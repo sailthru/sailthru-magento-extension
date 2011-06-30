@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <menu>
+        <newsletter>
+            <children>
+                <email_blast translate="title" module="email">
+                    <title>Send an eBlast with Sailthru</title>
+                    <sort_order>20</sort_order>
+                    <action>email/admin/index</action>
+                </email_blast>
+            </children>
+        </newsletter>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <sailthru_options>
+                                        <title>Sailthru Settings</title>
+                                    </sailthru_options>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

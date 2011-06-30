@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <sailthruconfig translate="label" module="email">
+            <label>Sailthru</label>
+            <sort_order>99999</sort_order>
+        </sailthruconfig>
+    </tabs>
+    <sections>
+        <sailthru_options translate="label" module="email">
+            <label>Settings</label>
+            <tab>sailthruconfig</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>1</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <api translate="label">
+                    <label>API</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[<a href="https://www.sailthru.com/signup">Get a free Sailthru account</a>]]></comment>
+                    <fields>
+                        <sailthru_api_key translate="label">
+                            <label>API Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Your Sailthru API Key. Can be found <![CDATA[<a href="https://sailthru.com/admin/settings_api">here</a>]]> by clicking on the padlock.</comment>
+                        </sailthru_api_key>
+                        <sailthru_api_secret translate="label">
+                            <label>API Secret</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Your Sailthru Secret. Can be found <![CDATA[<a href="https://sailthru.com/admin/settings_api">here</a>]]> by clicking on the padlock.</comment>
+                        </sailthru_api_secret>
+                    </fields>
+                </api>
+                <email translate="label">
+                    <label>Email</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <sailthru_def_list translate="label">
+                            <label>Default Email List</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The <![CDATA[<a href="https://sailthru.com/admin/lists">email list</a>]]> users are added to when they register.</comment>
+                        </sailthru_def_list>
+                        <sailthru_news_list translate="label">
+                            <label>Newsletter Email List</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The <![CDATA[<a href="https://sailthru.com/admin/lists">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
+                        </sailthru_news_list>
+                        <sailthru_sender_email translate="label">
+                            <label>Admin Email Address</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The email address used for customer service.</comment>
+                        </sailthru_sender_email>
+                    </fields>
+                </email>
+                <shopping_cart translate="label">
+                    <label>Shopping Cart</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <sailthru_reminder_time translate="label">
+                            <label>Shopping Cart Reminder Time</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart. Reminder requests are checked every ten minutes.</comment>
+                        </sailthru_reminder_time>
+                    </fields>
+                </shopping_cart>
+            </groups>
+        </sailthru_options>
+    </sections>
+</config>
