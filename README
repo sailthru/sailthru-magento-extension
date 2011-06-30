@@ -1,0 +1,14 @@
+--------------------
+Author: Jake Essman 
+Info:   sailthru.com
+--------------------
+This extension does the following:
+
+        1. Overrides all emails sent through Magento to be sent through Sailthru, allowing records of the emails to be kept.
+        2. Maintains carts and sends abandoned cart emails, improving your rate of sale.
+        3. Records all orders submitted.
+        4. Adds all registered users along with their info to an email list, for easy and custom eBlasts.
+        5. Adds subscribers to a separate list for simple newsletters.
+        
+           
+IMPORTANT: After installing the extension, you MUST log in and out and back in to the admin area to update the access-control list.
