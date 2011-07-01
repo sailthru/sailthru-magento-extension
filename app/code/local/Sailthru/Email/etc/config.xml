@@ -25,6 +25,16 @@
             <email>
                 <class>Sailthru_Email_Block</class>
             </email>
+            <catalog>
+                <rewrite>
+                    <product_view>Sailthru_Email_Block_Catalog_Product_View</product_view>
+                </rewrite>
+            </catalog>
+            <page>
+                <rewrite>
+                    <html_head>Sailthru_Email_Block_Page_Html_Head</html_head>
+                </rewrite>
+            </page>
         </blocks>
         <helpers>
             <email>

@@ -82,6 +82,34 @@
                         </sailthru_sender_email>
                     </fields>
                 </email>
+                <horizon translate="label">
+                    <label>Horizon</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Complete the first three steps of <![CDATA[<a href="http://docs.sailthru.com/horizon/setup">this page</a>]]> and fill out the "Horizon Domain" field below to complete Horizon setup</comment>
+                    <fields>
+                        <sailthru_horizon_domain translate="label">
+                                <label>Horizon Domain</label>
+                                <frontend_type>text</frontend_type>
+                                <sort_order>1</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                        </sailthru_horizon_domain>
+                        <sailthru_concierge_enabled translate="label">
+                                <label>Enable Concierge</label>
+                                <frontend_type>select</frontend_type>
+                                <sort_order>2</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                        </sailthru_concierge_enabled>
+                    </fields>
+                </horizon>
                 <shopping_cart translate="label">
                     <label>Shopping Cart</label>
                     <frontend_type>text</frontend_type>

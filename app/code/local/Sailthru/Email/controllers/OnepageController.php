@@ -32,7 +32,10 @@
                         $items[$i] = array("qty" => $obi->getQty(), "title" => $obi->getName(), "price" => $obi["product"]->getPrice()*100, "id" => $obi->getSku(), "url" => $obi["product"]->getProductUrl());
                         $i++;
                     }
-                    $data = array("email" => $email, "items" => $items);                  
+                    $data = array("email" => $email, "items" => $items);
+                    if (isset($_COOKIE['sailthru_bid'])) {
+                        $data['message_id'] = $_COOKIE['sailthru_bid'];
+                    }                  
                     $success = $sailthru->apiPost("purchase", $data);
                     if(count($success) == 2) {
                         Mage::throwException($this->__($success["errormsg"]));
