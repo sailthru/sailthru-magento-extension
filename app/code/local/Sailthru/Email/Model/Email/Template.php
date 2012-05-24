@@ -61,11 +61,11 @@
                 $temails = substr($temails, 0, -1);
                 $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
                 $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
-                if(count($success) == 2) {
+                if($success[error] == 14) {
                     $tempvars = array("content_html" => "{content}", "subject" => "{subj}");
                     $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
                     $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
-                    if(count($success) == 2) {
+                    if($success["error"]) {
                         Mage::throwException($this->__($success["errormsg"]));
                     }
                 }
