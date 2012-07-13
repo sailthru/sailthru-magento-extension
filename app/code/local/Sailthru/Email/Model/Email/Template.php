@@ -1,6 +1,6 @@
 <?php
     include_once("Mage/Core/Model/Email/Template.php");
-    class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template { 
+    class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
         public function send($email, $name = null, array $variables = array()) {
             if (!$this->isValidForSend()) {
                 Mage::logException(new Exception('This letter cannot be sent.')); // translation is intentionally omitted
@@ -61,7 +61,7 @@
                 $temails = substr($temails, 0, -1);
                 $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
                 $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
-                if($success[error] == 14) {
+                if($success["error"] == 14) {
                     $tempvars = array("content_html" => "{content}", "subject" => "{subj}");
                     $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
                     $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
@@ -79,6 +79,6 @@
             }
 
             return true;
-        }      
+        }
     }
 ?>
