@@ -34,7 +34,7 @@ class Sailthru_Email_Model_Observer
         }
         
         //uncomment line below to debug response from Sailthru API call. 
-        $this->showData($data['lists']);
+        //$this->showData($response);
   /*
    *    Other Data that we may push 
    * 
@@ -56,6 +56,29 @@ class Sailthru_Email_Model_Observer
         $store_id = $customer->getStoreId();
         
      */   
+    }
+    
+    public function addSubscriber(Varien_Event_Observer $observer)
+    {
+        //Sync subscriber data with Sailthru
+        $subscriber = $observer->getEvent()->getSubscriber();
+        $email = $subscriber->getSubscriberEmail();
+
+        $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
+        $data = array();
+        $data['email'] = $email;
+             
+        //Make API call to Sailthru to add subscriber
+        try{    
+            $response = $sailthru->apiPost('email', $data);
+        } catch (Exception $e){
+            Mage::logException($e);
+            return false;
+        }
+        
+        //uncomment line below to debug response from Sailthru API call. 
+        $this->showData($response);
+
     }
     
     

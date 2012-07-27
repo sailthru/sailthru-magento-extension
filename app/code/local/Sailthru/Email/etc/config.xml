@@ -47,6 +47,15 @@
                     </sailthru_create_new_user>
                 </observers>
             </customer_register_success>
+            <newsletter_subscriber_save_before>
+                <observers>
+                    <sailthru_subscriber_save_before>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>addSubscriber</method>
+                    </sailthru_subscriber_save_before>
+                </observers>
+            </newsletter_subscriber_save_before>
+            
             <checkout_cart_product_add_after>
                 <observers>
                     <sailthru_add_to_cart>
