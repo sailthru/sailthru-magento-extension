@@ -3,14 +3,14 @@
     <menu>
         <newsletter>
             <children>
-                <email_blast translate="title" module="email">
-                    <title>Send an eBlast with Sailthru</title>
+                <sailthruemail_blast translate="title" module="sailthruemail">
+                    <title>Send a Campaign with Sailthru</title>
                     <sort_order>20</sort_order>
-                    <action>email/admin/index</action>
-                </email_blast>
+                    <action>sailthruemail/admin/index</action>
+                </sailthruemail_blast> 
             </children>
         </newsletter>
-    </menu>
+    </menu> 
     <acl>
         <resources>
             <admin>
@@ -19,9 +19,9 @@
                         <children>
                             <config>
                                 <children>
-                                    <sailthru_options>
+                                    <sailthru>
                                         <title>Sailthru Settings</title>
-                                    </sailthru_options>
+                                    </sailthru>
                                 </children>
                             </config>
                         </children>
