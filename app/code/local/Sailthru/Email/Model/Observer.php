@@ -4,15 +4,64 @@ class Sailthru_Email_Model_Observer
 {
     public function addNewCustomer(Varien_Event_Observer $observer)
     {
-        /*
         $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $customer = $observer->getEvent()->getCustomer();
         $email = $customer->getEmail();
+        $customerId = $customer->getid();
         $name = $customer->getName();
+        $firstName = $customer->getFirstname();
+        $lastName = $customer->getLastname();
+        //$newsletter = Mage::getModel('newsletter/subscriber')->isSubscribed() ? '1' : '0';
+
+        //prepare data to push to Sailthru
         $data = array();
+        $data['id'] = $email;
+        $data['key'] = 'email';
+        $data['vars'] = array('customer_id' => $customerId,
+                              'name' => $name,
+                              'firstName' => $firstName,
+                              'lastName' => $lastName,
+                              //'newsletter' => $newsletter,
+                             );
+        $data['lists'] = array(Mage::helper('sailthruemail')->getMasterList());
         
-        $sailthru->apiPost('user', $data);
-        */
+        //Make API call to Sailthru to create new user
+        try{    
+            $response = $sailthru->apiPost('user', $data);
+        } catch (Exception $e){
+            Mage::logException($e);
+            return false;
+        }
+        
+        //uncomment line below to debug response from Sailthru API call. 
+        $this->showData($data['lists']);
+  /*
+   *    Other Data that we may push 
+   * 
+        $name = $customer->getName();
+        $firstName = $customer->getFirstname();
+        $middleName = $customer->getMiddlename();
+        $lastName = $customer->getLastname();
+        $address = $customer->getAddresses();
+        $attributes = $customer->getAttributes();
+        $primaryBillingAddress = $customer->getDefaultBillingAddress();
+        $primaryShippingAddress = $customer->getDefaultShippingAddress();
+        $additionalAddress = $customer->getAdditionalAddresses();
+        $zipCode = $customer->getPostcodoe();
+        $groupId = $customer->getGroupId();
+        $taxClassId = $customer->getTaxClassId();
+        
+        
+        //store information
+        $store_id = $customer->getStoreId();
+        
+     */   
+    }
+    
+    
+    public function updateUserProfile(Varien_Event_Observer $observer)
+    {
+        
     }
     /*
      * Use Sailthru's purchase api to push information to your account.

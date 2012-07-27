@@ -38,6 +38,11 @@
             return $horizonDomain;
         }
         
+        public function getMasterList($store = null)
+        {
+            return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
+        }
+        
         public function isConciergeEnabled($store = null)
         {
             $conciergeEnabled = Mage::getStoreConfig(self::XML_PATH_CONCIERGE_ENABLED, $store);
