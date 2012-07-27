@@ -1,5 +1,4 @@
 <?php
-    include_once("Mage/Checkout/Model/Cart.php");
     class Sailthru_Email_Model_Cart extends Mage_Checkout_Model_Cart {
         public function addProduct($productInfo, $requestInfo=null) {
             $product = $this->_getProduct($productInfo);
@@ -61,8 +60,8 @@
                 }
                 $data = array("email" => $email, "incomplete" => 1, "items" => $items, "reminder_time" => "+".Mage::getStoreConfig('sailthru_options/shopping_cart/sailthru_reminder_time')."min", "reminder_template" => $template_name);
                 //check if template is already created
-                $tempgood = $sailthru->getTemplate($template_name);
-                if(count($tempgood) == 2) {
+                $tempcheck = $sailthru->getTemplate($template_name);
+                if($tempcheck["error"] == 14) {
                     $content = '<p>The following was in your cart:</p>
                                 <ul>
                                 {sum = 0}
@@ -74,11 +73,15 @@
                                 <li>Total: ${number(sum, 2)}</li>
                                 </ul>';//use css here in future versions to style the email.
                     $tempvars = array("content_html" => $content, "subject" => "Abandoned Cart", "from_email" => Mage::getStoreConfig('sailthru_options/email/sailthru_sender_email'));
-                    $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
+                    $tempcheck = $sailthru->saveTemplate($template_name, $tempvars);
+                    if(isset($tempcheck["error"])) {
+                        unset($data["reminder_template"]);
+                        unset($data["reminder_time"]);
+                    }
                 }
-                $success = $sailthru->apiPost("purchase", $data);
-                if(count($success) == 2) {
-                    Mage::throwException($this->__($success["errormsg"]));
+                $response = $sailthru->apiPost("purchase", $data);
+                if(isset($response["error"])) {
+                    Mage::throwException($this->__($response["errormsg"]));
                 }
             }
             //sailthru//
