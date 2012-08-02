@@ -1,7 +1,11 @@
 <?php
-    include_once("Mage/Core/Model/Email/Template.php");
-    class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
+    class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template { 
         public function send($email, $name = null, array $variables = array()) {
+            
+            if(!Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
+                return parent::send($email, $name, $variables);
+            }
+            
             if (!$this->isValidForSend()) {
                 Mage::logException(new Exception('This letter cannot be sent.')); // translation is intentionally omitted
                 return false;
@@ -16,8 +20,10 @@
             }
             $variables['email'] = reset($emails);
             $variables['name'] = reset($names);
-            //ini_set('SMTP', Mage::getStoreConfig('system/smtp/host'));
-            //ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
+        
+            
+            ini_set('SMTP', Mage::getStoreConfig('system/smtp/host'));
+            ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
             $mail = $this->getMail();
             $setReturnPath = Mage::getStoreConfig(self::XML_PATH_SENDING_SET_RETURN_PATH);
             switch ($setReturnPath) {
@@ -47,21 +53,24 @@
             }
             $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
             $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
+            
             try {
                 //sailthru//
                 $template_name = "magento-default-email-template";
                 $temails = "";
                 $vars = null;
                 $evars = array();
-                $options = array("behalf_email" => Mage::getStoreConfig('sailthru_options/email/sailthru_sender_email'));
+                $options = array("behalf_email" => Mage::getStoreConfig('sailthru/email/sender_email'));
                 for($i = 0; $i < count($emails); $i++) {
                     $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
                     $temails .= $emails[$i].",";
                 }
                 $temails = substr($temails, 0, -1);
-                $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
+                $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
+                //$this->error_check($sailthru);
                 $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
-                if($success["error"] == 14) {
+                //$this->error_check($success);
+                if($success['error'] == 14) {
                     $tempvars = array("content_html" => "{content}", "subject" => "{subj}");
                     $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
                     $success = $sailthru->multisend($template_name, $temails, $vars, $evars, $options);
@@ -79,6 +88,13 @@
             }
 
             return true;
+        } 
+        
+        //
+        private function error_check($object) {
+            echo '<pre>';
+            print_r($object);
+            echo '</pre>';
         }
     }
 ?>
