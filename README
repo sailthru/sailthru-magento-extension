@@ -21,14 +21,14 @@ This extension does the following:
 ===Manual Installation===
 
 Step 1: Download Magento extension
+  Note: You can also clone the latest branch under development using this URL instead:
+  https://github.com/sailthru/sailthru-magento-extension/tarball/dev
+
 
 cd /tmp
 mkdir sailthru-magento
 cd sailthru-magento
 wget -O sailthru-magento.tar.gz https://github.com/sailthru/sailthru-magento-extension/tarball/master
-(You can also clone the latest branch that we're working on by using this command:
-wget -O sailthru-magento.tar.gz https://github.com/sailthru/sailthru-magento-extension/tarball/v2.0-alpha
-)
 tar -zxvf sailthru-magento.tar.gz --strip-components=1 --show-transformed-names
 
 
