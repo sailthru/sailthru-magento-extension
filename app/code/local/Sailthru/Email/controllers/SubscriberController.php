@@ -30,12 +30,12 @@
                     }
                     else {
                         $session->addSuccess($this->__('Thank you for your subscription.'));
-                        //sailthru//
+              /*          //sailthru//
                         $list = Mage::getStoreConfig('sailthru_options/email/sailthru_news_list');
                         $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
                         $sailthru->setEmail($email, array(), array($list => 1));
                         //sailthru//
-                    }
+                */    }
                 }
                 catch (Mage_Core_Exception $e) {
                     $session->addException($e, $this->__('There was a problem with the subscription: %s', $e->getMessage()));
@@ -61,13 +61,13 @@
                     Mage::getModel('newsletter/subscriber')->load($id)
                         ->setCheckCode($code)
                         ->unsubscribe();
-                    //sailthru//
+              /*      //sailthru//
                     $email = Mage::getModel('newsletter/subscriber')->load($id)->getEmail();
                     $list = Mage::getStoreConfig('sailthru_options/email/sailthru_news_list');
                     $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
                     $sailthru->setEmail($email, array(), array($list => 0));
                     //sailthru//
-                    $session->addSuccess($this->__('You have been unsubscribed.'));
+              */      $session->addSuccess($this->__('You have been unsubscribed.'));
                 }
                 catch (Mage_Core_Exception $e) {
                     $session->addException($e, $e->getMessage());

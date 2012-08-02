@@ -1,48 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <tabs>
-        <sailthruconfig translate="label" module="email">
+        <sailthruemail translate="label" module="sailthruemail">
             <label>Sailthru</label>
             <sort_order>350</sort_order>
-        </sailthruconfig>
+        </sailthruemail>
     </tabs>
     <sections>
-        <sailthru_options translate="label" module="email">
+        <sailthru translate="label" module="sailthruemail">
+            <class>separator-top</class>
             <label>Settings</label>
-            <tab>sailthruconfig</tab>
+            <tab>sailthruemail</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>1</sort_order>
+            <sort_order>99</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
                 <api translate="label">
-                    <label>API</label>
+                    <label>Sailthru API</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment><![CDATA[<a href="https://www.sailthru.com/getstarted">Signup for a Sailthru Account</a>]]></comment>
+                    <comment><![CDATA[<a href="https://www.sailthru.com/getstarted" target="_blank">Signup for a Sailthru Account</a>]]></comment>
                     <fields>
-                        <sailthru_api_key translate="label">
+                        <key translate="label">
                             <label>API Key</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Your Sailthru API key can be found on your<a href="https://my.sailthru.com/settings_api" target="_blank">Sailthru Settings page</a>, click the padlock next to "API Key and Secrets."]]></comment>
-                        </sailthru_api_key>
-                        <sailthru_api_secret translate="label">
+                            <comment>Your Sailthru API Key can be found <![CDATA[<a href="https://my.sailthru.com/settings_api" target="_blank">here</a>]]> by clicking on the padlock next to "API Key and Secrets."</comment>
+                        </key>
+                        <secret translate="label">
                             <label>API Secret</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Your Sailthru API secret can be found on your<a href="https://my.sailthru.com/settings_api" target="_blank">Sailthru Settings page</a>, click the padlock next to "API Key and Secrets."]]></comment>
-                        </sailthru_api_secret>
+                            <comment>Your Sailthru Secret can be found <![CDATA[<a href="https://my.sailthru.com/settings_api" target="_blank">here</a>]]> by clicking on the padlock.</comment>
+                        </secret>
                     </fields>
                 </api>
                 <email translate="label">
@@ -53,53 +54,63 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <sailthru_def_list translate="label">
+                        <enable_transactional_emails translate="label">
+                            <label>Enable Transactional Emails</label>
+                            <comment>Send transactional Emails through Sailthru</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </enable_transactional_emails>
+                        <default_list translate="label">
                             <label>Default Email List</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="https://my.sailthru.com/lists">email list</a>]]> users are added to when they register.</comment>
-                        </sailthru_def_list>
-                        <sailthru_news_list translate="label">
+                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they register.</comment>
+                        </default_list>
+                        <newsletter_list translate="label">
                             <label>Newsletter Email List</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="https://my.sailthru.com/lists">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
-                        </sailthru_news_list>
-                        <sailthru_sender_email translate="label">
+                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
+                        </newsletter_list>
+                        <sender_email translate="label">
                             <label>Admin Email Address</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>The email address used for customer service. This must be a verified email in Sailthru.</comment>
-                        </sailthru_sender_email>
+                            <comment>The email address used for customer service.</comment>
+                        </sender_email>
                     </fields>
-                </email>
+                </email> 
                 <horizon translate="label">
                     <label>Horizon</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>4</sort_order>
+                    <sort_order>3</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment><![CDATA[Complete the first three steps of <a href="http://getstarted.sailthru.com/documentation/products/horizon/horizon-data-collection-setup" target="_blank">this page</a> and fill out the "Horizon Domain" field below to complete Horizon setup]]></comment>
+                    <comment>Complete the first three steps of <![CDATA[<a href="http://getstarted.sailthru.com/documentation/products/horizon/horizon-data-collection-setup" target="_blank">this page</a>]]> and fill out the "Horizon Domain" field below to complete Horizon setup</comment>
                     <fields>
-                        <sailthru_horizon_domain translate="label">
+                        <horizon_domain translate="label">
                                 <label>Horizon Domain</label>
                                 <frontend_type>text</frontend_type>
                                 <sort_order>1</sort_order>
                                 <show_in_default>1</show_in_default>
                                 <show_in_website>1</show_in_website>
                                 <show_in_store>1</show_in_store>
-                        </sailthru_horizon_domain>
-                        <sailthru_concierge_enabled translate="label">
+                        </horizon_domain>
+                        <concierge_enabled translate="label">
                                 <label>Enable Concierge</label>
                                 <frontend_type>select</frontend_type>
                                 <sort_order>2</sort_order>
@@ -107,29 +118,39 @@
                                 <show_in_website>1</show_in_website>
                                 <show_in_store>1</show_in_store>
                                 <source_model>adminhtml/system_config_source_yesno</source_model>
-                        </sailthru_concierge_enabled>
+                        </concierge_enabled>
                     </fields>
                 </horizon>
                 <shopping_cart translate="label">
                     <label>Shopping Cart</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>3</sort_order>
+                    <sort_order>4</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <sailthru_reminder_time translate="label">
-                            <label>Shopping Cart Reminder Time</label>
-                            <frontend_type>text</frontend_type>
+                        <abandoned_cart translate="label">
+                            <label>Enable Abandoned Cart Emails</label>
+                            <frontend_type>select</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart.</comment>
-                        </sailthru_reminder_time>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>Send emails automatically to customers with abandoned items in their cart.</comment>
+                        </abandoned_cart>
+                        <reminder_time translate="label">
+                            <label>Shopping Cart Reminder Time</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart. Reminder requests are checked every ten minutes.</comment>
+                        </reminder_time>
                     </fields>
                 </shopping_cart>
             </groups>
-        </sailthru_options>
+        </sailthru>
     </sections>
 </config>

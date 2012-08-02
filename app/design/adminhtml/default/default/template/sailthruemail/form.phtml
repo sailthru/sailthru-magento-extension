@@ -1,0 +1,62 @@
+<h1>Schedule Campaign</h1>
+<form action="<?php echo $this->getFormAction(); ?>" name="blast" id="blast" method="POST">
+    <label>Select a <a href="https://sailthru.com/admin/templates">template</a></label><br />
+    <select id="template" name="template">
+        <?php
+            date_default_timezone_set('America/New_York');
+            $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
+            $temps = $sailthru->getTemplates();
+            for($i = 0; $i < count($temps["templates"]); $i++) {
+                ?><option value="<?php echo $temps['templates'][$i]['name']; ?>"><?php echo $temps['templates'][$i]['name']; ?></option><?php
+            }
+        ?>
+    </select><br /><br />
+    <label>Select a <a href="https://sailthru.com/admin/lists">member list</a></label><br />
+    <select id="list" name="list">
+        <?php $lists = $sailthru->getLists();
+            for($i = 0; $i < count($lists["lists"]); $i++) {
+                ?><option value="<?php echo $lists['lists'][$i]['name']; ?>"><?php echo $lists['lists'][$i]['name']." (".(0+$lists['lists'][$i]['email_count'])." members)"; ?></option><?php
+            } ?>
+    </select><br /><br />
+    <label>Set a time for the blast to be sent</label><br />
+    <select id="month" name="month">
+        <?php $months = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+            for($i = 0; $i < 12; $i++) { ?>
+                <option value="<?php echo $months[$i] ?>"><?php echo $months[$i] ?></option>
+           <?php } ?>
+    </select>
+    <select id="day" name="day">
+        <?php for($i = 1; $i < 32; $i++) { ?>
+                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+           <?php } ?>
+    </select>
+    <select id="year" name="year">
+        <?php for($i = 0; $i < 10; $i++) { ?>
+                <option value="<?php echo date('Y')+$i; ?>"><?php echo date('Y')+$i; ?></option>
+           <?php } ?>
+    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <select id="hour" name="hour">
+        <?php for($i = 1; $i < 13; $i++) { ?>
+                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+           <?php } ?>
+    </select>
+    <select id="minute" name="minute">
+        <?php for($i = 0; $i < 60; $i++) { ?>
+                <?php $t = $i; if($i < 10) $t = "0".$i; ?>
+                <option value="<?php echo $t; ?>"><?php echo $t; ?></option>
+           <?php } ?>
+    </select>
+    <select id="apm" name="apm">
+        <option value="am">AM</option>
+        <option value="pm">PM</option>
+    </select>
+    <input type="hidden" name="form_key" value="<?php echo Mage::getSingleton('core/session')->getFormKey(); ?>" />
+    <br /><br /><input type="submit" id="submit" name="submit" value="Send Blast" />
+</form>
+<script type="text/javascript">
+    document.forms["blast"].month.selectedIndex = <?php echo date("m")-1; ?>;
+    document.forms["blast"].day.selectedIndex = <?php echo date("d")-1; ?>;
+    document.forms["blast"].hour.selectedIndex = <?php echo date("h")-1; ?>;
+    document.forms["blast"].minute.selectedIndex = <?php echo date("i"); ?>;
+    document.forms["blast"].apm.selectedIndex = <?php echo 0+(date("A") == "PM"); ?>;
+</script>

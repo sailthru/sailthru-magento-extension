@@ -2,69 +2,170 @@
 <config>
     <modules>
         <Sailthru_Email>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </Sailthru_Email>
     </modules>
     <global>
         <models>
-            <email>
+           <sailthruemail>
                 <class>Sailthru_Email_Model</class>
-            </email>
-            <checkout>
-                <rewrite>
-                    <cart>Sailthru_Email_Model_Cart</cart>
-                </rewrite>
-            </checkout>
+            </sailthruemail>
             <core>
                 <rewrite>
+                    <!--<email>Sailthru_Email_Model_Email</email>-->
                     <email_template>Sailthru_Email_Model_Email_Template</email_template>
                 </rewrite>
             </core>
         </models>
         <blocks>
-            <email>
+            <sailthruemail>
                 <class>Sailthru_Email_Block</class>
-            </email>
-            <catalog>
-                <rewrite>
-                    <product_view>Sailthru_Email_Block_Catalog_Product_View</product_view>
-                </rewrite>
-            </catalog>
-            <page>
-                <rewrite>
-                    <html_head>Sailthru_Email_Block_Page_Html_Head</html_head>
-                </rewrite>
-            </page>
-        </blocks>
+            </sailthruemail>
+        </blocks> 
         <helpers>
-            <email>
+            <sailthruemail>
                 <class>Sailthru_Email_Helper</class>
-            </email>
+            </sailthruemail>
         </helpers>
     </global>
     <frontend>
+        <translate>
+            <modules>
+                <Sailthru_Email>
+                    <files>
+                        <default>Sailthru_Email.csv</default>
+                    </files>
+                </Sailthru_Email>
+            </modules>
+        </translate>
+        <events>
+            <customer_register_success>
+                <observers>
+                    <sailthru_create_new_user>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>addNewCustomer</method>
+                    </sailthru_create_new_user>
+                </observers>
+            </customer_register_success>
+            <newsletter_subscriber_save_before>
+                <observers>
+                    <sailthru_subscriber_save_before>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>addSubscriber</method>
+                    </sailthru_subscriber_save_before>
+                </observers>
+            </newsletter_subscriber_save_before>
+            
+            <checkout_cart_product_add_after>
+                <observers>
+                    <sailthru_add_to_cart>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_add_to_cart>
+                </observers>
+            </checkout_cart_product_add_after>
+            <checkout_cart_update_items_after>
+                <observers>
+                    <sailthru_update_cart_items>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_update_cart_items>
+                </observers>
+            </checkout_cart_update_items_after>
+            <checkout_cart_product_update_after>
+                <observers>
+                    <sailthru_update_product>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_update_product>
+                </observers>
+            </checkout_cart_product_update_after>
+            <checkout_type_onepage_save_order>
+                <observers>
+                    <sailthru_checkout_type_onepage_save_order>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_checkout_type_onepage_save_order>
+                </observers>
+            </checkout_type_onepage_save_order>
+            <checkout_controller_onepage_save_shipping_method>
+                <observers>
+                    <sailthru_checkout_controller_onepage_save_shipping_method>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_checkout_controller_onepage_save_shipping_method>
+                </observers>
+            </checkout_controller_onepage_save_shipping_method>
+  <!--          <sales_quote_save_after>
+                <observers>
+                    <sailthru_sales_quote_save_after>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_sales_quote_save_after>
+                </observers>
+            </sales_quote_save_after> -->
+            <sales_quote_remove_item>
+                <observers>
+                    <sailthru_remove_items>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                    </sailthru_remove_items>
+                </observers>
+            </sales_quote_remove_item>
+            <checkout_submit_all_after>
+                <observers>
+                    <sailthru_checkout_submit_all_after>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushPurchaseOrderSuccessToSailthru</method>
+                    </sailthru_checkout_submit_all_after>
+                </observers>
+            </checkout_submit_all_after>
+    <!--        <checkout_onepage_controller_success_action> 
+                <observers>
+                    <sailthru_order_success>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushPurchaseOrderSuccessToSailthru</method>
+                    </sailthru_order_success>
+                </observers>
+            </checkout_onepage_controller_success_action>
+            <checkout_multishipping_controller_success_action>
+                <observers>
+                    <sailthru_order_success>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>pushPurchaseOrderSuccessToSailthru</method>
+                    </sailthru_order_success>
+                </observers>
+            </checkout_multishipping_controller_success_action> -->
+     </events>
+        <layout>
+            <updates>
+                <sailthruemail>
+                    <file>sailthru.xml</file>
+                </sailthruemail>
+            </updates>
+        </layout>
         <routers>
-            <email>
+            <sailthruemail>
                 <use>standard</use>
                 <args>
                     <module>Sailthru_Email</module>
                     <frontName>email</frontName>
                 </args>
-            </email>
-            <checkout>
+            </sailthruemail>
+     <!--       <checkout>
                 <args>
                     <modules>
                         <Sailthru_Email before="Mage_Checkout">Sailthru_Email</Sailthru_Email>
                     </modules>
                 </args>
-            </checkout>
-            <customer>
+            </checkout> 
+            <customer>  
                 <args>
                     <modules>
                         <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
                     </modules>
                 </args>
-            </customer>
+            </customer> -->
             <newsletter>
                 <args>
                     <modules>
@@ -74,15 +175,15 @@
             </newsletter>
         </routers>
     </frontend>
-    <admin>
+   <admin>
         <routers>
-            <email>
+            <sailthruemail>
                 <use>admin</use>
                 <args>
                     <module>Sailthru_Email</module>
-                    <frontName>email</frontName>
+                    <frontName>sailthruemail</frontName>
                 </args>
-            </email>
+            </sailthruemail>
         </routers>
     </admin>
 </config>

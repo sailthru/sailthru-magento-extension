@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<layout version="0.1.0">
+    <catalog_product_view>
+        <reference name="head">
+            <action method="addJs"><script>jquery/jquery.min.js</script></action>
+            <block type="catalog/product_view" name="sailthru_horizon" as="sailthru_horizon" template="sailthru/horizon.phtml" />
+        </reference>    
+    </catalog_product_view>
+</layout>
+ 
