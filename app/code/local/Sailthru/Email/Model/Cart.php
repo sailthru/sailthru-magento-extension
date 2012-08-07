@@ -66,7 +66,7 @@
                                 <ul>
                                 {sum = 0}
                                 {foreach profile.purchase_incomplete.items as i}
-                                <li>{i.qty} <a href="{i.url}">{i.title}</a> for ${number(i.price*i.qty, 2)}</li>
+                                <li>{i.qty} <a href="{i.url}">{i.title}</a> for ${number((i.price/100)*i.qty, 2)}</li>
                                 {sum = sum+(i.price*i.qty)}
                                 {/foreach}
                                 <hr />
