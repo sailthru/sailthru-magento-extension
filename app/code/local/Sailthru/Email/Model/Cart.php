@@ -55,7 +55,7 @@
                 $items = array();
                 $i = 0;
                 foreach($protoitems as $obi) {
-                    $items[$i] = array("qty" => $obi->getQty(), "title" => $obi->getName(), "price" => $obi["product"]->getPrice(), "id" => $obi->getSku(), "url" => $obi["product"]->getProductUrl());
+                    $items[$i] = array("qty" => $obi->getQty(), "title" => $obi->getName(), "price" => $obi["product"]->getPrice()*100, "id" => $obi->getSku(), "url" => $obi["product"]->getProductUrl());
                     $i++;
                 }
                 $data = array("email" => $email, "incomplete" => 1, "items" => $items, "reminder_time" => "+".Mage::getStoreConfig('sailthru_options/shopping_cart/sailthru_reminder_time')."min", "reminder_template" => $template_name);
