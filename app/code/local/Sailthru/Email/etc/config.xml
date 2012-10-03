@@ -9,7 +9,7 @@
 <config>
     <modules>
         <Sailthru_Email>
-            <version>0.2.0</version>
+            <version>1.0.0</version>
         </Sailthru_Email>
     </modules>
     <global>
@@ -61,7 +61,7 @@
             <sailthruemail>
                 <class>Sailthru_Email_Block</class>
             </sailthruemail>
-        </blocks> 
+        </blocks>
         <helpers>
             <sailthruemail>
                 <class>Sailthru_Email_Helper</class>
@@ -159,7 +159,7 @@
                     </sailthru_checkout_submit_all_after>
                 </observers>
             </checkout_submit_all_after>
-    <!--        <checkout_onepage_controller_success_action> 
+    <!--        <checkout_onepage_controller_success_action>
                 <observers>
                     <sailthru_order_success>
                         <class>Sailthru_Email_Model_Observer</class>
@@ -197,8 +197,8 @@
                         <Sailthru_Email before="Mage_Checkout">Sailthru_Email</Sailthru_Email>
                     </modules>
                 </args>
-            </checkout> 
-            <customer>  
+            </checkout>
+            <customer>
                 <args>
                     <modules>
                         <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
