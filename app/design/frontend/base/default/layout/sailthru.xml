@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+<!--
+Default layout, loads most of the pages
+-->
+        <catalog_product_view>
+        <reference name="head"> 
+            <block type="core/text" name="google.cdn.jquery">
+                <action method="setText">
+                    <text><![CDATA[<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script><script type="text/javascript">jQuery.noConflict();</script>]]>
+                    </text>
+                </action>
+            </block>
+            <block type="catalog/product_view" name="sailthru_horizon" as="sailthru_horizon" template="sailthru/horizon.phtml" />
+       </reference>
+       </catalog_product_view>
+    
+</layout>

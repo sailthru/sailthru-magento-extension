@@ -1,10 +1,10 @@
-<h1>Send an eBlast</h1>
+<h1>Schedule Campaign</h1>
 <form action="<?php echo $this->getFormAction(); ?>" name="blast" id="blast" method="POST">
     <label>Select a <a href="https://sailthru.com/admin/templates">template</a></label><br />
     <select id="template" name="template">
         <?php
             date_default_timezone_set('America/New_York');
-            $sailthru = Mage::getSingleton('Sailthru_Email_Model_SailthruConfig')->getHandle();
+            $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
             $temps = $sailthru->getTemplates();
             for($i = 0; $i < count($temps["templates"]); $i++) {
                 ?><option value="<?php echo $temps['templates'][$i]['name']; ?>"><?php echo $temps['templates'][$i]['name']; ?></option><?php
