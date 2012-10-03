@@ -20,6 +20,7 @@
                 if ($data = $this->getRequest()->getPost('payment', false)) {
                     $this->getOnepage()->getQuote()->getPayment()->importData($data);
                 }
+                /*
                 //sailthru//
                 $scust = Mage::getSingleton('customer/session')->getCustomer();
                 $email = $scust->getEmail();
@@ -42,6 +43,8 @@
                     }
                 }
                 //sailthru//
+                 * 
+                 */
                 $this->getOnepage()->saveOrder();
                 $storeId = Mage::app()->getStore()->getId();
                 $paymentHelper = Mage::helper("payment");
