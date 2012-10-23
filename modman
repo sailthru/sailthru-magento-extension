@@ -3,4 +3,4 @@ app/code/local/Sailthru/Email                                               app/
 app/design/adminhtml/default/default/template/sailthruemail                 app/design/adminhtml/default/default/template/sailthruemail       
 app/design/frontend/base/default/layout/sailthru.xml                        app/design/frontend/base/default/layout/sailthru.xml       
 app/design/frontend/base/default/template/sailthru                          app/design/frontend/base/default/template/sailthru
-app/etc/modules/*     
+app/etc/modules/*                                                           app/etc/modules/
