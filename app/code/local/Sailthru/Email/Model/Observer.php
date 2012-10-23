@@ -2,22 +2,22 @@
 /**
  * @category  Sailthru
  * @package   Sailthru_Email
- * @author    Kwadwo Juantuah <support@sailthru.com> 
+ * @author    Kwadwo Juantuah <support@sailthru.com>
  */
 class Sailthru_Email_Model_Observer
-{    
+{
     protected function _getSailthruClient() {
         return Mage::helper('sailthruemail')->newSailthruClient();
     }
-    
+
     protected function _debug($object) {
         return Mage::helper('sailthruemail')->debug($object);
     }
-    
+
     public function updateCustomer($observer) {
         $customer = $observer->getEvent()->getCustomer();
         //$customer = Mage::getModel('customer/session')->getCustomer();
-        if (($customer instanceof Mage_Customer_Model_Customer)) {            
+        if (($customer instanceof Mage_Customer_Model_Customer)) {
             try{
                 $sailthru = $this->_getSailthruClient();
                 $response = $sailthru->saveUser($customer->getId(), $this->getCustomerData($customer));
@@ -28,7 +28,7 @@ class Sailthru_Email_Model_Observer
         }
         return $this;
     }
-    
+
     public function createNewCustomer($observer) {
         //$this->_debug($observer);
         $customer = $observer->getEvent()->getCustomer();
@@ -37,7 +37,7 @@ class Sailthru_Email_Model_Observer
             try{
                 $sailthru = $this->_getSailthruClient();
                 $options = $this->getCustomerData($customer);
-                 
+
                 //$this->_debug($options);
                 $response = $sailthru->createNewUser($this->getCustomerData($customer));
                 //$this->_debug($response);
@@ -47,12 +47,12 @@ class Sailthru_Email_Model_Observer
         }
         return $this;
     }
-        
+
     /**
      * Push new subscriber data to Sailthru
-     * 
+     *
      * @param Varien_Event_Observer $observer
-     * @return 
+     * @return
      */
     public function addSubscriber(Varien_Event_Observer $observer)
     {
@@ -60,11 +60,11 @@ class Sailthru_Email_Model_Observer
         //Sync subscriber data with Sailthru
         $subscriber = $observer->getEvent()->getSubscriber();
         //$this->_debug($subscriber);
-             
+
         //Make API call to Sailthru to add subscriber
-        try{    
+        try{
             $sailthru = $this->_getSailthruClient();
-            
+
             $email = $subscriber->getEmail();
             $vars = array(
                 'subscriberId' => $subscriber->getId(),
@@ -78,20 +78,20 @@ class Sailthru_Email_Model_Observer
             Mage::logException($e);
             return false;
         }
-        
+
         return $this;
 
     }
-    
-    
-    
+
+
+
     public function log($observer) {
         $event = $observer->getEvent();
         if (Mage::helper('sailthruemail')->isTransactionalEmailEnabled()) {
-            //code to enable logging from Sailthru here. 
+            //code to enable logging from Sailthru here.
         }
     }
-    
+
     public function getCustomerData($customer) {
         $options = array(
             'id' => $customer->getEmail(),
@@ -108,7 +108,7 @@ class Sailthru_Email_Model_Observer
                 /*'attributes' => $customer->getAttributes(),
                 'storeID' => $customer->getStoreId(),
                 'websiteId' => $customer->_getWebsiteStoreId(),
-                'groupId' => $customer->getGroupId(), 
+                'groupId' => $customer->getGroupId(),
                 'taxClassId' => $customer->getTaxClassId(),
                 'createdAt' => $customer->getCreatedAtTimestamp(),
                 'primaryBillingAddress' => $customer->getPrimaryBillingAddress(),
@@ -120,18 +120,18 @@ class Sailthru_Email_Model_Observer
                  */
             ),
             'lists' => array(
-                'Master List' => 1,  //Hard coded for now                    
+                'Master List' => 1,  //Hard coded for now
             ),
         );
-        
+
         return $options;
-    
+
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * Customer delete handler
      *
@@ -147,12 +147,12 @@ class Sailthru_Email_Model_Observer
         }
         return $this;
     }
-    
+
     /**
      * Push new customer information to Sailthru
-     * 
+     *
      * @param Varien_Event_Observer $observer
-     * @return 
+     * @return
      */
     public function addCustomer(Varien_Event_Observer $observer)
     {
@@ -176,20 +176,20 @@ class Sailthru_Email_Model_Observer
                               //'newsletter' => $newsletter,
                              );
         $data['lists'] = array(Mage::helper('sailthruemail')->getMasterList());
-        
+
         //Make API call to Sailthru to create new user
-        try{    
+        try{
             $response = $sailthru->apiPost('user', $data);
         } catch (Exception $e){
             Mage::logException($e);
             return false;
         }
-        
-        //uncomment line below to debug response from Sailthru API call. 
-        //$this->showData($response);
+
+        //uncomment line below to debug response from Sailthru API call.
+        //$this->_debug($response);
   /*
-   *    Other Data that we may push 
-   * 
+   *    Other Data that we may push
+   *
         $name = $customer->getName();
         $firstName = $customer->getFirstname();
         $middleName = $customer->getMiddlename();
@@ -202,26 +202,26 @@ class Sailthru_Email_Model_Observer
         $zipCode = $customer->getPostcodoe();
         $groupId = $customer->getGroupId();
         $taxClassId = $customer->getTaxClassId();
-        
-        
+
+
         //store information
         $store_id = $customer->getStoreId();
-        
-     */   
+
+     */
     }
-    
-    
-    
+
+
+
     public function updateUserProfile(Varien_Event_Observer $observer)
     {
-        
+
     }
-    
+
     /**
      * Push items that have been added to Cart to Sailthru
-     * 
+     *
      * @param Varien_Event_Observer $observer
-     * @return  
+     * @return
      */
     public function pushIncompletePurchaseOrderToSailthru(Varien_Event_Observer $observer)
     {
@@ -232,7 +232,7 @@ class Sailthru_Email_Model_Observer
             //Do nothing if user is not logged in.
             return;
         }
-        
+
         $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
         try{//Schedule Abandoned Cart Email if that option has been enabled.
             $this->updateCustomer($observer);
@@ -242,15 +242,16 @@ class Sailthru_Email_Model_Observer
                 $data['message_id'] = isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
                 $response = $sailthru->apiPost("purchase", $data);
                 //uncomment line below to debug API call.
-                //$this->showData($response);
+                //$this->_debug($response);
 
                 if($response["error"] == 14) {
                     $content = Mage::helper('sailthruemail')->createAbandonedCartHtmlContent();
                     $new_template = array("template" => $template_name, "content_html" => $content, "subject" => "Did you forget these items in your cart?", "from_email" => Mage::helper('sailthruemail')->getSenderEmail());
                     $create_template = $sailthru->apiPost('template', $new_template);
-                    //$this->showData($create_template);
+                    //$this->_debug
+                    //($create_template);
                     $response = $sailthru->apiPost("purchase", $data);
-                    //$this->showData($response);
+                    //$this->_debug($response);
                 }
             } else {
                 $data = array("email" => $email, "incomplete" => 1, "items" => $this->shoppingCart());
@@ -265,11 +266,11 @@ class Sailthru_Email_Model_Observer
     }
 
     /**
-     * Notify Sailthru that a purchase has been made. This automatically cancels 
-     * any scheduled abandoned cart email. 
-     * 
+     * Notify Sailthru that a purchase has been made. This automatically cancels
+     * any scheduled abandoned cart email.
+     *
      * @param Varien_Event_Observer $observer
-     * @return  
+     * @return
      */
     public function pushPurchaseOrderSuccessToSailthru(Varien_Event_Observer $observer)
     {
@@ -279,7 +280,7 @@ class Sailthru_Email_Model_Observer
         if(!$email){
             return;
         }
-        
+
         $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
         try{
             //$this->updateCustomer($customer);
@@ -287,29 +288,29 @@ class Sailthru_Email_Model_Observer
             if (isset($_COOKIE['sailthru_bid'])){
                 $data['message_id'] = $_COOKIE['sailthru_bid'];
             }
-                
+
             $response = $sailthru->apiPost("purchase", $data);
-            //$this->showData($response);
+            //$this->_debug($response);
         }catch (Exception $e) {
             Mage::logException($e);
             return false;
         }
-        
+
         return $this;
 
     }
 
     /**
      * Prepare data on items in cart.
-     * 
-     * @return type 
+     *
+     * @return type
      */
     public function shoppingCart()
     {
         $shopping_cart = Mage::getSingleton('checkout/session')->getQuote()->getAllItems();
         $items_in_cart = array();
         $i = 0;
- 
+
             foreach($shopping_cart as $basket) {
                 $product_id = $basket->getProductId();
                 $product = Mage::getModel('catalog/product')->load($product_id);
@@ -331,8 +332,8 @@ class Sailthru_Email_Model_Observer
                                             );
                 $i++;
             }
-            //$this->showData($items_in_cart);
-            
+            //$this->_debug($items_in_cart);
+
             return $items_in_cart;
     }
 
