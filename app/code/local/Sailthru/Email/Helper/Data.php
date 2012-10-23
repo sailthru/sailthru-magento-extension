@@ -153,54 +153,11 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $content_html;
     }
 
-public function debug($object) {
+    public function debug($object)
+    {
         echo '<pre>';
         print_r($object);
         echo '</pre>';
-}
-
-
-public function Salesforce($object) {
-    $salesforce = $this->newSailthruClient();
-
-    $salesforce->getTemplates();
-
-    $salesforce->updateBlast($object);
-
-    foreach(array() as $k) {
-        echo "This is a cool plugin";
-
-        $json_object = json_encode($salesforce);
-
-        $salesforce->send($template, $json_object);
-    }
-}
-
-    protected function test($name, $template, $email) {
-        if (isset($name)) {
-            return false;
-        } else {
-            return $salesforce;
-        }
-
-        $this->Salesforce($name);
-
-    }
-
-    public function deploy($serverName, $version, $database) {
-        $customer = Mage::getModule('customer/customer');
-
-        $lastName = $customer->getLastName();
-        $firstName = $customer->getFirstName();
-        $shippingZip = $customer->getPostalCode();
-
-        $product = Mage::getModel('catlog/product');
-
-        foreach ($product as $key => $value) {
-            $i++;
-            echo $product[$i];
-        }
-
     }
 
 }
