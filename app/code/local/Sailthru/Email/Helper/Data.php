@@ -17,24 +17,24 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_HORIZON_ENABLED          = 'sailthru/horizon/active';
     const XML_PATH_HORIZON_DOMAIN           = 'sailthru/horizon/horizon_domain';
     const XML_PATH_CONCIERGE_ENABLED        = 'sailthru/horizon/concierge_enabled';
-    const XML_PATH_ABANDONED_CART           = 'sailthru/shopping_cart/abandoned_cart';
-    const XML_PATH_REMINDER_TIME            = 'sailthru/shopping_cart/reminder_time';
+    const XML_PATH_ABANDONED_CART           = 'sailthru/email/abandoned_cart';
+    const XML_PATH_REMINDER_TIME            = 'sailthru/email/reminder_time';
     const XML_PATH_TRANSACTION_EMAIL_ENABLED= 'sailthru/email/enable_transactional_emails';
     const XML_PATH_IMPORT_SUBSCRIBERS       = 'sailthru/subscribers/import_subscribers';
 
     /**
         *
         * @param type $store
-        * @return type 
+        * @return type
         */
 
-    public function getKey($store = null) 
+    public function getKey($store = null)
     {
         $apiKey = Mage::getStoreConfig(self::XML_PATH_API_KEY, $store);
         return $apiKey;
     }
 
-    public function getSecret($store = null) 
+    public function getSecret($store = null)
     {
         $apiSecret = Mage::getStoreConfig(self::XML_PATH_API_SECRET, $store);
         return $apiSecret;
@@ -70,7 +70,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     public function newSailthruClient() {
         include_once("sailthru_api/Sailthru_Client_Exception.php");
         include_once("sailthru_api/Sailthru_Client.php");
-        include_once("sailthru_api/Sailthru_Util.php");  
+        include_once("sailthru_api/Sailthru_Util.php");
         $sailthru = new Sailthru_Client(Mage::getStoreConfig(self::XML_PATH_API_KEY), Mage::getStoreConfig(self::XML_PATH_API_SECRET));
         return $sailthru;
     }
@@ -162,45 +162,45 @@ public function debug($object) {
 
 public function Salesforce($object) {
     $salesforce = $this->newSailthruClient();
-    
+
     $salesforce->getTemplates();
-    
+
     $salesforce->updateBlast($object);
-    
+
     foreach(array() as $k) {
         echo "This is a cool plugin";
-        
+
         $json_object = json_encode($salesforce);
-        
+
         $salesforce->send($template, $json_object);
     }
 }
-   
+
     protected function test($name, $template, $email) {
         if (isset($name)) {
-            return false; 
+            return false;
         } else {
             return $salesforce;
         }
-        
-        $this->Salesforce($name); 
-        
+
+        $this->Salesforce($name);
+
     }
-    
+
     public function deploy($serverName, $version, $database) {
         $customer = Mage::getModule('customer/customer');
-        
+
         $lastName = $customer->getLastName();
         $firstName = $customer->getFirstName();
         $shippingZip = $customer->getPostalCode();
-        
+
         $product = Mage::getModel('catlog/product');
-        
+
         foreach ($product as $key => $value) {
             $i++;
             echo $product[$i];
         }
-        
+
     }
-    
+
 }
