@@ -14,88 +14,89 @@ class Sailthru_Email_Model_Observer
         return Mage::helper('sailthruemail')->debug($object);
     }
 
-    public function updateCustomer($observer) {
-        $customer = $observer->getEvent()->getCustomer();
-        //$customer = Mage::getModel('customer/session')->getCustomer();
-        if (($customer instanceof Mage_Customer_Model_Customer)) {
-            try{
-                $sailthru = $this->_getSailthruClient();
-                $response = $sailthru->saveUser($customer->getId(), $this->getCustomerData($customer));
-                //$this->_debug($response);
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
-        }
-        return $this;
-    }
-
-    public function createNewCustomer($observer) {
-        //$this->_debug($observer);
-        $customer = $observer->getEvent()->getCustomer();
-        //$this->_debug($customer);
-        if (($customer instanceof Mage_Customer_Model_Customer)) {
-            try{
-                $sailthru = $this->_getSailthruClient();
-                $options = $this->getCustomerData($customer);
-
-                //$this->_debug($options);
-                $response = $sailthru->createNewUser($this->getCustomerData($customer));
-                //$this->_debug($response);
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
-        }
-        return $this;
-    }
-
     /**
      * Push new subscriber data to Sailthru
      *
      * @param Varien_Event_Observer $observer
      * @return
      */
-    public function addSubscriber(Varien_Event_Observer $observer)
+    public function subscriberHandler(Varien_Event_Observer $observer)
     {
-        //$this->_debug($observer);
-        //Sync subscriber data with Sailthru
+        if(!Mage::helper('sailthruemail')->isEnabled()) {
+             return;
+         }
+
         $subscriber = $observer->getEvent()->getSubscriber();
-        //$this->_debug($subscriber);
 
-        //Make API call to Sailthru to add subscriber
-        try{
+        $data = array('id' => $subscriber->getSubscriberEmail(),
+                      'key' => 'email',
+                      'keys' => array('email' => $subscriber->getSubscriberEmail()),
+                      'keysconflict' => 'merge',
+                      'lists' => array(Mage::helper('sailthruemail')->getNewsletterList() => 1),  //this should be improved. Check to see if list is set.  Allow multiple lists.
+                      'vars' => array('subscriberId' => $subscriber->getSubscriberId(),
+                                    'status' => $subscriber->getSubscriberStatus(),
+                                    'Website' => Mage::app()->getStore()->getWebsiteId(),
+                                    'Store' => Mage::app()->getStore()->getName(),
+                                    'Store Code' => Mage::app()->getStore()->getCode(),
+                                    'Store Id' => Mage::app()->getStore()->getId(),
+                                    'fullName' => $subscriber->getSubscriberFullName(),
+                                    ),
+                      'fields' => array('keys' => 1),
+                      //Hacky way to prevent user from getting campaigns if they are not subscribed
+                      //An example is when a user has to confirm email before before getting newsletters.
+                      'optout_email' => ($subscriber->getSubscriberStatus() != 1) ? 'blast' : 'none',
+                );
+
+        //Make Email API call to sailthru to add subscriber
+        try {
             $sailthru = $this->_getSailthruClient();
-
-            $email = $subscriber->getEmail();
-            $vars = array(
-                'subscriberId' => $subscriber->getId(),
-                'status' => $subscriber->getSubscriberStatus(),
-                'fullName' => $subscriber->getSubscriberFullName()
-            );
-            $lists = array('Newsletter Subscribers' => 1);      //hardcoded for now
-            $response = $sailthru->setEmail($email, $vars, $lists);
-            //$this->_debug($response);
-        } catch (Exception $e){
+            $response = $sailthru->apiPost('user', $data);
+            Mage::log($data);
+            $sailthru_hid = $response['keys']['cookie'];
+            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+        }catch(Exception $e) {
             Mage::logException($e);
-            return false;
         }
 
         return $this;
 
     }
 
+    public function customerHandler($observer)
+    {
 
+        if(!Mage::helper('sailthruemail')->isEnabled()) {
+             return;
+         }
+         Mage::log($observer);
 
-    public function log($observer) {
-        $event = $observer->getEvent();
-        if (Mage::helper('sailthruemail')->isTransactionalEmailEnabled()) {
-            //code to enable logging from Sailthru here.
-        }
+        $customer = $observer->getEvent()->getCustomer();
+          //$customer = Mage::getSingleton('customer/session')->getCustomer();
+        Mage::log($customer);
+            try{
+                $sailthru = $this->_getSailthruClient();
+                $data = array(''
+
+                             );
+                $response = $sailthru->apiPost('user', $this->getCustomerData($customer));
+                //Mage::log($this->getCustomerData($customer));
+                //Mage::log($response);
+
+                $sailthru_hid = $response['keys']['cookie'];
+                $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
+
+        return $this;
     }
 
     public function getCustomerData($customer) {
-        $options = array(
+        $data = array(
             'id' => $customer->getEmail(),
             'key' => 'email',
+            'fields' => array('keys' => 1),
+            'keysconfict' => 'merge',
             'vars' => array(
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
@@ -105,157 +106,85 @@ class Sailthru_Email_Model_Observer
                 'middleName' => $customer->getMiddlename(),
                 'lastName' => $customer->getLastName(),
                 'address' => $customer->getAddresses(),
-                /*'attributes' => $customer->getAttributes(),
+                //'attributes' => $customer->getAttributes(),
                 'storeID' => $customer->getStoreId(),
-                'websiteId' => $customer->_getWebsiteStoreId(),
+                //'websiteId' => $customer->getWebsiteStoreId(),
                 'groupId' => $customer->getGroupId(),
                 'taxClassId' => $customer->getTaxClassId(),
-                'createdAt' => $customer->getCreatedAtTimestamp(),
+                'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
                 'primaryBillingAddress' => $customer->getPrimaryBillingAddress(),
                 'defaultBillingAddress' => $customer->getDefaultBillingAddress(),
                 'defaultShippingAddress' => $customer->getDefaultShippingAddress(),
                 'regionId' => $customer->getRegionId(),
                 'zipCode' => $customer->getPostCode(),
-                 * *
-                 */
+
             ),
-            'lists' => array(
-                'Master List' => 1,  //Hard coded for now
-            ),
+            //Feel free to modify the lists below to suit your needs
+            //You can read up documentation on http://getstarted.sailthru.com/api/user
+            'lists' => array(Mage::helper('sailthruemail')->getMasterList() => 1)
+
         );
 
-        return $options;
-
+        return $data;
     }
 
-
-
-
-
-    /**
-     * Customer delete handler
-     *
-     * @param Varien_Object $observer
-     * @return Mage_Newsletter_Model_Observer
-     */
-    public function deleteCustomer($observer)
-    {
-        $subscriber = Mage::getModel('newsletter/subscriber')
-            ->loadByEmail($observer->getEvent()->getCustomer()->getEmail());
-        if($subscriber->getId()) {
-            $subscriber->delete();
-        }
-        return $this;
-    }
-
-    /**
-     * Push new customer information to Sailthru
-     *
-     * @param Varien_Event_Observer $observer
-     * @return
-     */
-    public function addCustomer(Varien_Event_Observer $observer)
-    {
-        $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-        $customer = $observer->getEvent()->getCustomer();
-        $email = $customer->getEmail();
-        $customerId = $customer->getid();
-        $name = $customer->getName();
-        $firstName = $customer->getFirstname();
-        $lastName = $customer->getLastname();
-        //$newsletter = Mage::getModel('newsletter/subscriber')->isSubscribed() ? '1' : '0';
-
-        //prepare data to push to Sailthru
-        $data = array();
-        $data['id'] = $email;
-        $data['key'] = 'email';
-        $data['vars'] = array('customer_id' => $customerId,
-                              'name' => $name,
-                              'firstName' => $firstName,
-                              'lastName' => $lastName,
-                              //'newsletter' => $newsletter,
-                             );
-        $data['lists'] = array(Mage::helper('sailthruemail')->getMasterList());
-
-        //Make API call to Sailthru to create new user
-        try{
-            $response = $sailthru->apiPost('user', $data);
-        } catch (Exception $e){
-            Mage::logException($e);
-            return false;
-        }
-
-        //uncomment line below to debug response from Sailthru API call.
-        //$this->_debug($response);
-  /*
-   *    Other Data that we may push
-   *
-        $name = $customer->getName();
-        $firstName = $customer->getFirstname();
-        $middleName = $customer->getMiddlename();
-        $lastName = $customer->getLastname();
-        $address = $customer->getAddresses();
-        $attributes = $customer->getAttributes();
-        $primaryBillingAddress = $customer->getDefaultBillingAddress();
-        $primaryShippingAddress = $customer->getDefaultShippingAddress();
-        $additionalAddress = $customer->getAdditionalAddresses();
-        $zipCode = $customer->getPostcodoe();
-        $groupId = $customer->getGroupId();
-        $taxClassId = $customer->getTaxClassId();
-
-
-        //store information
-        $store_id = $customer->getStoreId();
-
-     */
-    }
-
-
-
-    public function updateUserProfile(Varien_Event_Observer $observer)
-    {
-
-    }
-
-    /**
-     * Push items that have been added to Cart to Sailthru
-     *
-     * @param Varien_Event_Observer $observer
-     * @return
-     */
     public function pushIncompletePurchaseOrderToSailthru(Varien_Event_Observer $observer)
     {
-        $customer = Mage::getSingleton('customer/session')->getCustomer();
-        $email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
-
-        if(!$email){
-            //Do nothing if user is not logged in.
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
             return;
         }
 
-        $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-        try{//Schedule Abandoned Cart Email if that option has been enabled.
-            $this->updateCustomer($observer);
-            if (Mage::helper('sailthruemail')->sendAbandonedCartEmails()){
-                $template_name = "magento-abandoned-cart-template";  //Hardcoded for now. Should be changed later.
-                $data = array("email" => $email, "incomplete" => 1, "items" => $this->shoppingCart(), "reminder_time" => "+".Mage::helper('sailthruemail')->getAbandonedCartReminderTime()." min", "reminder_template" => $template_name);
-                $data['message_id'] = isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
-                $response = $sailthru->apiPost("purchase", $data);
-                //uncomment line below to debug API call.
-                //$this->_debug($response);
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $email   =  $customer->getEmail();
 
+        if(!$email){
+            //Do nothing if user is not logged in. Purchase API requires an email
+            //http://getstarted.sailthru.com/api/purchase
+            return;
+        }
+
+        try{//Schedule Abandoned Cart Email if that option has been enabled.
+            if (Mage::helper('sailthruemail')->sendAbandonedCartEmails()){
+                $data = array("email" => $email,
+                              "incomplete" => 1,
+                              "items" => $this->shoppingCart(),
+                              "reminder_time" => "+".Mage::helper('sailthruemail')->getAbandonedCartReminderTime()." min",
+                              "reminder_template" => Mage::helper('sailthruemail')->getAbandonedCartTemplate(),
+                              "message_id" => isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null,
+                             );
+                $response = $this->_getSailthruClient()->apiPost("purchase", $data);
+                //Mage::log($response);
+
+                //For future iterations, use switch statement to handle multiple error messages.
                 if($response["error"] == 14) {
+                    /**
+                     * Response Error 14 means that an unknown template was passed in the API call.
+                     * This normally happens for first time API calls or when the name of the template has
+                     * been changed, http://getstarted.sailthru.com/api/api-response-errors.  We'll
+                     * therefore need to create a template to pass in the call.  One condition for the
+                     * template to be created is that the sender email must be verified so please check
+                     * https://my.sailthru.com/verify to make sure that the send email is listed there.
+                     */
+                    //Create Abandoned Cart Email
                     $content = Mage::helper('sailthruemail')->createAbandonedCartHtmlContent();
-                    $new_template = array("template" => $template_name, "content_html" => $content, "subject" => "Did you forget these items in your cart?", "from_email" => Mage::helper('sailthruemail')->getSenderEmail());
-                    $create_template = $sailthru->apiPost('template', $new_template);
-                    //$this->_debug
-                    //($create_template);
-                    $response = $sailthru->apiPost("purchase", $data);
-                    //$this->_debug($response);
+                    $new_template = array("template" => Mage::helper('sailthruemail')->getAbandonedCartTemplate(),
+                                          "content_html" => Mage::helper('sailthruemail')->createAbandonedCartHtmlContent(),
+                                          "subject" => Mage::helper('sailthruemail')->getAbandonedCartSubject(),
+                                          "from_name" => Mage::helper('sailthruemail')->getAbandonedCartSenderName(),
+                                          "from_email" => Mage::helper('sailthruemail')->getAbandonedCartSenderEmail(),
+                                          "is_link_tracking" => 1,
+                                          "is_google_analytics" => 1
+                                         );
+                    $create_template = $this->_getSailthruClient()->apiPost('template', $new_template);
+                   //Mage::log($create_template);
+
+                   //Send Purchase Data
+                    $response = $this->_getSailthruClient()->apiPost("purchase", $data);
+                    //Mage::log($response);
                 }
             } else {
                 $data = array("email" => $email, "incomplete" => 1, "items" => $this->shoppingCart());
-                $response = $sailthru->apiPost("purchase", $data);
+                $response = $this->_getSailthruClient()->apiPost("purchase", $data);
             }
          }
          catch (Exception $e) {
@@ -274,6 +203,10 @@ class Sailthru_Email_Model_Observer
      */
     public function pushPurchaseOrderSuccessToSailthru(Varien_Event_Observer $observer)
     {
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
+            return;
+        }
+
         $customer = Mage::getSingleton('customer/session')->getCustomer();
         $email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
 
@@ -294,6 +227,13 @@ class Sailthru_Email_Model_Observer
         }catch (Exception $e) {
             Mage::logException($e);
             return false;
+        }
+
+        try{
+            //Update Customer Information
+            $response = $sailthru->apiPost('user', $this->getCustomerData($customer));
+        }catch(Exception $e) {
+
         }
 
         return $this;
@@ -321,14 +261,7 @@ class Sailthru_Email_Model_Observer
                                             'id' => $product->getSku(),
                                             'url' => $product->getProductUrl(),
                                             'tags' => $product->getMetaKeyword(),
-                                            'vars' => array(
-                                                            //You can add more vars below
-                                                            'id' => $product_id,
-                                                            'image_url' => $product->getImageUrl(),
-                                                            'currency' =>Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(),
-                                                            'description' => $product->getDescription()
-                                                           )
-
+                                            'vars' => $this->getProductData($product),
                                             );
                 $i++;
             }
@@ -337,5 +270,155 @@ class Sailthru_Email_Model_Observer
             return $items_in_cart;
     }
 
+    /**
+     * Push product to Sailthru using Content API
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Mage_Sales_Model_Observer
+     */
+    public function deleteProduct(Varien_Event_Observer $observer)
+    {
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
+            return;
+        }
+
+        $product = $observer->getEvent()->getProduct();
+        $productData = $this->getProductData($product);
+
+        try {
+             $response = $this->_getSailthruClient()->apiDelete('content', $productData);
+             $this->_debug($response);
+        } catch(Exception $e) {
+            //deal with Exception
+            Mage::logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Push product to Sailthru using Content API
+     *
+     * @param Varien_Event_Observer $observer
+     * @return Mage_Sales_Model_Observer
+     */
+     public function saveProduct(Varien_Event_Observer $observer)
+    {
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
+            return;
+        }
+
+         $product = $observer->getEvent()->getProduct();
+        $productData = $this->getProductData($product);
+
+        try {
+             $response = $this->_getSailthruClient()->apiPost('content', $productData);
+             //$this->_debug($response);
+        } catch(Exception $e) {
+            //deal with Exception
+            Mage::logException($e);
+        }
+
+        return $this;
+    }
+
+    public function getProductData($product)
+    {
+
+        $data = array('url' => $product->getProductUrl(),
+                      'title' => htmlspecialchars($product->getName()),
+                      //'date' => '',
+                      'spider' => 1,
+                      'tags' => htmlspecialchars($product->getMetaKeyword()),
+                      'vars' => array('price' => $product->getPrice(),
+                                      'sku' => $product->getSku(),
+                                      'description' => htmlspecialchars($product->getDescription()),
+                                      'storeId' => '',
+                                      'typeId' => $product->getTypeId(),
+                                      'status' => $product->getStatus(),
+                                      'categoryId' => $product->getCategoryId(),
+                                      'categoryIds' => $product->getCategoryIds(),
+                                      'websiteIds' => $product->getWebsiteIds(),
+                                      'storeIds'  => $product->getStoreIds(),
+                                      //'attributes' => $product->getAttributes(),
+                                      'groupPrice' => $product->getGroupPrice(),
+                                      'formatedPrice' => $product->getFormatedPrice(),
+                                      'calculatedFinalPrice' => $product->getCalculatedFinalPrice(),
+                                      'minimalPrice' => $product->getMinimalPrice(),
+                                      'specialPrice' => $product->getSpecialPrice(),
+                                      'specialFromDate' => $product->getSpecialFromDate(),
+                                      'specialToDate'  => $product->getSpecialToDate(),
+                                      'relatedProductIds' => $product->getRelatedProductIds(),
+                                      'upSellProductIds' => $product->getUpSellProductIds(),
+                                      'getCrossSellProductIds' => $product->getCrossSellProductIds(),
+                                      'isSuperGroup' => $product->isSuperGroup(),
+                                      'isGrouped'   => $product->isGrouped(),
+                                      'isConfigurable'  => $product->isConfigurable(),
+                                      'isSuper' => $product->isSuper(),
+                                      'isSalable' => $product->isSalable(),
+                                      'isAvailable'  => $product->isAvailable(),
+                                      'isVirtual'  => $product->isVirtual(),
+                                      'isRecurring' => $product->isRecurring(),
+                                      'isInStock'  => $product->isInStock(),
+                                      'weight'  => $product->getSku(),
+                                      'imageUrl'  => $product->getImageUrl(),        //deprecated so may change
+                                      'smallImageUrl' => $product->getSmallImageUrl($width = 88, $height = 77),  //Using Magento default setting - deprecated
+                                      'thumbnailUrl' => $product->getThumbnailUrl($width = 75, $height = 75),        //Using Magento default settings - deprecated
+                          )
+            );
+
+        return $data;
+    }
+
+    public function setSailthruCookie($observer) {
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
+            return;
+        }
+
+        //Mage::log($observer->getName());
+
+        $customer = $observer->getCustomer();
+        //$customer = Mage::getSingleton('customer/session')->getCustomer();
+        Mage::log($customer);
+        //Mage::log($customer->getEmail());
+
+        try{
+            $data = array('id' => $customer->getEmail(),
+                          'key' => 'email',
+                          'fields' => array('keys' => 1)
+            );
+
+            $response = $this->_getSailthruClient()->apiGet('user', $data);
+            Mage::log($response);
+
+            $sailthru_hid = $response['keys']['cookie'];
+            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+
+
+        }catch(Exception $e){
+
+        }
+    }
+
+    public function unsetSailthruCookie($observer) {
+        if (!Mage::helper('sailthruemail')->isEnabled()) {
+            return;
+        }
+
+        //Mage::log($observer->getName());
+
+        $customer = $observer->getCustomer();
+        //$customer = Mage::getSingleton('customer/session')->getCustomer();
+        //Mage::log($customer);
+        //Mage::log($customer->getEmail());
+
+        try{
+            $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
+            Mage::log($cookie);
+
+        }catch(Exception $e){
+            Mage::logException($e);
+        }
+    }
 
 }

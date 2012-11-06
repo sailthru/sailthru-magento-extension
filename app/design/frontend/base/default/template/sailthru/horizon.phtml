@@ -12,7 +12,7 @@
 <?php   
         //$domain = Mage::getStoreConfig('sailthru/horizon/horizon_domain');
         $domain = Mage::helper('sailthruemail')->getHorizonDomain();
-        $concierge = Mage::helper('sailthruemail')->isConciergeEnabled() ? ",concierge: { from: 'top', threshold: 400}" : '';
+        $concierge = Mage::helper('sailthruemail')->isConciergeEnabled() ? ", concierge: { from: 'top', threshold: 400}" : '';
         //$concierge = Mage::getStoreConfig(Sailthru_Email_Helper_Data::XML_PATH_CONCIERGE_ENABLED) ? ', concierge: { from: "top", threshold: 10}' : 'not true';
 ?>
 <!--BEGIN SAILTHRU HORIZON & CONCIERGE -->
