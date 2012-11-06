@@ -9,18 +9,33 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     /*
         * Config paths to use
         */
-    const XML_PATH_API_KEY                  = 'sailthru/api/key';
-    const XML_PATH_API_SECRET               = 'sailthru/api/secret';
-    const XML_PATH_DEFAULT_EMAIL_LIST       = 'sailthru/email/default_list';
-    const XML_PATH_DEFAULT_NEWSLETTER_LIST  = 'sailthru/email/newsletter_list';
-    const XML_PATH_SENDER_EMAIL             = 'sailthru/email/sender_email';
-    const XML_PATH_HORIZON_ENABLED          = 'sailthru/horizon/active';
-    const XML_PATH_HORIZON_DOMAIN           = 'sailthru/horizon/horizon_domain';
-    const XML_PATH_CONCIERGE_ENABLED        = 'sailthru/horizon/concierge_enabled';
-    const XML_PATH_ABANDONED_CART           = 'sailthru/email/abandoned_cart';
-    const XML_PATH_REMINDER_TIME            = 'sailthru/email/reminder_time';
-    const XML_PATH_TRANSACTION_EMAIL_ENABLED= 'sailthru/email/enable_transactional_emails';
-    const XML_PATH_IMPORT_SUBSCRIBERS       = 'sailthru/subscribers/import_subscribers';
+    const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
+    const XML_PATH_API_KEY                                  = 'sailthru/api/key';
+    const XML_PATH_API_SECRET                               = 'sailthru/api/secret';
+    const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru/email/default_list';
+    const XML_PATH_DEFAULT_NEWSLETTER_LIST                  = 'sailthru/email/newsletter_list';
+    const XML_PATH_SENDER_EMAIL                             = 'sailthru/email/sender_email';
+    const XML_PATH_HORIZON_ENABLED                          = 'sailthru/horizon/active';
+    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/horizon/horizon_domain';
+    const XML_PATH_CONCIERGE_ENABLED                        = 'sailthru/horizon/concierge_enabled';
+    const XML_PATH_ABANDONED_CART                           = 'sailthru/email/abandoned_cart';
+    const XML_PATH_ABANDONED_CART_SENDER_EMAIL              = 'sailthru/email/abandoned_cart_sender_email';
+    const XML_PATH_ABANDONED_CART_SENDER_NAME               = 'sailthru/email/abandoned_cart_sender_name';
+    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru/email/abandoned_cart_template';
+    const XML_PATH_ABANDONED_CART_SUBJECT                   = 'sailthru/email/abandoned_cart_subject';
+    const XML_PATH_REMINDER_TIME                            = 'sailthru/email/reminder_time';
+    const XML_PATH_TRANSACTION_EMAIL_ENABLED                = 'sailthru/email/enable_transactional_emails';
+    const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
+
+    /**
+     * Check to see if Sailthru plugin is enabled
+     * 
+     * @return bool 
+     */
+    public function isEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ENABLED, $store);
+    }
 
     /**
         *
@@ -75,25 +90,57 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $sailthru;
     }
 
-    public function isTransactionalEmailEnabled()
+    public function isTransactionalEmailEnabled($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_TRANSACTION_EMAIL_ENABLED);
+        return Mage::getStoreConfig(self::XML_PATH_TRANSACTION_EMAIL_ENABLED, $store);
     }
 
-    public function sendAbandonedCartEmails()
+    public function sendAbandonedCartEmails($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART);
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART, $store);
     }
 
+    public function getAbandonedCartSenderEmail($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SENDER_EMAIL, $store);
+    }
+
+    public function getAbandonedCartSenderName($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SENDER_NAME, $store);
+    }
+
+    public function getAbandonedCartTemplate($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
+    }
+
+    public function getAbandonedCartSubject($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SUBJECT, $store);
+    }
+    
     public function getSenderEmail()
     {
         return Mage::getStoreConfig(self::XML_PATH_SENDER_EMAIL);
     }
 
-    public function getAbandonedCartReminderTime()
+    public function getAbandonedCartReminderTime($store = null)
     {
-        return Mage::getSToreConfig(self::XML_PATH_REMINDER_TIME);
+        return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
     }
+    
+    public function getDefaultList($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
+    }
+    
+    public function getNewsletterList($store = null) 
+    {
+        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_NEWSLETTER_LIST, $store);
+    }
+
+
     public function createAbandonedCartHtmlContent()
     {
         //It's important to note that the code below only works if routed through Sailthru.
@@ -153,54 +200,11 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $content_html;
     }
 
-public function debug($object) {
+    public function debug($object)
+    {
         echo '<pre>';
         print_r($object);
         echo '</pre>';
-}
-
-
-public function Salesforce($object) {
-    $salesforce = $this->newSailthruClient();
-
-    $salesforce->getTemplates();
-
-    $salesforce->updateBlast($object);
-
-    foreach(array() as $k) {
-        echo "This is a cool plugin";
-
-        $json_object = json_encode($salesforce);
-
-        $salesforce->send($template, $json_object);
-    }
-}
-
-    protected function test($name, $template, $email) {
-        if (isset($name)) {
-            return false;
-        } else {
-            return $salesforce;
-        }
-
-        $this->Salesforce($name);
-
-    }
-
-    public function deploy($serverName, $version, $database) {
-        $customer = Mage::getModule('customer/customer');
-
-        $lastName = $customer->getLastName();
-        $firstName = $customer->getFirstName();
-        $shippingZip = $customer->getPostalCode();
-
-        $product = Mage::getModel('catlog/product');
-
-        foreach ($product as $key => $value) {
-            $i++;
-            echo $product[$i];
-        }
-
     }
 
 }

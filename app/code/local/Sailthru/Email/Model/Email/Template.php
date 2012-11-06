@@ -8,7 +8,7 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template { 
+class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {   
     /**
      * Send mail to recipient
      *
@@ -17,10 +17,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      * @param   array              $variables    template variables
      * @return  boolean
      **/
-    public function send($email, $name = null, array $variables = array()) {
-
-        //Return default parent method if Sailthru Transactional Email has not been enabled
-        if(!Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
+    public function send($email, $name = null, array $variables = array()) 
+    {
+        //Return default parent method if Sailthru Extension or Transactional Email has not been enabled
+        if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
             return parent::send($email, $name, $variables);
         }
 
@@ -86,14 +86,14 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 //$emails .= $emails[$i].",";
             }
             $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-            $success = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
-            if($success['error'] == 14) {
+            $response = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
+            if(isset($response["error"]) && $response['error'] == 14) {
                 //Create template if it does not already exist
                 $tempvars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
                 $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
-                $success = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
-                if($success["error"]) {
-                    Mage::throwException($this->__($success["errormsg"]));
+                $response = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
+                if($response["error"]) {
+                    Mage::throwException($this->__($response["errormsg"]));
                 }
             }
             //sailthru//
