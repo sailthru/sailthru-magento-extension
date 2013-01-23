@@ -36,7 +36,6 @@ Step 2: Move into target directories
 
 export MAGENTO_BASE=<YOUR MAGENTO ROOT DIRECTORY>
 rsync -a app/ $MAGENTO_BASE/app/ --ignore-existing --whole-file
-rsync -a js/ $MAGENTO_BASE/js/ --ignore-existing --whole-file
 cd ..
 
 
