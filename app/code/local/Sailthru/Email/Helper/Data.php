@@ -61,6 +61,8 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         $log_path = Mage::getStoreConfig(self::XML_PATH_LOG_PATH, $store);
         if (empty($log_path)) {
             return null;
+        } else {
+            return $log_path;
         }
     }
 
