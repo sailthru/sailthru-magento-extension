@@ -12,6 +12,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
     const XML_PATH_API_KEY                                  = 'sailthru/api/key';
     const XML_PATH_API_SECRET                               = 'sailthru/api/secret';
+    const XML_PATH_LOG_PATH                                 = 'sailthru/api/log_path';
     const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru/email/default_list';
     const XML_PATH_DEFAULT_NEWSLETTER_LIST                  = 'sailthru/email/newsletter_list';
     const XML_PATH_SENDER_EMAIL                             = 'sailthru/email/sender_email';
@@ -55,6 +56,14 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $apiSecret;
     }
 
+    public function getLogPath($store = null)
+    {
+        $log_path = Mage::getStoreConfig(self::XML_PATH_LOG_PATH, $store);
+        if (empty($log_path)) {
+            return null;
+        }
+    }
+
     public function getHorizonDomain($store = null)
     {
         $horizonDomain = Mage::getStoreConfig(self::XML_PATH_HORIZON_DOMAIN, $store);
@@ -82,11 +91,12 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_IMPORT_SUBSCRIBERS, $store);
     }
 
-    public function newSailthruClient() {
+    public function newSailthruClient($store = null) {
         include_once("sailthru_api/Sailthru_Client_Exception.php");
         include_once("sailthru_api/Sailthru_Client.php");
         include_once("sailthru_api/Sailthru_Util.php");
-        $sailthru = new Sailthru_Client(Mage::getStoreConfig(self::XML_PATH_API_KEY), Mage::getStoreConfig(self::XML_PATH_API_SECRET));
+        $sailthru = new Sailthru_Client(self::getKey($store), self::getSecret($store));
+        $sailthru->setLogPath(self::getLogPath($store));
         return $sailthru;
     }
 
