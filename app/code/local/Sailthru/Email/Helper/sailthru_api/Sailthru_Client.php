@@ -1,7 +1,6 @@
 <?php
 /**
- * You can get the latest version of our client library from Gitub, https://github.com/sailthru/sailthru-php5-client
- * 
+ *
  * Makes HTTP Request to Sailthru API server
  * Response from server depends on the format being queried
  * if 'json' format is requested, client will recieve JSON object and 'php' is requested, client will recieve PHP array
@@ -14,28 +13,28 @@ class Sailthru_Client {
      * Sailthru API Key
      * @var string
      */
-    private $api_key;
+    protected $api_key;
 
     /**
      *
      * Sailthru Secret
      * @var string
      */
-    private $secret;
+    protected $secret;
 
     /**
      *
      * Sailthru API URL, can be different for different users according to their settings
      * @var string
      */
-    private $api_uri = 'https://api.sailthru.com';
+    protected $api_uri = 'https://api.sailthru.com';
 
     /**
      *
      * cURL or non-cURL request
      * @var string
      */
-    private $http_request_type;
+    protected $http_request_type;
 
     /**
      *
@@ -59,6 +58,9 @@ class Sailthru_Client {
 
     private $httpHeaders = array("User-Agent: Sailthru API PHP5 Client");
 
+    private $log_path = null;
+
+    private $log_handle = null;
 
     /**
      * Instantiate a new client; constructor optionally takes overrides for api_uri and whether
@@ -82,6 +84,10 @@ class Sailthru_Client {
     public function setHttpHeaders(array $headers) {
         $this->httpHeaders = array_merge($this->httpHeaders, $headers);
         return true;
+    }
+
+    public function setLogPath($log_path) {
+        $this->log_path = $log_path;
     }
 
 
@@ -163,10 +169,11 @@ class Sailthru_Client {
      * Return information about an email address, including replacement vars and lists.
      *
      * @param string $email
+     * @param array $options
      * @link http://docs.sailthru.com/api/email
      */
-    public function getEmail($email) {
-        return $this->apiGet('email', array('email' => $email));
+    public function getEmail($email, array $options = array()) {
+        return $this->apiGet('email', array_merge(array('email' => $email), $options));
     }
 
 
@@ -429,7 +436,7 @@ class Sailthru_Client {
      * @link http://docs.sailthru.com/api/template
      */
     public function getTemplates() {
-        return $this->apiGet('template', array());
+        return $this->apiGet('template');
     }
 
 
@@ -498,7 +505,7 @@ class Sailthru_Client {
      * @link http://docs.sailthru.com/api/list
      */
     public function getLists() {
-        return $this->apiGet('list');
+        return $this->apiGet('list', array());
     }
 
 
@@ -536,7 +543,7 @@ class Sailthru_Client {
         return $this->apiDelete('list', array('list' => $list));
     }
 
-    
+
     /**
      *
      * Push a new piece of content to Sailthru, triggering any applicable alerts.
@@ -703,7 +710,7 @@ class Sailthru_Client {
     /**
      * Retrieve information about a particular send or aggregated information from all of templates over a specified date range.
      * @param array $data
-     */    
+     */
     public function stats_send($template=null, $start_date = null, $end_date = null, array $data = array()) {
         $data['stat'] = 'send';
 
@@ -1040,7 +1047,7 @@ class Sailthru_Client {
     /**
      * Creates new user
      * @param Array $options
-     */ 
+     */
     public function createNewUser(array $options = array()) {
         unset($options['id']);
         return $this->apiPost('user', $options);
@@ -1050,7 +1057,7 @@ class Sailthru_Client {
      * Get user by Sailthru ID
      * @param String $id
      * @param Array $fields
-     */ 
+     */
     public function getUseBySid($id, array $fields = array()) {
         return $this->apiGet('user', array('id' => $id));
     }
@@ -1060,7 +1067,7 @@ class Sailthru_Client {
      * @param String $id
      * @param String $key
      * @param Array $fields
-     */ 
+     */
     public function getUserByKey($id, $key, array $fields = array()) {
         $data  = array(
             'id' => $id,
@@ -1184,7 +1191,10 @@ class Sailthru_Client {
      * @return string
      */
     protected function httpRequest($url, $data, $method = 'POST') {
+        $this->log(array("url"=>$url,"method"=>$method),"API");
+        $this->log(array("url"=>$url,"request"=>$data['json']),$method." REQUEST");
         $response = $this->{$this->http_request_type}($url, $data, $method);
+        $this->log(array("url"=>$url,"response"=>$response),$method." RESPONSE");
         $json = json_decode($response, true);
         if ($json === NULL) {
             throw new Sailthru_Client_Exception("Response: {$response} is not a valid JSON");
@@ -1223,7 +1233,7 @@ class Sailthru_Client {
      * @param array $data
      * @return array
      */
-    public function apiGet($action, $data, $method = 'GET') {
+    public function apiGet($action, $data = array(), $method = 'GET') {
         return $this->httpRequest("{$this->api_uri}/{$action}", $this->prepareJsonPayload($data), $method);
     }
 
@@ -1264,5 +1274,39 @@ class Sailthru_Client {
             $payload = array_merge($payload, $binary_data);
         }
         return $payload;
+    }
+
+    public function startLogging() {
+        if ($this->log_handle) {
+            return true; ##persistent handle
+        }
+        if (!$this->log_handle && !empty($this->log_path)) {
+            $this->log_handle = fopen($this->log_path,"a");
+            return false;
+        }
+        return false;
+    }
+
+    public function stopLogging() {
+        if ($this->log_handle) {
+            fclose($this->log_handle);
+            $this->log_handle = null;
+        }
+    }
+
+    public function log($data,$tag="INFO") {
+        if (empty($this->log_path)) {
+            return false;
+        }
+        $persistent = $this->startLogging();
+        if (is_array($data) || is_object($data)) {
+            $data = json_encode($data);
+        }
+        $date = new DateTime(null, new DateTimeZone('America/New_York'));
+        fwrite($this->log_handle,"[$tag][".$date->format('Y-m-d H:i:sP')."] $data\n");
+        if (!$persistent) {
+            $this->stopLogging();
+        }
+        return true;
     }
 }
