@@ -134,6 +134,9 @@ class Sailthru_Email_Model_Observer
             return;
         }
 
+        $this->_getSailthruClient()->log($observer->getData(), "OBSERVER");
+        $this->_getSailthruClient()->log($observer->getEvent()->getData(), "EVENT");
+
         $customer = Mage::getSingleton('customer/session')->getCustomer();
         $email   =  $customer->getEmail();
 
@@ -254,6 +257,19 @@ class Sailthru_Email_Model_Observer
             foreach($shopping_cart as $basket) {
                 $product_id = $basket->getProductId();
                 $product = Mage::getModel('catalog/product')->load($product_id);
+
+                if ($product->isSuper()) continue;
+                $this->_getSailthruClient()->log(array(
+                                      'isSuperGroup' => $product->isSuperGroup(),
+                                      'isGrouped'   => $product->isGrouped(),
+                                      'isConfigurable'  => $product->isConfigurable(),
+                                      'isSuper' => $product->isSuper(),
+                                      'isSalable' => $product->isSalable(),
+                                      'isAvailable'  => $product->isAvailable(),
+                                      'isVirtual'  => $product->isVirtual(),
+                                      'id' => $product->getSku(),
+                ),"PRODUCT");
+
                 $quantity = $basket->getQty();
                 $items_in_cart[$i] = array( 'qty' => $quantity,
                                             'title' => $product->getName(),
