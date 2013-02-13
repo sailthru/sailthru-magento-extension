@@ -2,13 +2,13 @@
 /**
  * This class overwrites Magento's default send functionality by routing all
  * emails through Sailthru using the Send API call.  Documentation can be found
- * online at http://getstarted.sailthru.com/api/send.  
- * 
+ * online at http://getstarted.sailthru.com/api/send.
+ *
  * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {   
+class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
     /**
      * Send mail to recipient
      *
@@ -17,7 +17,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      * @param   array              $variables    template variables
      * @return  boolean
      **/
-    public function send($email, $name = null, array $variables = array()) 
+    public function send($email, $name = null, array $variables = array())
     {
         //Return default parent method if Sailthru Extension or Transactional Email has not been enabled
         if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
@@ -69,8 +69,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         } else {
             $mail->setBodyHTML($text);
         }
-        $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
-        $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
+        if (!$mail->getSubject()) $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
+        if (!$mail->getFrom()) $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
 
         //sailthru//
         try {
@@ -105,7 +105,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         }
 
         return true;
-    } 
+    }
 
 }
 ?>
