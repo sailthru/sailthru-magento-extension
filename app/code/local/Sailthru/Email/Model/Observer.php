@@ -340,6 +340,15 @@ class Sailthru_Email_Model_Observer
 
     public function getProductData($product)
     {
+        // If product is not a configurable, let's see if it has parent ids, and use that for images,etc
+        if($product->getProductType() != 'configurable')
+        {
+            $parentIdArray = Mage::getResourceSingleton('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
+            Mage::log("parents:".$parentIdArray);
+            if(!empty($parentIdArray)) {
+               $product = Mage::getModel('catalog/product')->load($parentIdArray[0]);
+            }
+        }
 
         $data = array('url' => $product->getProductUrl(),
                       'title' => htmlspecialchars($product->getName()),
