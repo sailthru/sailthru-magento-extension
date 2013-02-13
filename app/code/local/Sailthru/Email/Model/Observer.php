@@ -385,7 +385,7 @@ class Sailthru_Email_Model_Observer
                                       'isVirtual'  => $product->isVirtual(),
                                       'isRecurring' => $product->isRecurring(),
                                       'isInStock'  => $product->isInStock(),
-                                      'weight'  => $product->getSku(),
+                                      'weight'  => $product->getWeight(),
                                       'imageUrl'  => $product->getImageUrl(),        //deprecated so may change
                                       'smallImageUrl' => $product->getSmallImageUrl($width = 88, $height = 77),  //Using Magento default setting - deprecated
                                       'thumbnailUrl' => $product->getThumbnailUrl($width = 75, $height = 75),        //Using Magento default settings - deprecated
