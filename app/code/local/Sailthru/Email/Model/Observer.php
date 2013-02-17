@@ -340,7 +340,7 @@ class Sailthru_Email_Model_Observer
 
     public function getProductData($product)
     {
-
+        $noImage = array(null, 'no_selection');
         $data = array('url' => $product->getProductUrl(),
                       'title' => htmlspecialchars($product->getName()),
                       //'date' => '',
@@ -377,9 +377,9 @@ class Sailthru_Email_Model_Observer
                                       'isRecurring' => $product->isRecurring(),
                                       'isInStock'  => $product->isInStock(),
                                       'weight'  => $product->getSku(),
-                                      'imageUrl'  => $product->getImageUrl(),        //deprecated so may change
-                                      'smallImageUrl' => $product->getSmallImageUrl($width = 88, $height = 77),  //Using Magento default setting - deprecated
-                                      'thumbnailUrl' => $product->getThumbnailUrl($width = 75, $height = 75),        //Using Magento default settings - deprecated
+                                      'imageUrl'  => !in_array($product->getImage(), $noImage) ? $product->getImageUrl() : '',        //deprecated so may change
+                                      'smallImageUrl' => !in_array($product->getSmallImage(), $noImage) ? $product->getSmallImageUrl($width = 88, $height = 77) : '',  //Using Magento default setting - deprecated
+                                      'thumbnailUrl' => !in_array($product->getThumbnail(), $noImage) ? $product->getThumbnailUrl($width = 75, $height = 75) : '',        //Using Magento default settings - deprecated
                           )
             );
 
