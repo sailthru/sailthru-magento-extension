@@ -340,7 +340,6 @@ class Sailthru_Email_Model_Observer
 
     public function getProductData($product)
     {
-
         $data = array('url' => $product->getProductUrl(),
                       'title' => htmlspecialchars($product->getName()),
                       //'date' => '',
@@ -377,11 +376,19 @@ class Sailthru_Email_Model_Observer
                                       'isRecurring' => $product->isRecurring(),
                                       'isInStock'  => $product->isInStock(),
                                       'weight'  => $product->getSku(),
-                                      'imageUrl'  => $product->getImageUrl(),        //deprecated so may change
-                                      'smallImageUrl' => $product->getSmallImageUrl($width = 88, $height = 77),  //Using Magento default setting - deprecated
-                                      'thumbnailUrl' => $product->getThumbnailUrl($width = 75, $height = 75),        //Using Magento default settings - deprecated
                           )
             );
+
+        // Add product images
+        if(self::validateProductImage($product->getImage())) {
+            $data['vars']['imageUrl'] = $product->getImageUrl();
+        }
+        if(self::validateProductImage($product->getSmallImage())) {
+            $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width = 88, $height = 77);
+        }
+        if(self::validateProductImage($product->getThumbnail())) {
+            $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width = 75, $height = 75);
+        }
 
         return $data;
     }
@@ -437,4 +444,15 @@ class Sailthru_Email_Model_Observer
         }
     }
 
+    private static function validateProductImage($image) {
+        if(empty($image)) {
+            return false;
+        }
+
+        if('no_selection' == $image) {
+            return false;
+        }
+
+        return true;
+    }
 }
