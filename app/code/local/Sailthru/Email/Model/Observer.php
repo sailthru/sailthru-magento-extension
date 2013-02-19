@@ -376,9 +376,6 @@ class Sailthru_Email_Model_Observer
                                       'isRecurring' => $product->isRecurring(),
                                       'isInStock'  => $product->isInStock(),
                                       'weight'  => $product->getSku(),
-                                      'imageUrl'  => '',
-                                      'smallImageUrl' => '',
-                                      'thumbnailUrl' => '',
                           )
             );
 
