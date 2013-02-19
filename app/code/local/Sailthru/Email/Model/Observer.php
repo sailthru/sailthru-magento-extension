@@ -377,11 +377,22 @@ class Sailthru_Email_Model_Observer
                                       'isRecurring' => $product->isRecurring(),
                                       'isInStock'  => $product->isInStock(),
                                       'weight'  => $product->getSku(),
-                                      'imageUrl'  => !in_array($product->getImage(), $noImage) ? $product->getImageUrl() : '',        //deprecated so may change
-                                      'smallImageUrl' => !in_array($product->getSmallImage(), $noImage) ? $product->getSmallImageUrl($width = 88, $height = 77) : '',  //Using Magento default setting - deprecated
-                                      'thumbnailUrl' => !in_array($product->getThumbnail(), $noImage) ? $product->getThumbnailUrl($width = 75, $height = 75) : '',        //Using Magento default settings - deprecated
+                                      'imageUrl'  => '',
+                                      'smallImageUrl' => '',
+                                      'thumbnailUrl' => '',
                           )
             );
+
+        // Add product images
+        if(self::validateProductImage($product->getImage())) {
+            $data['vars']['imageUrl'] = $product->getImageUrl();
+        }
+        if(self::validateProductImage($product->getSmallImage())) {
+            $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width = 88, $height = 77);
+        }
+        if(self::validateProductImage($product->getThumbnail())) {
+            $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width = 75, $height = 75);
+        }
 
         return $data;
     }
@@ -437,4 +448,15 @@ class Sailthru_Email_Model_Observer
         }
     }
 
+    private static function validateProductImage($image) {
+        if(empty($image)) {
+            return false;
+        }
+
+        if('no_selection' == $image) {
+            return false;
+        }
+
+        return true;
+    }
 }
