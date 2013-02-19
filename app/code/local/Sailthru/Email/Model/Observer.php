@@ -340,7 +340,6 @@ class Sailthru_Email_Model_Observer
 
     public function getProductData($product)
     {
-        $noImage = array(null, 'no_selection');
         $data = array('url' => $product->getProductUrl(),
                       'title' => htmlspecialchars($product->getName()),
                       //'date' => '',
