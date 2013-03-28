@@ -43,3 +43,14 @@ Step 3: You will need to login to your admin account, clear Magento's cache, log
 
 
 Step 4: Add your Sailthru API key and secret and other Sailthru settings on Magento's configurations page.
+
+
+===Modman Installation===
+This extension can be used with modman, https://github.com/colinmollenhour/modman
+
+Move into the base directory for your magento installation and run the following commands
+modman init
+modman clone git://github.com/sailthru/sailthru-magento-extension.git 
+
+To update the extension, you'll run this command
+modman update sailthru-magento-extension
