@@ -27,15 +27,25 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_REMINDER_TIME                            = 'sailthru/email/reminder_time';
     const XML_PATH_TRANSACTION_EMAIL_ENABLED                = 'sailthru/email/enable_transactional_emails';
     const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
+    const XML_PATH_DEBUG_ENABLED                            = 'sailthru/debug/debug_enabled';
 
     /**
      * Check to see if Sailthru plugin is enabled
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function isEnabled($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_ENABLED, $store);
+    }
+
+    /**
+     * Check to see if debug mode is enabled.
+     * @return bool
+     */
+    public function isDebugEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_DEBUG_ENABLED, $store);
     }
 
     /**
@@ -131,7 +141,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SUBJECT, $store);
     }
-    
+
     public function getSenderEmail()
     {
         return Mage::getStoreConfig(self::XML_PATH_SENDER_EMAIL);
@@ -141,13 +151,13 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
     }
-    
+
     public function getDefaultList($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
     }
-    
-    public function getNewsletterList($store = null) 
+
+    public function getNewsletterList($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_DEFAULT_NEWSLETTER_LIST, $store);
     }

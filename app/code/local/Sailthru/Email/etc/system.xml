@@ -209,7 +209,7 @@
                             <comment>The email address used for customer service.</comment>
                         </sender_email> -->
                     </fields>
-                </email> 
+                </email>
                 <horizon translate="label">
                     <label>Horizon</label>
                     <frontend_type>text</frontend_type>
@@ -247,6 +247,26 @@
                         </concierge_enabled>
                     </fields>
                 </horizon>
+                <debug>
+                    <label>Debug</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment>Enable writing to debug logs</comment>
+                    <fields>
+                        <debug_enabled translate="label">
+                                <label>Debug Mode</label>
+                                <frontend_type>select</frontend_type>
+                                <sort_order>1</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                        </debug_enabled>
+                    </fields>
+                </debug>
           <!--  <subscribers translate="label">
                     <label>Subscribers</label>
                     <frontend_type>text</frontend_type>

@@ -51,7 +51,9 @@ class Sailthru_Email_Model_Observer
         try {
             $sailthru = $this->_getSailthruClient();
             $response = $sailthru->apiPost('user', $data);
-            Mage::log($data);
+            if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+                Mage::log($data);
+            }
             $sailthru_hid = $response['keys']['cookie'];
             $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
         }catch(Exception $e) {
@@ -68,11 +70,15 @@ class Sailthru_Email_Model_Observer
         if(!Mage::helper('sailthruemail')->isEnabled()) {
              return;
          }
-         Mage::log($observer);
+         if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+             Mage::log($observer);
+         }
 
         $customer = $observer->getEvent()->getCustomer();
           //$customer = Mage::getSingleton('customer/session')->getCustomer();
-        Mage::log($customer);
+        if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+            Mage::log($customer);
+        }
             try{
                 $sailthru = $this->_getSailthruClient();
                 $data = array(''
@@ -402,7 +408,9 @@ class Sailthru_Email_Model_Observer
 
         $customer = $observer->getCustomer();
         //$customer = Mage::getSingleton('customer/session')->getCustomer();
-        Mage::log($customer);
+        if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+            Mage::log($customer);
+        }
         //Mage::log($customer->getEmail());
 
         try{
@@ -412,7 +420,9 @@ class Sailthru_Email_Model_Observer
             );
 
             $response = $this->_getSailthruClient()->apiGet('user', $data);
-            Mage::log($response);
+            if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+                Mage::log($response);
+            }
 
             $sailthru_hid = $response['keys']['cookie'];
             $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
@@ -437,7 +447,9 @@ class Sailthru_Email_Model_Observer
 
         try{
             $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
-            Mage::log($cookie);
+            if (Mage::helper('sailthruemail')->isDebugEnabled()) {
+                Mage::log($cookie);
+            }
 
         }catch(Exception $e){
             Mage::logException($e);
