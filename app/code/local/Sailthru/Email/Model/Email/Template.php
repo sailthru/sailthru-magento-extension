@@ -8,7 +8,8 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {   
+class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
+{
     /**
      * Send mail to recipient
      *
@@ -19,13 +20,17 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      **/
     public function send($email, $name = null, array $variables = array()) 
     {
-        //Return default parent method if Sailthru Extension or Transactional Email has not been enabled
-        if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
+        // Return default parent method if Sailthru Extension
+        // or Transactional Email has not been enabled
+        if (!Mage::helper('sailthruemail')->isEnabled()
+            || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()) {
             return parent::send($email, $name, $variables);
         }
 
         if (!$this->isValidForSend()) {
-            Mage::logException(new Exception('This letter cannot be sent.')); // translation is intentionally omitted
+            // Translation is intentionally omitted
+            Mage::logException(new Exception('This letter cannot be sent.'));
+
             return false;
         }
         $emails = array_values((array)$email);
@@ -43,69 +48,101 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         ini_set('SMTP', Mage::getStoreConfig('system/smtp/host'));
         ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
         $mail = $this->getMail();
-        $setReturnPath = Mage::getStoreConfig(self::XML_PATH_SENDING_SET_RETURN_PATH);
+        $setReturnPath = Mage::getStoreConfig(
+            self::XML_PATH_SENDING_SET_RETURN_PATH
+        );
+
         switch ($setReturnPath) {
             case 1:
                 $returnPathEmail = $this->getSenderEmail();
                 break;
             case 2:
-                $returnPathEmail = Mage::getStoreConfig(self::XML_PATH_SENDING_RETURN_PATH_EMAIL);
+                $returnPathEmail = Mage::getStoreConfig(
+                    self::XML_PATH_SENDING_RETURN_PATH_EMAIL
+                );
                 break;
             default:
                 $returnPathEmail = null;
                 break;
         }
+
         if ($returnPathEmail !== null) {
-            $mailTransport = new Zend_Mail_Transport_Sendmail("-f".$returnPathEmail);
+            $mailTransport = new Zend_Mail_Transport_Sendmail(
+                "-f".$returnPathEmail
+            );
+
             Zend_Mail::setDefaultTransport($mailTransport);
         }
+
         foreach ($emails as $key => $email) {
-            $mail->addTo($email, '=?utf-8?B?' . base64_encode($names[$key]) . '?=');
+            $mail->addTo(
+                $email, '=?utf-8?B?' . base64_encode($names[$key]) . '?='
+            );
         }
+
         $this->setUseAbsoluteLinks(true);
         $text = $this->getProcessedTemplate($variables, true);
-        if($this->isPlain()) {
+
+        if ($this->isPlain()) {
             $mail->setBodyText($text);
         } else {
             $mail->setBodyHTML($text);
         }
-        $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
+
+        $mail->setSubject(
+            '=?utf-8?B?'
+            . base64_encode($this->getProcessedTemplateSubject($variables))
+            . '?='
+        );
+
         $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
 
-        //sailthru//
         try {
-            $template_name = $this->getId();
+            $templateName = $this->getId();
             $options = array(
                 'behalf_email' => $this->getSenderEmail(),
             );
+
             $email = $emails;
             $vars = null;
             $evars = array();
-            for($i = 0; $i < count($emails); $i++) {
-                $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
-                //$emails .= $emails[$i].",";
+
+            for ($i = 0; $i < count($emails); $i++) {
+                $evars[$emails[$i]] = array(
+                    "content" => $text,
+                    "subj" => $this->getProcessedTemplateSubject($variables)
+                );
             }
+
             $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-            $response = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
-            if(isset($response["error"]) && $response['error'] == 14) {
+            $response = $sailthru->multisend(
+                $templateName, $emails, $vars, $evars, $options
+            );
+
+            if (isset($response["error"]) && $response['error'] == 14) {
                 //Create template if it does not already exist
-                $tempvars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
-                $tempsuccess = $sailthru->saveTemplate($template_name, $tempvars);
-                $response = $sailthru->multisend($template_name, $emails, $vars, $evars, $options);
-                if($response["error"]) {
+                $tempvars = array(
+                    "content_html"  => "{content} {beacon}",
+                    "subject"       => "{subj}"
+                );
+
+                $tempsuccess =
+                    $sailthru->saveTemplate($templateName, $tempvars);
+
+                $response =
+                    $sailthru->multisend($templateName, $emails, $vars, $evars, $options);
+
+                if ($response["error"]) {
                     Mage::throwException($this->__($response["errormsg"]));
                 }
             }
-            //sailthru//
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->_mail = null;
             Mage::logException($e);
             return false;
         }
 
         return true;
-    } 
-
+    }
 }
 ?>

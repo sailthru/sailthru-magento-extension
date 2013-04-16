@@ -7,21 +7,27 @@
  * @author Kwadwo Juantuah <support@sailthru.com>
  */
 
-
 class Sailthru_Email_Block_Horizon extends Mage_Page_Block_Html_Head
 {
-    
+    /**
+     * Initialize template
+     *
+     */
     protected function _construct() {
         $this->setTemplate('sailthru/horizon.phtml');
     }
-    
+
+    /**
+     * Generate Horizon Javascript
+     * @return string
+     */
     public function getHorizonJavascript() {
         
-         //$domain = Mage::getStoreConfig('sailthru/horizon/horizon_domain');
         $domain = Mage::helper('sailthruemail')->getHorizonDomain();
-        $concierge = Mage::helper('sailthruemail')->isConciergeEnabled() ? ', concierge: { from: "top", threshold: 10}' : '';
-        //$concierge = Mage::getStoreConfig(Sailthru_Email_Helper_Data::XML_PATH_CONCIERGE_ENABLED) ? ', concierge: { from: "top", threshold: 10}' : 'not true';
-        
+        $concierge = Mage::helper('sailthruemail')
+            ->isConciergeEnabled() ? ',
+                concierge: { from: "top", threshold: 10}' : '';
+
     $horizon = <<<EOD
         <!--BEGIN SAILTHRU HORIZON & CONCIERGE -->
             <script type="text/javascript">
@@ -50,10 +56,13 @@ class Sailthru_Email_Block_Horizon extends Mage_Page_Block_Html_Head
             </script>
             <!-- END SAILTHRU HORIZON & CONCIERGE -->
 EOD;
-        
+
         return $horizon;
     }
 
+    /**
+     * Set Horizon tags
+     */
     public function setHorizonTags() {
         $product = Mage::registry('current_product');
         
@@ -63,7 +72,12 @@ EOD;
         $this->addItem('meta', 'sailthru.image.full', $product->getImageUrl());
         $this->addItem('meta', 'sailthru.image.thumb', $product->getThumbnailUrl(50, 50));
     }
-    
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
     protected function _toHtml() {
         if (!Mage::helper('sailthruemail')->isHorizonEnabled()) {
             return '';

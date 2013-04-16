@@ -18,31 +18,40 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
      * @return boolean
      * @deprecated since 1.4.0.1
      **/
-    public function send($subscriber, array $variables = array(), $name=null, Mage_Newsletter_Model_Queue $queue=null)
+    public function send(
+        $subscriber, array $variables = array(),
+        $name=null, Mage_Newsletter_Model_Queue $queue=null)
     {
         //Check to see if module is enabled, otherwise return parent
-        if (!Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
+        if (!Mage::helper('sailthruemail')->isTransactionalEmailEnabled()) {
             return parent::send($subscriber, $variables, $name, $queue);
         }
         
         if (!$this->isValidForSend()) {
             return false;
         }
-        
-        Mage::log('Sailthru module is enabled, sending email in Sailthru_Email_Model_Newsletter_Template');
+
+        $logMessage =
+            'Sailthru module is enabled, '
+                . 'sending email in Sailthru_Email_Model_Newsletter_Template'
+        Mage::log($logMessage);
 
         $email = '';
         if ($subscriber instanceof Mage_Newsletter_Model_Subscriber) {
             $email = $subscriber->getSubscriberEmail();
-            if (is_null($name) && ($subscriber->hasCustomerFirstname() || $subscriber->hasCustomerLastname()) ) {
-                $name = $subscriber->getCustomerFirstname() . ' ' . $subscriber->getCustomerLastname();
+            if (is_null($name) && ($subscriber->hasCustomerFirstname()
+                || $subscriber->hasCustomerLastname()) ) {
+                $name = $subscriber->getCustomerFirstname()
+                . ' '
+                . $subscriber->getCustomerLastname();
             }
         }
         else {
             $email = (string) $subscriber;
         }
 
-        if (Mage::getStoreConfigFlag(Mage_Core_Model_Email_Template::XML_PATH_SENDING_SET_RETURN_PATH)) {
+        if (Mage::getStoreConfigFlag(
+            Mage_Core_Model_Email_Template::XML_PATH_SENDING_SET_RETURN_PATH)) {
             $this->getMail()->setReturnPath($this->getTemplateSenderEmail());
         }
 
@@ -61,19 +70,18 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
         }
 
         $mail->setSubject($this->getProcessedTemplateSubject($variables));
-        $mail->setFrom($this->getTemplateSenderEmail(), $this->getTemplateSenderName());
+        $mail->setFrom(
+            $this->getTemplateSenderEmail(), $this->getTemplateSenderName()
+        );
 
-        /*
-         * SAILTHRU CODE SHOULD GO IN TRY - CATCH BLOCK BELOW
-         */
+        // Sailthru code should go in the try/catch block below
         try {
             $mail->send();
             $this->_mail = null;
             if (!is_null($queue)) {
                 $subscriber->received($queue);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             if ($subscriber instanceof Mage_Newsletter_Model_Subscriber) {
                 // If letter sent for subscriber, we create a problem report entry
                 $problem = Mage::getModel('newsletter/problem');
