@@ -1,5 +1,4 @@
 <?php
-
 class Sailthru_Util
 {
     /**

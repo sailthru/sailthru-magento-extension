@@ -8,8 +8,8 @@
 class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /*
-        * Config paths to use
-        */
+     * Config paths to use
+     */
     const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
     const XML_PATH_API_KEY                                  = 'sailthru/api/key';
     const XML_PATH_API_SECRET                               = 'sailthru/api/secret';

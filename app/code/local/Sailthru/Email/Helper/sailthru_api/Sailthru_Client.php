@@ -344,17 +344,17 @@ class Sailthru_Client
     /**
      * Schedule a mass mail blast from previous blast
      *
-     * @param  String|Integer $blast_id
+     * @param  String|Integer $blastId
      * @param  String         $scheduleTime
      * @param  array          $options
      * @return array
      * @link   http://docs.sailthru.com/api/blast
      **/
     public function scheduleBlastFromBlast(
-        $blast_id, $scheduleTime, $options = array())
+        $blastId, $scheduleTime, $options = array())
     {
         $data = $options;
-        $data['copy_blast'] = $blast_id;
+        $data['copy_blast'] = $blastId;
         $data['schedule_time'] = $scheduleTime;
         return $this->apiPost('blast', $data);
     }
@@ -568,18 +568,18 @@ class Sailthru_Client
     /**
      * Delete a template.
      *
-     * @param   string $template_name
+     * @param   string $templateName
      *
      * @return   array
      * @internal param array $template_fields
      * @link     http://docs.sailthru.com/api/template
      */
-    public function deleteTemplate($template_name)
+    public function deleteTemplate($templateName)
     {
         return $this->apiDelete(
             'template',
             array(
-                 'template' => $template_name
+                 'template' => $templateName
             )
         );
     }
@@ -695,7 +695,8 @@ class Sailthru_Client
      * @param  String $email
      * @return array
      */
-    public function getAlert($email) {
+    public function getAlert($email)
+    {
         $data = array(
             'email' => $email
         );
@@ -1026,7 +1027,8 @@ class Sailthru_Client
      * @return array
      * @link http://docs.sailthru.com/api/horizon
      */
-    public function getHorizon($email, $hidOnly = false) {
+    public function getHorizon($email, $hidOnly = false)
+    {
         $data = array('email' => $email);
 
         if ($hidOnly === true) {
@@ -1134,7 +1136,9 @@ class Sailthru_Client
             'list' => $list
         );
 
-        return $this->processJob('import', $data, $reportEmail, $postbackUrl, array('file'));
+        return $this->processJob(
+            'import', $data, $reportEmail, $postbackUrl, array('file')
+        );
     }
 
 
