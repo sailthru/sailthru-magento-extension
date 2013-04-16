@@ -395,7 +395,7 @@ class Sailthru_Email_Model_Observer
      * @param Varien_Event_Observer $observer
      * @return Mage_Sales_Model_Observer
      */
-     public function saveProduct(Varien_Event_Observer $observer)
+    public function saveProduct(Varien_Event_Observer $observer)
     {
         if (!Mage::helper('sailthruemail')->isEnabled()) {
             return;
@@ -456,14 +456,16 @@ class Sailthru_Email_Model_Observer
         );
 
         // Add product images
-        if(self::validateProductImage($product->getImage())) {
+        if (self::validateProductImage($product->getImage())) {
             $data['vars']['imageUrl'] = $product->getImageUrl();
         }
-        if(self::validateProductImage($product->getSmallImage())) {
+
+        if (self::validateProductImage($product->getSmallImage())) {
             $data['vars']['smallImageUrl'] =
                 $product->getSmallImageUrl($width = 88, $height = 77);
         }
-        if(self::validateProductImage($product->getThumbnail())) {
+
+        if (self::validateProductImage($product->getThumbnail())) {
             $data['vars']['thumbnailUrl'] =
                 $product->getThumbnailUrl($width = 75, $height = 75);
         }
@@ -471,7 +473,8 @@ class Sailthru_Email_Model_Observer
         return $data;
     }
 
-    public function setSailthruCookie($observer) {
+    public function setSailthruCookie($observer)
+    {
         if (!Mage::helper('sailthruemail')->isEnabled()) {
             return;
         }
@@ -489,15 +492,16 @@ class Sailthru_Email_Model_Observer
             $response = $this->_getSailthruClient()->apiGet('user', $data);
             Mage::log($response);
 
-            $sailthru_hid = $response['keys']['cookie'];
+            $sailthruHid = $response['keys']['cookie'];
             $cookie = Mage::getSingleton('core/cookie')
-                ->set('sailthru_hid', $sailthru_hid);
+                ->set('sailthruHid', $sailthruHid);
         } catch(Exception $e) {
 
         }
     }
 
-    public function unsetSailthruCookie($observer) {
+    public function unsetSailthruCookie($observer)
+    {
         if (!Mage::helper('sailthruemail')->isEnabled()) {
             return;
         }
@@ -512,12 +516,13 @@ class Sailthru_Email_Model_Observer
         }
     }
 
-    private static function validateProductImage($image) {
-        if(empty($image)) {
+    private static function validateProductImage($image)
+    {
+        if (empty($image)) {
             return false;
         }
 
-        if('no_selection' == $image) {
+        if ('no_selection' == $image) {
             return false;
         }
 

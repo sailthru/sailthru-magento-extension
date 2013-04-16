@@ -130,7 +130,9 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                     $sailthru->saveTemplate($templateName, $tempvars);
 
                 $response =
-                    $sailthru->multisend($templateName, $emails, $vars, $evars, $options);
+                    $sailthru->multisend(
+                        $templateName, $emails, $vars, $evars, $options
+                    );
 
                 if ($response["error"]) {
                     Mage::throwException($this->__($response["errormsg"]));
