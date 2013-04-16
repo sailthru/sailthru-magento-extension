@@ -39,7 +39,7 @@ class Sailthru_Email_Model_Observer
     {
         if (!Mage::helper('sailthruemail')->isEnabled()) {
              return;
-         }
+        }
 
         $subscriber = $observer->getEvent()->getSubscriber();
 
