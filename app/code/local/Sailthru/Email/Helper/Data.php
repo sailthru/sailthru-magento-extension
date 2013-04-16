@@ -5,7 +5,8 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
+class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
+{
     /*
         * Config paths to use
         */

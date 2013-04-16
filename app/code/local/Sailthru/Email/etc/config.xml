@@ -98,15 +98,6 @@
                     </sailthru_customer_logout>
                 </observers>
             </customer_logout>
-      <!--      <customer_customer_authenticated>
-                <observers>
-                    <sailthru_customer_customer_authenticated>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>setSailthruCookie</method>
-                    </sailthru_customer_customer_authenticated>
-                </observers>
-            </customer_customer_authenticated> -->
             <checkout_cart_product_add_after>
                 <observers>
                     <sailthru_checkout_cart_product_add_after>
@@ -170,14 +161,6 @@
                     </sailthru_checkout_controller_onepage_save_shipping_method>
                 </observers>
             </checkout_controller_onepage_save_shipping_method>
-       <!--    <sales_quote_save_after>
-                <observers>
-                    <sailthru_sales_quote_save_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_sales_quote_save_after>
-                </observers>
-            </sales_quote_save_after> -->
             <checkout_quote_destroy>
                 <observers>
                     <sailthru_checkout_quote_destroy>
