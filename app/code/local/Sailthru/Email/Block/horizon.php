@@ -13,7 +13,8 @@ class Sailthru_Email_Block_Horizon extends Mage_Page_Block_Html_Head
      * Initialize template
      *
      */
-    protected function _construct() {
+    protected function _construct()
+    {
         $this->setTemplate('sailthru/horizon.phtml');
     }
 
@@ -21,7 +22,8 @@ class Sailthru_Email_Block_Horizon extends Mage_Page_Block_Html_Head
      * Generate Horizon Javascript
      * @return string
      */
-    public function getHorizonJavascript() {
+    public function getHorizonJavascript()
+    {
         
         $domain = Mage::helper('sailthruemail')->getHorizonDomain();
         $concierge = Mage::helper('sailthruemail')
@@ -63,14 +65,29 @@ EOD;
     /**
      * Set Horizon tags
      */
-    public function setHorizonTags() {
+    public function setHorizonTags()
+    {
         $product = Mage::registry('current_product');
         
-        $this->addItem('meta', 'sailthru.title', $product->getName());
-        $this->addItem('meta', 'sailthru.tags', $product->getMetaKeyword());
-        $this->addItem('meta', 'sailthru.description', $product->getDescription());
-        $this->addItem('meta', 'sailthru.image.full', $product->getImageUrl());
-        $this->addItem('meta', 'sailthru.image.thumb', $product->getThumbnailUrl(50, 50));
+        $this->addItem(
+            'meta', 'sailthru.title', $product->getName()
+        );
+
+        $this->addItem(
+            'meta', 'sailthru.tags', $product->getMetaKeyword()
+        );
+
+        $this->addItem(
+            'meta', 'sailthru.description', $product->getDescription()
+        );
+
+        $this->addItem(
+            'meta', 'sailthru.image.full', $product->getImageUrl()
+        );
+
+        $this->addItem(
+            'meta', 'sailthru.image.thumb', $product->getThumbnailUrl(50, 50)
+        );
     }
 
     /**
@@ -78,7 +95,8 @@ EOD;
      *
      * @return string
      */
-    protected function _toHtml() {
+    protected function _toHtml()
+    {
         if (!Mage::helper('sailthruemail')->isHorizonEnabled()) {
             return '';
         }

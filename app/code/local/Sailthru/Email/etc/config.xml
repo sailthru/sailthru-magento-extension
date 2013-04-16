@@ -18,32 +18,12 @@
                 <class>Sailthru_Email_Model</class>
                 <resourceModel>sailthruemail_mysql4</resourceModel>
             </sailthruemail>
-            <!--<sailthruemail_mysql4>
-                <class>Sailthru_Email_Model_Mysql4</class>
-                <entities>
-                    <email_log><table>sailthruemail_email_log</table></email_log>
-                </entities>
-            </sailthruemail_mysql4>
-            <newsletter>
-                <rewrite>
-                    <template>Sailthru_Email_Model_Newsletter_Template</template>
-                </rewrite>
-            </newsletter> -->
             <core>
                 <rewrite>
-                    <!--<email>Sailthru_Email_Model_Email</email>-->  <!--http://getstarted.sailthru.com/developers/smtp-auth-send-->
                     <email_template>Sailthru_Email_Model_Email_Template</email_template>
                 </rewrite>
             </core>
         </models>
-      <!--  <resources>
-            <sailthruemail_setup>
-                <setup>
-                    <module>Sailthru_Email</module>
-                    <class>Sailthru_Email_Model_Resource_Setup</class>
-                </setup>
-            </sailthruemail_setup>
-        </resources> -->
         <blocks>
             <sailthruemail>
                 <class>Sailthru_Email_Block</class>
@@ -79,16 +59,6 @@
                     </sailthru_update_customer>
                 </observers>
             </customer_save_after>
-            <!--
-            <sales_order_place_after>
-                <observers>
-                    <sailthru_global_sales_order_place_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>updateSalesAfterSubmit</method>
-                    </sailthru_global_sales_order_place_after>
-                </observers>
-            </sales_order_place_after>
-            -->
         </events>
     </global>
     <frontend>
@@ -241,20 +211,6 @@
                     <frontName>email</frontName>
                 </args>
             </sailthruemail>
-     <!--       <checkout>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Checkout">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </checkout>
-            <customer>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </customer> -->
             <newsletter>
                 <args>
                     <modules>

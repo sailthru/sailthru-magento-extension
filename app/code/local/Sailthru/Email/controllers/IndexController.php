@@ -13,4 +13,3 @@ class Sailthru_Horizon_IndexController extends Mage_Adminhtml_Controller_Action
         $this->renderLayout();
     }
 }
-?>

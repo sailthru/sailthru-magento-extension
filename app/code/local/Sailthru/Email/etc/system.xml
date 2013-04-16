@@ -160,54 +160,6 @@
                             <show_in_store>1</show_in_store>
                             <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
                         </newsletter_list>
-                <!--        <list translate="label coment">
-                            <label>General Subscription</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>sailthru/system_config_source_list</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                             <show_in_website>0</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                            <comment>Synchronize Magento's General Subscription List with this Sailthru list</comment>
-                        </list> -->
-                  <!--      <logenabled translate = "label comment">
-                            <label>Log all messages</label>
-                            <comment>This will log all outbound emails to the table sailthru_email_log and allow viewing withing the admin interface</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_sourceyesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </logenabled> -->
-                    <!--    <use_store_email translate="label">
-                            <label>Use Store Email Addresses for Reply-to</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_store_email>
-                        <default_list translate="label">
-                            <label>Default Email List</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they register.</comment>
-                        </default_list>
-                        <sender_email translate="label">
-                            <label>Admin Email Address</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The email address used for customer service.</comment>
-                        </sender_email> -->
                     </fields>
                 </email> 
                 <horizon translate="label">
@@ -219,15 +171,6 @@
                     <show_in_store>1</show_in_store>
                     <comment>Complete the first three steps of <![CDATA[<a href="http://getstarted.sailthru.com/documentation/products/horizon/horizon-data-collection-setup" target="_blank">this page</a>]]> and fill out the "Horizon Domain" field below to complete Horizon setup</comment>
                     <fields>
-              <!--          <active translate="label">
-                            <label>Enable Horizon</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </active>-->
                         <horizon_domain translate="label">
                                 <label>Horizon Domain</label>
                                 <frontend_type>text</frontend_type>
@@ -247,26 +190,6 @@
                         </concierge_enabled>
                     </fields>
                 </horizon>
-          <!--  <subscribers translate="label">
-                    <label>Subscribers</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>5</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <import_subscribers translate="label">
-                            <label>Import Existing subscribers to Sailthru</label>
-                            <frontend_type>select</frontend_type>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>Import Existing Customers to Sailthru</comment>
-                        </import_subscribers>
-                    </fields>
-                </subscribers> -->
             </groups>
         </sailthru>
     </sections>

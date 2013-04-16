@@ -7,32 +7,6 @@
   */
 -->
 <config>
- <!--   <events>
-        <customer_prepare_save>
-            <observers>
-                <sailthru_admin_create_new_customer>
-                    <class>Sailthru_Email_Model_Observer</class>
-                    <method>createNewCustomer</method>
-                </sailthru_admin_create_new_customer>
-            </observers>
-        </customer_prepare_save>
-        <customer_save_after>
-            <observers>
-                <sailthru_subscribe_observer>
-                    <class>Sailthru_Email_Model_Observer</class>
-                    <method>createNewCustomer</method>
-                </sailthru_subscribe_observer>
-            </observers>
-        </customer_save_after>
-        <customer_delete_after>
-            <observers>
-                <sailthru_subscribe_observer>
-                    <class>Sailthru_Email_Model_Observer</class>
-                    <method>deleteCustomer</method>
-                </sailthru_subscribe_observer>
-            </observers>
-        </customer_delete_after> 
-    </events> -->
     <menu>
         <newsletter>
             <children>
