@@ -6,18 +6,21 @@
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
 
-class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Template 
+class Sailthru_Email_Model_Newsletter_Template
+    extends Mage_Newsletter_Model_Template
 {
     /**
      * Send mail to subscriber
      *
-     * @param   Mage_Newsletter_Model_Subscriber|string   $subscriber   subscriber Model or E-mail
-     * @param   array                                     $variables    template variables
-     * @param   string|null                               $name         receiver name (if subscriber model not specified)
-     * @param   Mage_Newsletter_Model_Queue|null          $queue        queue model, used for problems reporting.
+     * @param   Mage_Newsletter_Model_Subscriber|string $subscriber   subscriber Model or E-mail
+     * @param   array                                   $variables    template variables
+     * @param   string|null                             $name         receiver name (if subscriber model not specified)
+     * @param   Mage_Newsletter_Model_Queue|null        $queue        queue model, used for problems reporting.
+     *
+     * @throws Exception
      * @return boolean
      * @deprecated since 1.4.0.1
-     **/
+     */
     public function send(
         $subscriber, array $variables = array(),
         $name=null, Mage_Newsletter_Model_Queue $queue=null)
@@ -33,7 +36,7 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
 
         $logMessage =
             'Sailthru module is enabled, '
-                . 'sending email in Sailthru_Email_Model_Newsletter_Template'
+                . 'sending email in Sailthru_Email_Model_Newsletter_Template';
         Mage::log($logMessage);
 
         $email = '';
@@ -45,8 +48,7 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
                 . ' '
                 . $subscriber->getCustomerLastname();
             }
-        }
-        else {
+        } else {
             $email = (string) $subscriber;
         }
 
@@ -64,8 +66,7 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
 
         if ($this->isPlain()) {
             $mail->setBodyText($text);
-        }
-        else {
+        } else {
             $mail->setBodyHTML($text);
         }
 
@@ -74,7 +75,6 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
             $this->getTemplateSenderEmail(), $this->getTemplateSenderName()
         );
 
-        // Sailthru code should go in the try/catch block below
         try {
             $mail->send();
             $this->_mail = null;
@@ -83,7 +83,7 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
             }
         } catch (Exception $e) {
             if ($subscriber instanceof Mage_Newsletter_Model_Subscriber) {
-                // If letter sent for subscriber, we create a problem report entry
+                // If letter sent for sub., we create a problem report entry
                 $problem = Mage::getModel('newsletter/problem');
                 $problem->addSubscriberData($subscriber);
                 if (!is_null($queue)) {
