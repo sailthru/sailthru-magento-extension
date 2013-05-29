@@ -8,7 +8,6 @@
 
 ?>
 
-<?php if (!Mage::helper('core/cookie')->isUserNotAllowSaveCookie()): ?>
 <?php   
         //$domain = Mage::getStoreConfig('sailthru/horizon/horizon_domain');
         $domain = Mage::helper('sailthruemail')->getHorizonDomain();
@@ -51,5 +50,3 @@
 <meta name="sailthru.image.thumb" content="<?php echo htmlspecialchars($product->getThumbnailUrl(50, 50)); ?>" />
 <meta name="sailthru.price" content="<?php echo htmlspecialchars($product->getPrice()); ?>" />
 <!--END SAILTHRU TAGS-->
-
-<?php endif; ?>
