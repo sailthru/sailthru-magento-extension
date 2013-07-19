@@ -69,8 +69,17 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         } else {
             $mail->setBodyHTML($text);
         }
-        $mail->setSubject('=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=');
-        $mail->setFrom($this->getSenderEmail(), $this->getSenderName());
+
+        //Prevent Zend_Mail "Subject Set Twice" Error
+        $mail_subject = '=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=';
+        $mail->clearSubject();
+        $mail->setSubject($mail_subject);
+
+        //Prevent Zend_Mail "From Set Twice" Error
+        $mail_from_email = $this->getSenderEmail();
+        $mail_from_name = $this->getSenderName();
+        $mail->clearFrom();
+        $mail->setFrom($mail_from_email, $mail_from_name);
 
         //sailthru//
         try {
