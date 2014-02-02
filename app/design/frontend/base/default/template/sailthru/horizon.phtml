@@ -49,7 +49,7 @@
 <meta name="sailthru.description" content="<?php echo htmlspecialchars($product->getDescription()); ?>" />
 <meta name="sailthru.image.full" content="<?php echo htmlspecialchars($product->getImageUrl()); ?>" />
 <meta name="sailthru.image.thumb" content="<?php echo htmlspecialchars($product->getThumbnailUrl(50, 50)); ?>" />
-<meta name="sailthru.price" content="<?php echo htmlspecialchars($product->getPrice()); ?>" />
+<meta name="sailthru.price" content="<?php echo htmlspecialchars($product->getPrice()*100); ?>" />
 <!--END SAILTHRU TAGS-->
 
 <?php endif; ?>
