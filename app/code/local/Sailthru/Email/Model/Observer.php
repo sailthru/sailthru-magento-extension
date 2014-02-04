@@ -269,13 +269,22 @@ class Sailthru_Email_Model_Observer
                                       'isVirtual'  => $product->isVirtual(),
                                       'id' => $product->getSku(),
                 ),"PRODUCT");
+                
+                //Use Configurable Product URL for Simple Products 
+                $parentID = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild( $product->getId() ); 
+                if (isset($parentID[0])){
+                    $parentProduct = Mage::getModel('catalog/product')->load($parentID);
+                    $productUrl = $parentProduct->getProductUrl();
+                }else{
+                    $productUrl = $product->getProductUrl();
+                }
 
                 $quantity = $basket->getQty();
                 $items_in_cart[$i] = array( 'qty' => $quantity,
                                             'title' => $product->getName(),
                                             'price' => $product->getPrice()*100,
                                             'id' => $product->getSku(),
-                                            'url' => $product->getProductUrl(),
+                                            'url' => $productUrl,
                                             'tags' => $product->getMetaKeyword(),
                                             'vars' => $this->getProductData($product),
                                             );
