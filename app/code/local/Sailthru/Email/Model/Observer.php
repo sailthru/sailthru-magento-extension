@@ -269,7 +269,8 @@ class Sailthru_Email_Model_Observer
                                       'isVirtual'  => $product->isVirtual(),
                                       'id' => $product->getSku(),
                 ),"PRODUCT");
-                
+
+
                 //Use Configurable Product URL for Simple Products 
                 $parentID = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild( $product->getId() ); 
                 if (isset($parentID[0])){
