@@ -61,19 +61,19 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * Get information regarding last response from server
      * @var type
      */
-    private $_lastResponseInfo;
+    protected $_lastResponseInfo;
 
 
     /**
      * File Upload Flag variable
     */
-    private $_fileUpload;
+    protected $_fileUpload;
 
-    private $_httpHeaders;
+    protected $_httpHeaders;
 
-    private $_logPath ;
+    protected $_logPath ;
 
-    private $_logHandle;
+    protected $_logHandle;
 
 
     public function  __construct()
@@ -1120,7 +1120,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @param array $headers
      * @return string
      */
-    private function httpRequestCurl($url, array $data, $method = 'POST') {
+    protected function httpRequestCurl($url, array $data, $method = 'POST') {
         $ch = curl_init();
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -1160,7 +1160,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @param array $headers
      * @return string
      */
-    private function httpRequestWithoutCurl($url, $data, $method = 'POST') {
+    protected function httpRequestWithoutCurl($url, $data, $method = 'POST') {
         if ($this->_fileUpload === true) {
             $this->_fileUpload = false;
             throw new Sailthru_Email_Model_Client_Exception('cURL extension is required for the request with file upload');
@@ -1312,5 +1312,24 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
             $this->stopLogging();
         }
         return true;
+    }
+
+    public function setCookie($email)
+    {
+        $data = array(
+            'id' => $email,
+            'key' => 'email',
+            'fields' => array('keys' => 1)
+        );
+        $response = $this->apiGet('user', $data);
+        $sailthru_hid = $response['keys']['cookie'];
+        $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+
+    }
+
+    public function deleteCookie()
+    {
+        $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
+
     }
 }
