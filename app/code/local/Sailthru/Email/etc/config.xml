@@ -9,14 +9,14 @@
 <config>
     <modules>
         <Sailthru_Email>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </Sailthru_Email>
     </modules>
     <global>
         <models>
            <sailthruemail>
                 <class>Sailthru_Email_Model</class>
-                <resourceModel>sailthruemail_mysql4</resourceModel>
+                <resourceModel>sailthruemail_resource</resourceModel>
             </sailthruemail>
             <!--<sailthruemail_mysql4>
                 <class>Sailthru_Email_Model_Mysql4</class>
@@ -303,4 +303,11 @@
             </sailthruemail>
         </routers>
     </admin>
+    <default>
+        <sailthru>
+            <api>
+                <uri><![CDATA[https://api.sailthru.com]]></uri>
+            </api>
+       </sailthru>
+    </default>
 </config>

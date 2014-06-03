@@ -1,14 +1,17 @@
 <?php
 /**
- * This class overwrites Magento's default send functionality by routing all
- * emails through Sailthru using the Send API call.  Documentation can be found
- * online at http://getstarted.sailthru.com/api/send.  
- * 
+ * Email Template Model
+ *
  * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
+ *
+ * This class overwrites Magento's default send functionality by routing all
+ * emails through Sailthru using the Send API call.  Documentation can be found
+ * online at http://getstarted.sailthru.com/api/send.
+ *
  */
-class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {   
+class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
     /**
      * Send mail to recipient
      *
@@ -17,7 +20,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      * @param   array              $variables    template variables
      * @return  boolean
      **/
-    public function send($email, $name = null, array $variables = array()) 
+    public function send($email, $name = null, array $variables = array())
     {
         //Return default parent method if Sailthru Extension or Transactional Email has not been enabled
         if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
@@ -114,7 +117,5 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         }
 
         return true;
-    } 
-
+    }
 }
-?>

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Primary Observer Model
+ *
  * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
@@ -271,15 +273,15 @@ class Sailthru_Email_Model_Observer
                 ),"PRODUCT");
 
 
-                //Use Configurable Product URL for Simple Products 
-                $parentID = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild( $product->getId() ); 
+                //Use Configurable Product URL for Simple Products
+                $parentID = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild( $product->getId() );
                 if (isset($parentID[0])){
                     $parentProduct = Mage::getModel('catalog/product')->load($parentID[0]);
                     $productUrl = $parentProduct->getProductUrl();
                 }else{
                     $productUrl = $product->getProductUrl();
                 }
-                
+
                 $quantity = $basket->getQty();
                 $items_in_cart[$i] = array( 'qty' => $quantity,
                                             'title' => $product->getName(),

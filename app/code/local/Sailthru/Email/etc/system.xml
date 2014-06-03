@@ -60,10 +60,18 @@
                             <show_in_store>1</show_in_store>
                             <comment>Your Sailthru Secret can be found <![CDATA[<a href="https://my.sailthru.com/settings_api" target="_blank">here</a>]]> by clicking on the padlock.</comment>
                         </secret>
+                        <uri translate="label,comment">
+                            <label>API URI</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </uri>
                         <log_path translate="label,comment">
                             <label>Log Path</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>31</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
