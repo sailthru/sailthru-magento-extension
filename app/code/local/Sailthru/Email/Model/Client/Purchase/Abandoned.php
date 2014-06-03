@@ -1,15 +1,87 @@
 <?php
 /**
- * Model for content in Zephyr code
+ * Client Purchase Abandoned Model
  *
  * @category  Sailthru
  * @package   Sailthru_Email
- * @author    Kwadwo Juantuah <support@sailthru.com>
+ *
  */
-
-class Sailthru_Email_Model_Zephyr  extends Mage_Core_Model_Abstract
+class Sailthru_Email_Model_Client_Purchase_Abandoned extends Sailthru_Email_Model_Client_Purchase
 {
-    public function createAbandonedCartHtmlContent()
+
+    protected $_cart;
+
+    protected $_template;
+
+    protected $_subject;
+
+    protected $_senderEmail;
+
+    protected $_senderName;
+
+    protected $_messageId;
+
+    protected $_reminderTime;
+
+    public function __construct()
+    {
+        $this->_cart = Mage::getStoreConfig('sailthru/email/abandoned_cart', $this->_storeId);
+        $this->_template = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
+        $this->_subject = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
+        $this->_senderEmail = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $this->_storeId);
+        $this->_senderName = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $this->_storeId);
+        $this->_messageId = isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
+        $this->_reminderTime = '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min';
+    }
+
+    public function sendCart($cart,$email)
+    {
+        try{
+            $data = array(
+                'email' => $email,
+                'incomplete' => 1,
+                'items' => $this->_getItems($cart),
+                'reminder_time' => $this->_reminderTime,
+                'reminder_template' => $this->_template,
+                'message_id' =>$this->_messageId
+            );
+
+            $response = $this->apiPost('purchase', $data);
+
+            //For future iterations, use switch statement to handle multiple error messages.
+            if($response['error'] == 14) {
+                /**
+                 * Response Error 14 means that an unknown template was passed in the API call.
+                 * This normally happens for first time API calls or when the name of the template has
+                 * been changed, http://getstarted.sailthru.com/api/api-response-errors.  We'll
+                 * therefore need to create a template to pass in the call.  One condition for the
+                 * template to be created is that the sender email must be verified so please check
+                 * https://my.sailthru.com/verify to make sure that the send email is listed there.
+                 *
+                 *Create Abandoned Cart Email
+                 */
+                $newTemplate = array("template" => $this->_cartTemplate,
+                        'content_html' => $this->_getContent(),
+                        'subject' => $this->_subject,
+                        'from_name' => $this->_senderName,
+                        'from_email' => $this->_senderEmail,
+                        'is_link_tracking' => 1,
+                        'is_google_analytics' => 1
+                );
+                $create_template = $this->apiPost('template', $newTemplate);
+
+                //Send Purchase Data
+                $response = $this->apiPost('purchase', $data);
+                $data = array('email' => $email, '=incomplete' => 1, 'items' => $this->shoppingCart());
+                $response = $this->apiPost("purchase", $data);
+            }
+        } catch (Exception $e) {
+            Mage::logException($e);
+            return false;
+        }
+    }
+
+    private function _createContent()
     {
         //It's important to note that the code below only works if routed through Sailthru.
         $content_html = '{*Sailthru zephyr code is used for full functionality*}
@@ -64,7 +136,5 @@ class Sailthru_Email_Model_Zephyr  extends Mage_Core_Model_Abstract
                                             </tr>
                                         </table>
                                     </div>'; //include css or tables here to style e-mail.
-                            //It's important that the "from_email" is verified, otherwise the code below will not work.
+        //It's important that the "from_email" is verified, otherwise the code below will not work.
         return $content_html;
-    }
-}

@@ -66,7 +66,7 @@ class Sailthru_Email_Model_Observer
         if($this->_isEnabled && $this->_customerEmail && Mage::helper('sailthruemail')->sendAbandonedCartEmails()) {
             try{
                 $cart = $observer->getCart();
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendAbandonedCart($cart,$this->_customerEmail);
+                $response = Mage::getModel('sailthruemail/client_purchase_abandoned')->sendCart($cart,$this->_customerEmail);
             } catch (Exception $e) {
                 Mage::logException($e);
             }
@@ -94,7 +94,6 @@ class Sailthru_Email_Model_Observer
         }
         return $this;
     }
-
 
     /**
      * Push product to Sailthru using Content API

@@ -17,11 +17,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_HORIZON_ENABLED                          = 'sailthru/horizon/active';
     const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/horizon/horizon_domain';
     const XML_PATH_CONCIERGE_ENABLED                        = 'sailthru/horizon/concierge_enabled';
-    const XML_PATH_ABANDONED_CART                           = 'sailthru/email/abandoned_cart';
-    const XML_PATH_ABANDONED_CART_SENDER_EMAIL              = 'sailthru/email/abandoned_cart_sender_email';
-    const XML_PATH_ABANDONED_CART_SENDER_NAME               = 'sailthru/email/abandoned_cart_sender_name';
-    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru/email/abandoned_cart_template';
-    const XML_PATH_ABANDONED_CART_SUBJECT                   = 'sailthru/email/abandoned_cart_subject';
     const XML_PATH_REMINDER_TIME                            = 'sailthru/email/reminder_time';
     const XML_PATH_TRANSACTION_EMAIL_ENABLED                = 'sailthru/email/enable_transactional_emails';
     const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
@@ -83,39 +78,9 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_TRANSACTION_EMAIL_ENABLED, $store);
     }
 
-    public function sendAbandonedCartEmails($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART, $store);
-    }
-
-    public function getAbandonedCartSenderEmail($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SENDER_EMAIL, $store);
-    }
-
-    public function getAbandonedCartSenderName($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SENDER_NAME, $store);
-    }
-
-    public function getAbandonedCartTemplate($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
-    }
-
-    public function getAbandonedCartSubject($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_SUBJECT, $store);
-    }
-
     public function getSenderEmail()
     {
         return Mage::getStoreConfig(self::XML_PATH_SENDER_EMAIL);
-    }
-
-    public function getAbandonedCartReminderTime($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
     }
 
     public function getDefaultList($store = null)
@@ -127,6 +92,12 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         return Mage::getStoreConfig(self::XML_PATH_DEFAULT_NEWSLETTER_LIST, $store);
     }
+
+    public function getReminderTime($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
+    }
+
 
     public function debug($object)
     {
