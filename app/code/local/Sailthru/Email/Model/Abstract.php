@@ -11,6 +11,46 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
 {
 
     /**
+     *
+     * Current Store Id
+     * @var string
+     */
+    protected $_storeId;
+
+    protected $_isEnabled = false;
+
+    protected $_customer = null;
+
+    protected $_customerEmail = null;
+
+    public function __construct()
+    {
+        $this->_storeId = Mage::app()->getStore()->getStoreId();
+        $this->_logPath = Mage::helper('sailthruemail')->getLogPath($this->_storeId);
+
+        if(Mage::helper('sailthruemail')->isEnabled($this->_storeId)) {
+            $this->_isEnabled = true;
+            if ($this->_customer = Mage::getSingleton('customer/session')->getCustomer()) {
+                $this->_customerEmail = $this->_customer->getEmail();
+            }
+        }
+    }
+
+    protected function _debug($object) {
+        return Mage::helper('sailthruemail')->debug($object);
+    }
+
+    protected function _getApiKey()
+    {
+        return Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
+    }
+
+    protected function _getApiSecret()
+    {
+        return Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
+    }
+
+    /**
      * Returns an MD5 hash of the signature string for an API call.
      *
      * This hash should be passed as the 'sig' value with any API request.

@@ -54,42 +54,6 @@
                 <class>Sailthru_Email_Helper</class>
             </sailthruemail>
         </helpers>
-        <events>
-            <newsletter_subscriber_save_before>
-                <observers>
-                    <sailthru_newsletter_subscriber_save_before>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>subscriberHandler</method>
-                    </sailthru_newsletter_subscriber_save_before>
-                </observers>
-            </newsletter_subscriber_save_before>
-            <newsletter_subscriber_delete_after>
-                <observers>
-                    <sailthru_newsletter_subscriber_delete_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>subscriberHandler</method>
-                    </sailthru_newsletter_subscriber_delete_after>
-                </observers>
-            </newsletter_subscriber_delete_after>
-            <customer_save_after>
-                <observers>
-                    <sailthru_update_customer>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>customerHandler</method>
-                    </sailthru_update_customer>
-                </observers>
-            </customer_save_after>
-            <!--
-            <sales_order_place_after>
-                <observers>
-                    <sailthru_global_sales_order_place_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>updateSalesAfterSubmit</method>
-                    </sailthru_global_sales_order_place_after>
-                </observers>
-            </sales_order_place_after>
-            -->
-        </events>
     </global>
     <frontend>
         <translate>
@@ -115,7 +79,7 @@
                     <sailthru_customer_login>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>setSailthruCookie</method>
+                        <method>login</method>
                     </sailthru_customer_login>
                 </observers>
             </customer_login>
@@ -128,7 +92,40 @@
                     </sailthru_customer_logout>
                 </observers>
             </customer_logout>
-      <!--      <customer_customer_authenticated>
+            <!--
+             <newsletter_subscriber_save_before>
+                <observers>
+                    <sailthru_newsletter_subscriber_save_before>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>subscriberHandler</method>
+                    </sailthru_newsletter_subscriber_save_before>
+                </observers>
+            </newsletter_subscriber_save_before>
+            <newsletter_subscriber_delete_after>
+                <observers>
+                    <sailthru_newsletter_subscriber_delete_after>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>subscriberHandler</method>
+                    </sailthru_newsletter_subscriber_delete_after>
+                </observers>
+            </newsletter_subscriber_delete_after>
+            <customer_register_success>
+                <observers>
+                    <sailthru_customer_register_success>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>customerHandler</method>
+                    </sailthru_customer_register_success>
+                </observers>
+            </customer_register_success>
+            <sales_order_place_after>
+                <observers>
+                    <sailthru_global_sales_order_place_after>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>updateSalesAfterSubmit</method>
+                    </sailthru_global_sales_order_place_after>
+                </observers>
+            </sales_order_place_after>
+             <customer_customer_authenticated>
                 <observers>
                     <sailthru_customer_customer_authenticated>
                         <type>Singleton</type>
@@ -136,13 +133,13 @@
                         <method>setSailthruCookie</method>
                     </sailthru_customer_customer_authenticated>
                 </observers>
-            </customer_customer_authenticated> -->
+            </customer_customer_authenticated> 
             <checkout_cart_product_add_after>
                 <observers>
                     <sailthru_checkout_cart_product_add_after>
                         <type>singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <method>addProductToCart</method>
                     </sailthru_checkout_cart_product_add_after>
                 </observers>
             </checkout_cart_product_add_after> 
@@ -151,7 +148,7 @@
                     <sailthru_checkout_cart_update_items_after>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <method>updateCart</method>
                     </sailthru_checkout_cart_update_items_after>
                 </observers>
             </checkout_cart_update_items_after>
@@ -160,7 +157,7 @@
                     <sailthru_checkout_cart_save_after>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <method>saveCart</method>
                     </sailthru_checkout_cart_save_after>
                 </observers>
             </checkout_cart_save_after>
@@ -169,7 +166,7 @@
                     <sailthru_checkout_cart_product_update_after>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <method>updateCart</method>
                     </sailthru_checkout_cart_product_update_after>
                 </observers>
             </checkout_cart_product_update_after>
@@ -178,7 +175,7 @@
                     <sailthru_sales_quote_remove_item>
                         <type>singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <method>updateCart</method>
                     </sailthru_sales_quote_remove_item>
                 </observers>
             </sales_quote_remove_item> 
@@ -200,14 +197,14 @@
                     </sailthru_checkout_controller_onepage_save_shipping_method>
                 </observers>
             </checkout_controller_onepage_save_shipping_method>
-       <!--    <sales_quote_save_after>
+          <sales_quote_save_after>
                 <observers>
                     <sailthru_sales_quote_save_after>
                         <class>Sailthru_Email_Model_Observer</class>
                         <method>pushIncompletePurchaseOrderToSailthru</method>
                     </sailthru_sales_quote_save_after>
                 </observers>
-            </sales_quote_save_after> -->
+            </sales_quote_save_after> 
             <checkout_quote_destroy>
                 <observers>
                     <sailthru_checkout_quote_destroy>
@@ -224,7 +221,7 @@
                         <method>pushPurchaseOrderSuccessToSailthru</method>
                     </sailthru_checkout_submit_all_after>
                 </observers>
-            </checkout_submit_all_after>
+            </checkout_submit_all_after>-->
      </events>
         <layout>
             <updates>
@@ -266,6 +263,7 @@
     </frontend>
     <adminhtml>
         <events>
+            <!-- 
              <catalog_product_delete_after>
                 <observers>
                     <sailthru_catalog_product_delete_after>
@@ -289,7 +287,8 @@
                         <method>saveProduct</method>
                     </sales_quote>
                 </observers>
-            </catalog_product_status_update>
+            </catalog_product_status_update> 
+            -->
         </events>
     </adminhtml>
    <admin>

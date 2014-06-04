@@ -23,49 +23,63 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     /**
      * Check to see if Sailthru plugin is enabled
-     *
      * @return bool
      */
     public function isEnabled($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_ENABLED, $store);
+        return (boolean) Mage::getStoreConfig(self::XML_PATH_ENABLED, $store);
     }
-    /**
-     *
-     * @param type $store
-     * @return type
-     */
 
+    /**
+     * Get log path
+     * @param type $store
+     * @return string
+     */
     public function getLogPath($store = null)
     {
         $log_path = Mage::getStoreConfig(self::XML_PATH_LOG_PATH, $store);
-        if (empty($log_path)) {
-            return null;
-        } else {
-            return $log_path;
-        }
+        return !empty($log_path) ? $log_path : null;
+
     }
 
+    /**
+     * Get Horizon domain
+     * @param type $store
+     * @return string
+     */
     public function getHorizonDomain($store = null)
     {
-        $horizonDomain = Mage::getStoreConfig(self::XML_PATH_HORIZON_DOMAIN, $store);
-        return $horizonDomain;
+        return Mage::getStoreConfig(self::XML_PATH_HORIZON_DOMAIN, $store);
     }
 
+    /**
+     * Get master list
+     * @param type $store
+     * @return string
+     */
     public function getMasterList($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
     }
 
+    /**
+     * Check to see if Horizon is enabled
+     *
+     * @return bool
+     */
     public function isHorizonEnabled($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_HORIZON_ENABLED, $store);
+        return (boolean) Mage::getStoreConfig(self::XML_PATH_HORIZON_ENABLED, $store);
     }
 
+    /**
+     * Check to see if Concierge is enabled
+     *
+     * @return bool
+     */
     public function isConciergeEnabled($store = null)
     {
-        $conciergeEnabled = Mage::getStoreConfig(self::XML_PATH_CONCIERGE_ENABLED, $store);
-        return $conciergeEnabled;
+        return (boolean) Mage::getStoreConfig(self::XML_PATH_CONCIERGE_ENABLED, $store);
     }
 
     public function importSubscribers($store = null)

@@ -6,7 +6,7 @@
  * @package   Sailthru_Email
  *
  */
-class Mage_Catalog_Model_Product $product extends Sailthru_Email_Model_Client
+class Sailthru_Email_Model_Client_Product extends Sailthru_Email_Model_Client
 {
 
     /**

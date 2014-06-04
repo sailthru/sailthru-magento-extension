@@ -9,15 +9,30 @@
 class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 {
 
+    public function  __construct()
+    {
+        parent::__construct();
+    }
     /**
      * Get customer data object
      *
      * @param Mage_Customer_Model_Customer $customer
      * @return array
      */
-    protected function getCustomerData(Mage_Customer_Model_Customer $customer)
+    public function getCustomerData(Mage_Customer_Model_Customer $customer)
     {
         try {
+            if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()) {
+                $address = implode(', ',$primaryBillingAddress->getStreet());
+                $state = $customer->getPrimaryBillingAddress()->getRegion();
+                $zipcode = $customer->getPrimaryBillingAddress()->getPostcode();
+            } else {
+                $address = '';
+                $state= '';
+                $zipcode= '';
+            }
+
+
             $data = array(
                 'id' => $customer->getEmail(),
                 'key' => 'email',
@@ -28,21 +43,21 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                     'name' => $customer->getName(),
                     'suffix' => $customer->getSuffix(),
                     'prefix' => $customer->getPrefix(),
-                    'firstName' => $customer->getFirstName(),
+                    'firstName' => $customer->getFirstname(),
                     'middleName' => $customer->getMiddlename(),
-                    'lastName' => $customer->getLastName(),
-                    'address' => $customer->getAddresses(),
+                    'lastName' => $customer->getLastname(),
+                    'address' => $address,
                     //'attributes' => $customer->getAttributes(),
                     'storeID' => $customer->getStoreId(),
                     //'websiteId' => $customer->getWebsiteStoreId(),
                     'groupId' => $customer->getGroupId(),
                     'taxClassId' => $customer->getTaxClassId(),
                     'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
-                    'primaryBillingAddress' => $customer->getPrimaryBillingAddress(),
-                    'defaultBillingAddress' => $customer->getDefaultBillingAddress(),
-                    'defaultShippingAddress' => $customer->getDefaultShippingAddress(),
-                    'regionId' => $customer->getRegionId(),
-                    'zipCode' => $customer->getPostCode(),
+                    'primaryBillingAddress' => $this->getAddress($customer->getPrimaryBillingAddress()),
+                    'defaultBillingAddress' => $this->getAddress($customer->getDefaultBillingAddress()),
+                    'defaultShippingAddress' => $this->getAddress($customer->getDefaultShippingAddress()),
+                    'state' => $state,
+                    'zipCode' => $zipcode
                  ),
                 //Feel free to modify the lists below to suit your needs
                 //You can read up documentation on http://getstarted.sailthru.com/api/user
@@ -51,6 +66,25 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             return $data;
         } catch(Exception $e) {
             Mage::logException($e);
+        }
+    }
+
+    public function getAddress($address)
+    {
+        if ($address) {
+            return array(
+                'firstname' => $address->getFirstname(),
+                'middlename' => $address->getMiddlename(),
+                'lastname' => $address->getLastname(),
+                'company' => $address->getCompany(),
+                'city' => $address->getCity(),
+                 'address' => implode(', ',$address->getStreet()),
+                'country' => $address->getCountryId(),
+                'state' => $address->getRegion(),
+                'postcode' => $address->getPostcode(),
+                'telephone' => $address->getTelephone(),
+                'fax' => $address->getFax()
+            );
         }
     }
 
@@ -63,9 +97,11 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     public function sendCustomerData(Mage_Customer_Model_Customer $customer)
     {
         try {
-            $response = $this->apiPost('user', $this->getCustomerData($customer));
-            $sailthru_hid = $response['keys']['cookie'];
-            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+            $data = $this->getCustomerData($customer);
+            $response = $this->apiPost('user', $data);
+            $this->setCookie($response);
+        } catch(Sailthru_Email_Model_Client_Exception $e) {
+             Mage::logException($e);
         } catch(Exception $e) {
             Mage::logException($e);
         }
@@ -101,6 +137,46 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             Mage::logException($e);
         }
         return $this;
+    }
+
+    public function setCookie($response)
+    {
+        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
+            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $response['keys']['cookie']);
+            return true;
+        } else {
+            throw new Sailthru_Email_Model_Client_Exception('Response: ' . json_encode($response));
+        }
+
+    }
+
+    public function login($email)
+    {
+        try {
+            $data = array(
+                    'id' => $email,
+                    'key' => 'email',
+                    'fields' => array('keys' => 1)
+            );
+            $response = $this->apiGet('user', $data);
+            return $this->setCookie($response);
+        } catch(Sailthru_Email_Model_Client_Exception $e) {
+            Mage::logException($e);
+        } catch(Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+
+    public function logout()
+    {
+        try {
+            $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
+            return true;
+        } catch (Exception $e) {
+            Mage::logException($e);
+            return false;
+        }
     }
 
 }

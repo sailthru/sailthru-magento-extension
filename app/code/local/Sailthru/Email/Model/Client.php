@@ -16,13 +16,6 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
 {
     /**
      *
-     * Current Store Id
-     * @var string
-     */
-    protected $_storeId;
-
-    /**
-     *
      * Sailthru API Key
      * @var string
      */
@@ -71,20 +64,13 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
 
     protected $_httpHeaders;
 
-    protected $_logPath ;
-
-    protected $_logHandle;
-
-
     public function  __construct()
     {
-        $this->_storeId = Mage::app()->getStore()->getStoreId();
         $this->_key = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
         $this->_secret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
         $this->_uri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
         $this->_httpHeaders = array('User-Agent: Sailthru API PHP5 Client');
         $this->_httpRequestType = function_exists('curl_init') ? 'httpRequestCurl' : 'httpRequestWithoutCurl';
-        $this->_logPath = Mage::helper('sailthruemail')->getLogPath($this->_storeId);
         $this->_fileUpload = false;
     }
 
@@ -96,6 +82,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
     public function setLogPath($logPath) {
         $this->_logPath = $logPath;
     }
+
 
 
     /**
@@ -762,7 +749,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->_secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         $send = $this->getSend($params['send_id']);
@@ -794,7 +781,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->_secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         return true;
@@ -818,7 +805,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->_secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         if (isset($params['send_id'])) {
@@ -1214,7 +1201,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @param array $data
      * @return array
      */
-    public  function apiPost($action, $data, array $binary_data_param = array()) {
+    public function apiPost($action, $data, array $binary_data_param = array()) {
         $binary_data = array();
         if (!empty ($binary_data_param)) {
             foreach ($binary_data_param as $param) {
@@ -1263,17 +1250,16 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         return $this->_lastResponseInfo;
     }
 
-
     /**
      * Prepare JSON payload
      */
     protected function prepareJsonPayload(array $data, array $binary_data = array()) {
         $payload =  array(
-            'apiKey' => $this->_key,
+            'api_key' => $this->_getApiKey(),
             'format' => 'json', //<3 XML
             'json' => json_encode($data)
         );
-        $payload['sig'] = Sailthru_Util::getSignatureHash($payload, $this->_secret);
+        $payload['sig'] = $this->getSignatureHash($payload, $this->_getApiSecret());
         if (!empty($binary_data)) {
             $payload = array_merge($payload, $binary_data);
         }
@@ -1314,22 +1300,4 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         return true;
     }
 
-    public function setCookie($email)
-    {
-        $data = array(
-            'id' => $email,
-            'key' => 'email',
-            'fields' => array('keys' => 1)
-        );
-        $response = $this->apiGet('user', $data);
-        $sailthru_hid = $response['keys']['cookie'];
-        $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
-
-    }
-
-    public function deleteCookie()
-    {
-        $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
-
-    }
 }

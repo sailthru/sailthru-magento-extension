@@ -6,24 +6,10 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer
+class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
 {
 
-    protected $_isEnabled = false;
 
-    protected $_customerEmail = null;
-
-    protected function __construct()
-    {
-        if(!Mage::helper('sailthruemail')->isEnabled()) {
-            $this->_isEnabled = true;
-            $this->_customerEmail = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
-        }
-    }
-
-    protected function _debug($object) {
-        return Mage::helper('sailthruemail')->debug($object);
-    }
 
     /**
      * Push new subscriber data to Sailthru
@@ -46,15 +32,30 @@ class Sailthru_Email_Model_Observer
 
     public function customerHandler(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_customerEmail && Mage::helper('sailthruemail')->isEnabled()) {
+        if($this->_isEnabled) {
             try{
                 $customer = $observer->getEvent()->getCustomer();
-                $response = Mage::getModel('sailthruemail/client_user')->sendSubscriberData($customer);
+                $response = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
             } catch (Exception $e) {
                 Mage::logException($e);
             }
         }
         return $this;
+    }
+
+    public function addProductToCart(Varien_Event_Observer $observer)
+    {
+        $this->pushIncompletePurchaseOrderToSailthru($observer);
+    }
+
+    public function updateCart(Varien_Event_Observer $observer)
+    {
+        $this->pushIncompletePurchaseOrderToSailthru($observer);
+    }
+
+    public function saveCart(Varien_Event_Observer $observer)
+    {
+        $this->pushIncompletePurchaseOrderToSailthru($observer);
     }
 
     public function pushIncompletePurchaseOrderToSailthru(Varien_Event_Observer $observer)
@@ -133,23 +134,28 @@ class Sailthru_Email_Model_Observer
         return $this;
     }
 
-    public function setSailthruCookie()
+    public function login(Varien_Event_Observer $observer)
     {
         if($this->_isEnabled) {
             try{
-                $response = Mage::getModel('sailthruemail/client')->setCookie($this->_customerEmail);
-             }catch(Exception $e){
+                if ($customerEmail = $observer->getEvent()->getCustomer()->getEmail()) {
+                    $response = Mage::getModel('sailthruemail/client_user')->login($customerEmail);
+                    return true;
+                } else {
+                    return false;
+                }
+             } catch(Exception $e){
                  Mage::logException($e);
             }
         }
         return $this;
     }
 
-    public function unsetSailthruCookie()
+    public function logout()
     {
         if($this->_isEnabled) {
             try{
-                $response = Mage::getModel('sailthruemail/client')->deleteCookie();
+                $response = Mage::getModel('sailthruemail/client_user')->logout();
              }catch(Exception $e){
                  Mage::logException($e);
             }
