@@ -9,41 +9,25 @@
 class Sailthru_Email_Model_Client_Purchase_Abandoned extends Sailthru_Email_Model_Client_Purchase
 {
 
-    protected $_cart;
-
-    protected $_template;
-
-    protected $_subject;
-
-    protected $_senderEmail;
-
-    protected $_senderName;
-
-    protected $_messageId;
-
-    protected $_reminderTime;
-
-    public function __construct()
-    {
-        $this->_cart = Mage::getStoreConfig('sailthru/email/abandoned_cart', $this->_storeId);
-        $this->_template = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
-        $this->_subject = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
-        $this->_senderEmail = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $this->_storeId);
-        $this->_senderName = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $this->_storeId);
-        $this->_messageId = isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
-        $this->_reminderTime = '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min';
-    }
-
-    public function sendCart($cart,$email)
+    public function sendCart(Mage_Sales_Model_Quote $quote,$email)
     {
         try{
+
+            $cart = Mage::getStoreConfig('sailthru/email/abandoned_cart', $this->_storeId);
+            $template = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
+            $subject = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $this->_storeId);
+            $senderEmail = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $this->_storeId);
+            $senderName = Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $this->_storeId);
+            $messageId = isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
+            $reminderTime = '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min';
+
             $data = array(
                 'email' => $email,
                 'incomplete' => 1,
-                'items' => $this->_getItems($cart),
-                'reminder_time' => $this->_reminderTime,
-                'reminder_template' => $this->_template,
-                'message_id' =>$this->_messageId
+                'items' => $this->_getCartItems($quote),
+                'reminder_time' => $reminderTime,
+                'reminder_template' => $template,
+                'message_id' =>$messageId
             );
 
             $response = $this->apiPost('purchase', $data);
@@ -60,19 +44,20 @@ class Sailthru_Email_Model_Client_Purchase_Abandoned extends Sailthru_Email_Mode
                  *
                  *Create Abandoned Cart Email
                  */
-                $newTemplate = array("template" => $this->_cartTemplate,
+                $newTemplate = array("template" => $cartTemplate,
                         'content_html' => $this->_getContent(),
-                        'subject' => $this->_subject,
-                        'from_name' => $this->_senderName,
-                        'from_email' => $this->_senderEmail,
+                        'subject' => $subject,
+                        'from_name' => $senderName,
+                        'from_email' => $senderEmail,
                         'is_link_tracking' => 1,
                         'is_google_analytics' => 1
                 );
+
                 $create_template = $this->apiPost('template', $newTemplate);
 
                 //Send Purchase Data
                 $response = $this->apiPost('purchase', $data);
-                $data = array('email' => $email, '=incomplete' => 1, 'items' => $this->shoppingCart());
+                $data = array('email' => $email, '=incomplete' => 1, 'items' => $this->_getCartItems());
                 $response = $this->apiPost("purchase", $data);
             }
         } catch (Exception $e) {
@@ -81,7 +66,7 @@ class Sailthru_Email_Model_Client_Purchase_Abandoned extends Sailthru_Email_Mode
         }
     }
 
-    private function _createContent()
+    private function _getContent()
     {
         //It's important to note that the code below only works if routed through Sailthru.
         $content_html = '{*Sailthru zephyr code is used for full functionality*}
@@ -138,3 +123,5 @@ class Sailthru_Email_Model_Client_Purchase_Abandoned extends Sailthru_Email_Mode
                                     </div>'; //include css or tables here to style e-mail.
         //It's important that the "from_email" is verified, otherwise the code below will not work.
         return $content_html;
+    }
+}

@@ -88,10 +88,22 @@
                     <sailthru_customer_logout>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>unsetSailthruCookie</method>
+                        <method>logout</method>
                     </sailthru_customer_logout>
                 </observers>
             </customer_logout>
+             <checkout_cart_product_add_after>
+                <observers>
+                    <sailthru_checkout_cart_product_add_after>
+                        <type>singleton</type>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>addProductToCart</method>
+                    </sailthru_checkout_cart_product_add_after>
+                </observers>
+            </checkout_cart_product_add_after> 
+            
+            
+            
             <!--
              <newsletter_subscriber_save_before>
                 <observers>
@@ -109,14 +121,6 @@
                     </sailthru_newsletter_subscriber_delete_after>
                 </observers>
             </newsletter_subscriber_delete_after>
-            <customer_register_success>
-                <observers>
-                    <sailthru_customer_register_success>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>customerHandler</method>
-                    </sailthru_customer_register_success>
-                </observers>
-            </customer_register_success>
             <sales_order_place_after>
                 <observers>
                     <sailthru_global_sales_order_place_after>
@@ -125,24 +129,8 @@
                     </sailthru_global_sales_order_place_after>
                 </observers>
             </sales_order_place_after>
-             <customer_customer_authenticated>
-                <observers>
-                    <sailthru_customer_customer_authenticated>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>setSailthruCookie</method>
-                    </sailthru_customer_customer_authenticated>
-                </observers>
-            </customer_customer_authenticated> 
-            <checkout_cart_product_add_after>
-                <observers>
-                    <sailthru_checkout_cart_product_add_after>
-                        <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>addProductToCart</method>
-                    </sailthru_checkout_cart_product_add_after>
-                </observers>
-            </checkout_cart_product_add_after> 
+           
+           
             <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>

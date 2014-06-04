@@ -92,15 +92,15 @@ class Sailthru_Email_Model_Client_Product extends Sailthru_Email_Model_Client
             );
 
             // Add product images
-            if($this->validateProductImage($product->getImage())) {
+            if($product->getImage()) {
                 $data['vars']['imageUrl'] = $product->getImageUrl();
             }
 
-            if($this->validateProductImage($product->getSmallImage())) {
+            if($product->getSmallImage()) {
                 $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width=88,$height =77);
             }
 
-            if($this->validateProductImage($product->getThumbnail())) {
+            if($product->getThumbnail()) {
                 $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width=75,$height=75);
             }
 
@@ -111,9 +111,4 @@ class Sailthru_Email_Model_Client_Product extends Sailthru_Email_Model_Client
 
     }
 
-
-    private static function validateProductImage($image) {
-        if(empty($image)) {
-            return false;
-        }
 }
