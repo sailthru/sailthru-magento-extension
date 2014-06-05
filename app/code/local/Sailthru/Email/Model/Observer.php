@@ -14,7 +14,7 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
      * @param Varien_Event_Observer $observer
      * @return
      */
-    public function subscriberHandler(Varien_Event_Observer $observer)
+    public function customerSubscription(Varien_Event_Observer $observer)
     {
 
         if($this->_isEnabled && $this->_email) {
@@ -28,7 +28,7 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
         return $this;
     }
 
-    public function customerHandler(Varien_Event_Observer $observer)
+    public function customerRegistration(Varien_Event_Observer $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
 

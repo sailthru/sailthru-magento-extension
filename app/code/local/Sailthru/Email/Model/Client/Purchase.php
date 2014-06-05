@@ -48,16 +48,19 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * any scheduled abandoned cart email.
      *
      */
-    public function sendOrder(Mage_Sales_Model_Quote $quote, $customer)
+    public function sendOrder(Mage_Sales_Model_Order $order, $customer)
     {
         try{
-            $data = array("email" => $customer->getEmail(), "items" => $this->_getCartItems($quote));
+            $this->_eventType = 'placeOrder';
+
+            $data = array("email" => $customer->getEmail(), "items" => $this->_getOrderItems($order));
             if (isset($_COOKIE['sailthru_bid'])){
                 $data['message_id'] = $_COOKIE['sailthru_bid'];
             }
 
-            $response1 = $this->apiPost("purchase", $data);
-            $response2 = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
+            $responsePurchase = $this->apiPost("purchase", $data);
+
+            $responseUser = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
 
         }catch (Exception $e) {
             Mage::logException($e);
@@ -81,7 +84,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 if ($item->getProductType() != 'configurable') {
 
                     /**
-                     * If variant, use paretn item info
+                     * If variant, use parent item info
                      */
                     if ($parentItem = $item->getParentItem()) {
                         $url = $parentItem->getProduct()->getProductUrl();
@@ -109,6 +112,48 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         }
     }
 
+ /**
+     * Prepare data on items in cart.
+     *
+     * @return type
+     */
+    protected function _getOrderItems(Mage_Sales_Model_Order $order)
+    {
+        try {
+            $orderItems = $order->getAllVisibleItems();
+            $cartItems = array();
+
+            foreach($orderItems as $item) {
+                if ($item->getProductType() != 'configurable') {
+
+                    /**
+                     * If variant, use parent item info
+                     */
+                    if ($parentItem = $item->getParentItem()) {
+                        $url = $parentItem->getProduct()->getProductUrl();
+                        $price = $parentItem->getPrice();
+                    } else {
+                        $url = $item->getProduct()->getProductUrl();
+                        $price = $item->getPrice();
+                    }
+
+                    $cartItems[] = array(
+                        'qty' => intval($item->getQty()),
+                        'title' => $item->getName(),
+                        'price' => intval($price*100),
+                        'id' => $item->getSku(),
+                        'url' => $url,
+                        'tags' => '',
+                        'vars' => '',
+                    );
+                }
+            }
+            return $cartItems;
+        } catch (Exception $e) {
+             Mage::logException($e);
+            return false;
+        }
+    }
     /**
      * Get product meta keywords
      * @param Mage_Catalog_Model_Product $product

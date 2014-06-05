@@ -78,7 +78,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'lastname' => $address->getLastname(),
                 'company' => $address->getCompany(),
                 'city' => $address->getCity(),
-                 'address' => implode(', ',$address->getStreet()),
+                'address' => implode(', ',$address->getStreet()),
                 'country' => $address->getCountryId(),
                 'state' => $address->getRegion(),
                 'postcode' => $address->getPostcode(),
@@ -96,6 +96,8 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      */
     public function sendCustomerData(Mage_Customer_Model_Customer $customer)
     {
+        $this->_eventType = 'orderCustomerData';
+
         try {
             $data = $this->getCustomerData($customer);
             $response = $this->apiPost('user', $data);
@@ -141,25 +143,40 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 
     public function setCookie($response)
     {
-        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
+        if (array_key_exists('ok',$response) && array_key_exists('keys',$response) && array_key_exists('cookie',$response['keys'])) {
             $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $response['keys']['cookie']);
             return true;
         } else {
-            throw new Sailthru_Email_Model_Client_Exception('Response: ' . json_encode($response));
+            return false;
         }
-
     }
 
-    public function login($email)
+    public function login(Mage_Customer_Model_Customer $customer)
     {
         try {
+            $this->_eventType = 'login';
             $data = array(
-                    'id' => $email,
+                    'id' => $customer->getEmail(),
                     'key' => 'email',
-                    'fields' => array('keys' => 1)
+                    'fields' => array(
+                        'keys' => 1,
+                        'engagement' => 1,
+                        'activity' => 1,
+                        'email' => $customer->getEmail(),
+                        'extid' => $customer->getEntityId()
+                    ),
+                    'login' => array(
+                        'site' => Mage::helper('core/url')->getHomeUrl(),
+                        'ip' => Mage::helper('core/http')->getRemoteAddr(true),
+                        'user_agent' => Mage::helper('core/http')->getHttpUserAgent(true)
+                    )
             );
-            $response = $this->apiGet('user', $data);
-            return $this->setCookie($response);
+
+            if ($response = $this->apiPost('user',$data)) {
+                return $this->setCookie($response);
+            } else {
+                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+            }
         } catch(Sailthru_Email_Model_Client_Exception $e) {
             Mage::logException($e);
         } catch(Exception $e) {

@@ -1230,7 +1230,8 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @return array
      */
     public function apiGet($action, $data = array(), $method = 'GET') {
-        return $this->_httpRequest('{' . $this->_uri . "}/{$action}", $this->prepareJsonPayload($data), $method);
+        $payload = $this->prepareJsonPayload($data);
+        return $this->_httpRequest($this->_apiUri . '/' . $action, $payload, $method);
     }
 
 

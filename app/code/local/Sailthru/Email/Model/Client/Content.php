@@ -1,12 +1,12 @@
 <?php
 /**
- * Client Purchase Model
+ * Client Content Model
  *
  * @category  Sailthru
  * @package   Sailthru_Email
  *
  */
-class Sailthru_Email_Model_Client_Product extends Sailthru_Email_Model_Client
+class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 {
 
     /**
