@@ -13,7 +13,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @return type
      */
-    public function getCartItems(Mage_Sales_Model_Quote $quote)
+    protected function _getCartItems(Mage_Sales_Model_Quote $quote)
     {
         try {
             $quoteItems = $quote->getAllItems();
@@ -22,13 +22,13 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             foreach($quoteItems as $item) {
                 $product = Mage::getModel('catalog/product')->load($item->getProductId());
                 $cartItems[] = array(
-                    'qty' => intval($item.getQty()),
+                    'qty' => intval($item->getQty()),
                     'title' => $item->getName(),
                     'price' => intval($item->getPrice()*100),
                     'id' => $item->getSku(),
                     'url' => $this->_getUrl($product),
-                    'tags' => $product->_getTags(),
-                    'vars' => $this->getVars($product),
+                    'tags' => '',//$product->_getTags(),
+                    'vars' => ''//$this->getVars($product),
                 );
             }
             return $cartItems;
@@ -85,6 +85,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $data['message_id'] = $_COOKIE['sailthru_bid'];
             }
 
+            $data['incomplete'] = 1;
             $response = $this->apiPost("purchase", $data);
 
         } catch (Exception $e) {

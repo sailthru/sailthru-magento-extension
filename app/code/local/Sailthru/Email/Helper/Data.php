@@ -112,7 +112,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
     }
 
-
     public function debug($object)
     {
         echo '<pre>';

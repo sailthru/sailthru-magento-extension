@@ -100,7 +100,8 @@
                         <method>updateCart</method>
                     </sailthru_checkout_cart_product_add_after>
                 </observers>
-            </checkout_cart_product_add_after> 
+            </checkout_cart_product_add_after>
+             <!--
              <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>
@@ -119,7 +120,7 @@
                 </observers>
             </sales_order_place_after>
             
-            <!--
+           
              <newsletter_subscriber_save_before>
                 <observers>
                     <sailthru_newsletter_subscriber_save_before>

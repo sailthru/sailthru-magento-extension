@@ -16,9 +16,8 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
      */
     public function subscriberHandler(Varien_Event_Observer $observer)
     {
-        $customer = $observer->getEvent()->getCustomer();
 
-        if($this->_isEnabled && $customer->getEmail()) {
+        if($this->_isEnabled && $this->_email) {
             try{
                 $subscriber = $observer->getEvent()->getSubscriber();
                 $response = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
@@ -50,12 +49,12 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
 
     public function updateCart(Varien_Event_Observer $observer)
     {
-        $customer = $observer->getEvent()->getCustomer();
 
-        if($this->_isEnabled && $customer->getEmail()) {
+        if($this->_isEnabled && $this->_email) {
             try{
-                $cart = $observer->getCart();
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($cart,$customer->getEmail());
+                $quote = Mage::getModel('sales/quote')->load($observer->getQuoteItem()->getQuoteId());
+
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote,$this->_email);
             } catch (Exception $e) {
                 Mage::logException($e);
             }

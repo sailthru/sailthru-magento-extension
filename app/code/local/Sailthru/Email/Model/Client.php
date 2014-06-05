@@ -14,26 +14,27 @@
  */
 class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
 {
+
     /**
      *
      * Sailthru API Key
      * @var string
      */
-    protected $_key;
+    protected $_apiKey;
 
     /**
      *
      * Sailthru Secret
      * @var string
      */
-    protected $_secret;
+    protected $_apiSecret;
 
     /**
      *
      * Sailthru API URL, can be different for different users according to their settings
      * @var string
      */
-    protected $_uri;
+    protected $_apiUri;
 
     /**
      *
@@ -41,6 +42,9 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @var string
      */
     protected $_httpRequestType;
+
+
+    protected $_httpHeaders;
 
     /**
      *
@@ -59,16 +63,15 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
 
     /**
      * File Upload Flag variable
-    */
+     */
     protected $_fileUpload;
 
-    protected $_httpHeaders;
 
     public function  __construct()
     {
-        $this->_key = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
-        $this->_secret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
-        $this->_uri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
+        $this->_apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
+        $this->_apiSecret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
+        $this->_apiUri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
         $this->_httpHeaders = array('User-Agent: Sailthru API PHP5 Client');
         $this->_httpRequestType = function_exists('curl_init') ? 'httpRequestCurl' : 'httpRequestWithoutCurl';
         $this->_fileUpload = false;
@@ -78,12 +81,6 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         $this->_httpHeaders = array_merge($this->_httpHeaders, $headers);
         return true;
     }
-
-    public function setLogPath($logPath) {
-        $this->_logPath = $logPath;
-    }
-
-
 
     /**
      * Remotely send an email template to a single email address.
@@ -1181,16 +1178,19 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @param array $headers
      * @return string
      */
-    protected function httpRequest($url, $data, $method = 'POST') {
-        $this->log(array("url"=>$url,"method"=>$method),"API");
-        $this->log(array("url"=>$url,"request"=>$data['json']),$method." REQUEST");
-        $response = $this->{$this->_httpRequestType}($url, $data, $method);
-        $this->log(array("url"=>$url,"response"=>$response),$method." RESPONSE");
-        $json = json_decode($response, true);
-        if ($json === NULL) {
-            throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+    protected function _httpRequest($url, $data, $method = 'POST') {
+        try {
+            $this->log(array('url'=>$url,'request'=>$data['json'],'http_request_type'=>$this->_httpRequestType),$method.' REQUEST');
+            $response = $this->{$this->_httpRequestType}($url, $data, $method);
+            $this->log(array('url'=>$url,'response'=>$response),$method.' RESPONSE');
+            $json = json_decode($response, true);
+            if ($json === NULL) {
+                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+            }
+            return $json;
+        } catch (Exception $e) {
+            Mage::logException($e);
         }
-        return $json;
     }
 
 
@@ -1213,7 +1213,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
             }
         }
         $payload = $this->prepareJsonPayload($data, $binary_data);
-        return $this->httpRequest($this->_uri . '/' . $action, $payload, 'POST');
+        return $this->_httpRequest($this->_apiUri . '/' . $action, $payload, 'POST');
     }
 
 
@@ -1225,7 +1225,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @return array
      */
     public function apiGet($action, $data = array(), $method = 'GET') {
-        return $this->httpRequest('{' . $this->_uri . "}/{$action}", $this->prepareJsonPayload($data), $method);
+        return $this->_httpRequest('{' . $this->_uri . "}/{$action}", $this->prepareJsonPayload($data), $method);
     }
 
 
@@ -1255,49 +1255,14 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      */
     protected function prepareJsonPayload(array $data, array $binary_data = array()) {
         $payload =  array(
-            'api_key' => $this->_getApiKey(),
+            'api_key' => $this->_apiKey,
             'format' => 'json', //<3 XML
             'json' => json_encode($data)
         );
-        $payload['sig'] = $this->getSignatureHash($payload, $this->_getApiSecret());
+        $payload['sig'] = $this->getSignatureHash($payload, $this->_apiSecret);
         if (!empty($binary_data)) {
             $payload = array_merge($payload, $binary_data);
         }
         return $payload;
     }
-
-    public function startLogging() {
-        if ($this->_logHandle) {
-            return true; ##persistent handle
-        }
-        if (!$this->_logHandle && !empty($this->_logPath)) {
-            $this->_logHandle = fopen($this->_logPath,'a');
-            return false;
-        }
-        return false;
-    }
-
-    public function stopLogging() {
-        if ($this->_logHandle) {
-            fclose($this->_logHandle);
-            $this->_logHandle = null;
-        }
-    }
-
-    public function log($data,$tag="INFO") {
-        if (empty($this->_logPath)) {
-            return false;
-        }
-        $persistent = $this->startLogging();
-        if (is_array($data) || is_object($data)) {
-            $data = json_encode($data);
-        }
-        $date = new DateTime(null, new DateTimeZone('America/New_York'));
-        fwrite($this->_logHandle,"[$tag][".$date->format('Y-m-d H:i:sP')."] $data\n");
-        if (!$persistent) {
-            $this->stopLogging();
-        }
-        return true;
-    }
-
 }
