@@ -64,10 +64,15 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
     /**
      * File Upload Flag variable
      */
-    protected $_fileUpload;
+    protected $_fileUpload = false;
 
+    /**
+     * Event type (add,delete,update) for logging
+     * @var string
+     */
+    protected $_eventType = null;
 
-    public function  __construct()
+    public function __construct()
     {
         $this->_apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
         $this->_apiSecret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
@@ -1180,7 +1185,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      */
     protected function _httpRequest($url, $data, $method = 'POST') {
         try {
-            $this->log(array('url'=>$url,'request'=>$data['json'],'http_request_type'=>$this->_httpRequestType),$method.' REQUEST');
+            $this->log(array('url'=>$url,'request'=>$data['json'],'http_request_type'=>$this->_httpRequestType,'event_type'=>$this->_eventType),$method.' REQUEST');
             $response = $this->{$this->_httpRequestType}($url, $data, $method);
             $this->log(array('url'=>$url,'response'=>$response),$method.' RESPONSE');
             $json = json_decode($response, true);
