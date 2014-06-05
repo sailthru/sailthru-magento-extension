@@ -76,12 +76,29 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         return array();
     }
 
+    public function sendCart(Mage_Sales_Model_Quote $quote, $email)
+    {
+        try{
+            $data = array("email" => $email, "items" => $this->_getCartItems($quote));
+
+            if (isset($_COOKIE['sailthru_bid'])){
+                $data['message_id'] = $_COOKIE['sailthru_bid'];
+            }
+
+            $response = $this->apiPost("purchase", $data);
+
+        } catch (Exception $e) {
+            Mage::logException($e);
+            return false;
+        }
+    }
+
     /**
      * Notify Sailthru that a purchase has been made. This automatically cancels
      * any scheduled abandoned cart email.
      *
      */
-    public function sendOrderSuccess(Mage_Sales_Model_Quote $quote, $customer)
+    public function sendOrder(Mage_Sales_Model_Quote $quote, $customer)
     {
         try{
             $data = array("email" => $customer->getEmail(), "items" => $this->_getCartItems($quote));

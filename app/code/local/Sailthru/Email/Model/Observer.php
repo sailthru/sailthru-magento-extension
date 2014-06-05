@@ -8,9 +8,6 @@
  */
 class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
 {
-
-
-
     /**
      * Push new subscriber data to Sailthru
      *
@@ -19,7 +16,9 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
      */
     public function subscriberHandler(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_customerEmail) {
+        $customer = $observer->getEvent()->getCustomer();
+
+        if($this->_isEnabled && $customer->getEmail()) {
             try{
                 $subscriber = $observer->getEvent()->getSubscriber();
                 $response = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
@@ -32,9 +31,10 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
 
     public function customerHandler(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled) {
+        $customer = $observer->getEvent()->getCustomer();
+
+        if($this->_isEnabled && $customer->getEmail()) {
             try{
-                $customer = $observer->getEvent()->getCustomer();
                 $response = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
             } catch (Exception $e) {
                 Mage::logException($e);
@@ -50,30 +50,19 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
 
     public function updateCart(Varien_Event_Observer $observer)
     {
-        $this->pushIncompletePurchaseOrderToSailthru($observer);
-    }
+        $customer = $observer->getEvent()->getCustomer();
 
-    public function saveCart(Varien_Event_Observer $observer)
-    {
-        $this->pushIncompletePurchaseOrderToSailthru($observer);
-    }
-
-    public function pushIncompletePurchaseOrderToSailthru(Varien_Event_Observer $observer)
-    {
-        /**
-         * Do nothing if user is not logged in. Purchase API requires an email
-         * http://getstarted.sailthru.com/api/purchase
-         */
-        if($this->_isEnabled && $this->_customerEmail && Mage::helper('sailthruemail')->sendAbandonedCartEmails()) {
+        if($this->_isEnabled && $customer->getEmail()) {
             try{
                 $cart = $observer->getCart();
-                $response = Mage::getModel('sailthruemail/client_purchase_abandoned')->sendCart($cart,$this->_customerEmail);
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($cart,$customer->getEmail());
             } catch (Exception $e) {
                 Mage::logException($e);
             }
         }
         return $this;
     }
+
 
     /**
      * Notify Sailthru that a purchase has been made. This automatically cancels
@@ -82,19 +71,37 @@ class Sailthru_Email_Model_Observer extends Sailthru_Email_Model_Abstract
      * @param Varien_Event_Observer $observer
      * @return
      */
-    public function pushPurchaseOrderSuccessToSailthru(Varien_Event_Observer $observer)
+    public function saveOrder(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_customerEmail) {
+        $customer = $observer->getEvent()->getCustomer();
+
+        if($this->_isEnabled && $customer->getEmail()) {
             try{
                 $cart = $observer->getCart();
                 $customer = $observer->getEvent()->getCustomer();
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendOrderSuccess($cart, $customer, $this->_customerEmail);
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendOrder($cart, $customer);
             } catch (Exception $e) {
                 Mage::logException($e);
             }
         }
         return $this;
     }
+
+    public function sendAbandonedCart(Varien_Event_Observer $observer)
+    {
+        $customer = $observer->getEvent()->getCustomer();
+
+        if($this->_isEnabled && $customer->getEmail()) {
+            try{
+                $cart = $observer->getCart();
+                $response = Mage::getModel('sailthruemail/client_purchase_abandoned')->sendCart($cart,$customer->getEmail());
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
+        }
+        return $this;
+    }
+
 
     /**
      * Push product to Sailthru using Content API

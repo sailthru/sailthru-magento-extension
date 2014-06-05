@@ -97,12 +97,27 @@
                     <sailthru_checkout_cart_product_add_after>
                         <type>singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>addProductToCart</method>
+                        <method>updateCart</method>
                     </sailthru_checkout_cart_product_add_after>
                 </observers>
             </checkout_cart_product_add_after> 
-            
-            
+             <checkout_cart_update_items_after>
+                <observers>
+                    <sailthru_checkout_cart_update_items_after>
+                        <type>Singleton</type>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>updateCart</method>
+                    </sailthru_checkout_cart_update_items_after>
+                </observers>
+            </checkout_cart_update_items_after>
+            <sales_order_place_after>
+                <observers>
+                    <sailthru_sales_order_place_after>
+                        <class>Sailthru_Email_Model_Observer</class>
+                        <method>saveOrder</method>
+                    </sailthru_sales_order_place_after>
+                </observers>
+            </sales_order_place_after>
             
             <!--
              <newsletter_subscriber_save_before>
@@ -131,15 +146,7 @@
             </sales_order_place_after>
            
            
-            <checkout_cart_update_items_after>
-                <observers>
-                    <sailthru_checkout_cart_update_items_after>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>updateCart</method>
-                    </sailthru_checkout_cart_update_items_after>
-                </observers>
-            </checkout_cart_update_items_after>
+       
             <checkout_cart_save_after>
                 <observers>
                     <sailthru_checkout_cart_save_after>
