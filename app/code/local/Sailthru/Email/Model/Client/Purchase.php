@@ -25,13 +25,13 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             }
 
             if ($email) {
-                $data = array("email" => $email, "items" => $this->_getCartItems($quote));
+                $data = array(
+                        'email' => $email,
+                        'items' => $this->_getItems($quote->getAllVisibleItems()),
+                        'message_id' => Mage::getSingleton('core/cookie')->getSailthruBid(),
+                        'incomplete' => 1
+                        );
 
-                if (isset($_COOKIE['sailthru_bid'])){
-                    $data['message_id'] = $_COOKIE['sailthru_bid'];
-                }
-
-                $data['incomplete'] = 1;
                 $response = $this->apiPost("purchase", $data);
                 return true;
             } else {
@@ -53,36 +53,36 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         try{
             $this->_eventType = 'placeOrder';
 
-            $data = array("email" => $customer->getEmail(), "items" => $this->_getOrderItems($order));
-            if (isset($_COOKIE['sailthru_bid'])){
-                $data['message_id'] = $_COOKIE['sailthru_bid'];
-            }
+            $data = array(
+                    'email' => $customer->getEmail(),
+                    'items' => $this->_getItems($order->getAllVisibleItems()),
+                    'adjustments' => $this->_getAdjustments($order),
+                    'message_id' => Mage::getSingleton('core/cookie')->getSailthruBid(),
+                    'send_template' => 'purchase receipt',
+                    'date' => $order->getCreatedAt() . ' ' . Mage::app()->getLocale()->getTimeZone(),
+                    'tenders' => $this->_getTenders($order)
+                    );
 
-            $responsePurchase = $this->apiPost("purchase", $data);
-
+            $responsePurchase = $this->apiPost('purchase', $data);
             $responseUser = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
 
         }catch (Exception $e) {
             Mage::logException($e);
             return false;
         }
-
     }
 
     /**
-     * Prepare data on items in cart.
+     * Prepare data on items in cart or order.
      *
      * @return type
      */
-    protected function _getCartItems(Mage_Sales_Model_Quote $quote)
+    protected function _getItems($items)
     {
         try {
-            $quoteItems = $quote->getAllItems();
-            $cartItems = array();
-
-            foreach($quoteItems as $item) {
+            $data = array();
+            foreach($items as $item) {
                 if ($item->getProductType() != 'configurable') {
-
                     /**
                      * If variant, use parent item info
                      */
@@ -94,10 +94,10 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                         $price = $item->getPrice();
                     }
 
-                    $cartItems[] = array(
+                    $data[] = array(
                         'qty' => intval($item->getQty()),
                         'title' => $item->getName(),
-                        'price' => intval($price*100),
+                        'price' => Mage::helper('sailthruemail')->formatAmount($price),
                         'id' => $item->getSku(),
                         'url' => $url,
                         'tags' => '',
@@ -105,55 +105,48 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     );
                 }
             }
-            return $cartItems;
+            return $data;
         } catch (Exception $e) {
              Mage::logException($e);
             return false;
         }
     }
 
- /**
-     * Prepare data on items in cart.
-     *
-     * @return type
+    /**
+     * Get order adjustments
+     * @param Mage_Sales_Model_Order $order
+     * @return array
      */
-    protected function _getOrderItems(Mage_Sales_Model_Order $order)
+    protected function _getAdjustments(Mage_Sales_Model_Order $order)
     {
-        try {
-            $orderItems = $order->getAllVisibleItems();
-            $cartItems = array();
-
-            foreach($orderItems as $item) {
-                if ($item->getProductType() != 'configurable') {
-
-                    /**
-                     * If variant, use parent item info
-                     */
-                    if ($parentItem = $item->getParentItem()) {
-                        $url = $parentItem->getProduct()->getProductUrl();
-                        $price = $parentItem->getPrice();
-                    } else {
-                        $url = $item->getProduct()->getProductUrl();
-                        $price = $item->getPrice();
-                    }
-
-                    $cartItems[] = array(
-                        'qty' => intval($item->getQty()),
-                        'title' => $item->getName(),
-                        'price' => intval($price*100),
-                        'id' => $item->getSku(),
-                        'url' => $url,
-                        'tags' => '',
-                        'vars' => '',
-                    );
-                }
-            }
-            return $cartItems;
-        } catch (Exception $e) {
-             Mage::logException($e);
-            return false;
+        if ($order = $order->getBaseDiscountAmount()) {
+            return array(
+                    'title' => 'Sale',
+                    'price' => Mage::helper('sailthruemail')->formatAmount($payment->getBaseDiscountAmount())
+            );
         }
+
+        return array();
     }
+
+    /**
+     * Get payment information
+     * @param Mage_Sales_Model_Order $order
+     * @return array
+     */
+    protected function _getTenders(Mage_Sales_Model_Order $order)
+    {
+        if ($payment = $order->getPayment()) {
+            return array(
+                'title' => $payment->getCcType(),
+                'price' => Mage::helper('sailthruemail')->formatAmount($payment->getBaseAmountOrdered())
+            );
+        }
+
+        return array();
+    }
+
+
     /**
      * Get product meta keywords
      * @param Mage_Catalog_Model_Product $product
