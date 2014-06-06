@@ -41,10 +41,10 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'vars' => array(
                     'id' => $customer->getId(),
                     'name' => $customer->getName(),
-                    'suffix' => $customer->getSuffix(),
-                    'prefix' => $customer->getPrefix(),
+                    'suffix' => $customer->getSuffix() ? $customer->getSuffix() : '',
+                    'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
                     'firstName' => $customer->getFirstname(),
-                    'middleName' => $customer->getMiddlename(),
+                    'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
                     'lastName' => $customer->getLastname(),
                     'address' => $address,
                     //'attributes' => $customer->getAttributes(),
@@ -74,16 +74,16 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         if ($address) {
             return array(
                 'firstname' => $address->getFirstname(),
-                'middlename' => $address->getMiddlename(),
+                'middlename' => $address->getMiddlename() ? $address->getMiddlename() : '',
                 'lastname' => $address->getLastname(),
-                'company' => $address->getCompany(),
+                'company' => $address->getCompany() ? $address->getCompany() : '',
                 'city' => $address->getCity(),
                 'address' => implode(', ',$address->getStreet()),
                 'country' => $address->getCountryId(),
                 'state' => $address->getRegion(),
                 'postcode' => $address->getPostcode(),
                 'telephone' => $address->getTelephone(),
-                'fax' => $address->getFax()
+                'fax' => $address->getFax() ? $address->getFax() : ''
             );
         }
     }
@@ -133,8 +133,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'optout_email' => ($subscriber->getSubscriberStatus() != 1) ? 'blast' : 'none',
             );
             $response = $this->apiPost('user', $data);
-            $sailthru_hid = $response['keys']['cookie'];
-            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $sailthru_hid);
+            $this->setCookie($response);
         } catch(Exception $e) {
             Mage::logException($e);
         }
@@ -143,8 +142,8 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 
     public function setCookie($response)
     {
-        if (array_key_exists('ok',$response) && array_key_exists('keys',$response) && array_key_exists('cookie',$response['keys'])) {
-            $cookie = Mage::getSingleton('core/cookie')->set('sailthru_hid', $response['keys']['cookie']);
+        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
+            Mage::getSingleton('customer/session')->setSailthruHid($response['keys']['cookie']);
             return true;
         } else {
             return false;
@@ -188,11 +187,9 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     public function logout()
     {
         try {
-            $cookie = Mage::getSingleton('core/cookie')->delete('sailthru_hid');
-            return true;
+            Mage::getSingleton('customer/session')->unsSailthruHid();
         } catch (Exception $e) {
             Mage::logException($e);
-            return false;
         }
     }
 
