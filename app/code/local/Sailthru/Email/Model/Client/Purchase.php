@@ -24,22 +24,60 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $this->_eventType = $eventType;
             }
 
-            if ($email) {
-                $data = array(
-                        'email' => $email,
-                        'items' => $this->_getItems($quote->getAllVisibleItems()),
-                        'message_id' => Mage::getSingleton('core/cookie')->get('sailthru_bid'),
-                        'incomplete' => 1
-                        );
-                $response = $this->apiPost('purchase', $data);
-                return true;
+            if (!$email) {
+                if(!$email = $quote->getCustomerEmail()) {
+                    Mage::logException("Unable to post purchase: customer email is not defined.");
+                    return false;
+                }
+            }
+
+            $data = array(
+                    'email' => $email,
+                    'items' => $this->_getItems($quote->getAllVisibleItems()),
+                    'incomplete' => 1,
+                    'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
+                    'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
+                    'message_id' => $this->getMessageId()
+                    );
+
+            $response = $this->apiPost('purchase', $data);
+
+            if (array_key_exists('error',$response)){
+                return $this->handleError($response, $quote, $email);
             } else {
-                return false;
+                return true;
             }
         } catch (Exception $e) {
             Mage::logException($e);
-            return false;
         }
+    }
+
+    /**
+     * Route errors
+     *
+     * @param array $response
+     * @param Mage_Sales_Model_Quote $quote
+     * @param string $email
+     * @return boolean
+     *
+     * @todo For future iterations, use switch statement to handle multiple error messages.
+     */
+    public function handleError($response, $quote, $email)
+    {
+            if($response['error'] == 14) {
+                /**
+                 * Response Error 14 means that an unknown template was passed in the API call.
+                 * This normally happens for first time API calls or when the name of the template has
+                 * been changed, http://getstarted.sailthru.com/api/api-response-errors.  We'll
+                 * therefore need to create a template to pass in the call.  One condition for the
+                 * template to be created is that the sender email must be verified so please check
+                 * https://my.sailthru.com/verify to make sure that the send email is listed there.
+                 */
+                return $this->createAbandonedCartEmail($quote, $email);
+            } else {
+                Mage::throwException('Unknown purchase response error: ' . json_encode($response));
+            }
+
     }
 
     /**
@@ -51,16 +89,24 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     {
         try{
             $this->_eventType = 'placeOrder';
+
             $data = array(
                     'email' => $customer->getEmail(),
                     'items' => $this->_getItems($order->getAllVisibleItems()),
                     'adjustments' => $this->_getAdjustments($order),
-                    'message_id' => Mage::getSingleton('core/cookie')->get('sailthru_bid'),
+                    'message_id' => $this->getMessageId(),
                     'send_template' => 'purchase receipt',
                     'date' => $order->getCreatedAt() . ' ' . Mage::app()->getLocale()->getTimeZone(),
                     'tenders' => $this->_getTenders($order)
                     );
+            /**
+             * Send order data to purchase API
+             */
             $responsePurchase = $this->apiPost('purchase', $data);
+
+            /**
+             * Send customer data to user API
+             */
             $responseUser = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
         }catch (Exception $e) {
             Mage::logException($e);
@@ -177,4 +223,103 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
         return $vars;
     }
+
+    /**
+     * Create Abandoned Cart Email
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     * @param string $email
+     * @return boolean
+     */
+    public function createAbandonedCartEmail($quote,$email)
+    {
+        try{
+            $this->_eventType = 'abandonedCart';
+
+            $storeId = $quote->getStoreId();
+
+            $newTemplate = array(
+                    "template" => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $storeId),
+                    'content_html' => $this->_getContent(),
+                    'subject' => Mage::getStoreConfig('sailthru/email/abandoned_subject', $storeId),
+                    'from_name' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $storeId),
+                    'from_email' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $storeId),
+                    'is_link_tracking' => 1,
+                    'is_google_analytics' => 1
+            );
+
+            $create_template = $this->apiPost('template', $newTemplate);
+
+            //Send Purchase Data
+            $response = $this->apiPost('purchase', $data);
+            $data = array('email' => $email, 'incomplete' => 1, 'items' => $this->_getCartItems());
+            $response = $this->apiPost("purchase", $data);
+            return true;
+        } catch (Exception $e) {
+            Mage::logException($e);
+            return false;
+        }
+    }
+
+    /**
+     * Get Abandoned cart email content formatted in Zephyr
+     *
+     * It's important to note that the code below only works if routed through Sailthru.
+     *
+     * Include css or tables here to style e-mail.
+     *
+     * It's important that the "from_email" is verified, otherwise the code below will not work.
+     *
+     * @return string
+     */
+    private function _getContent()
+    {
+        return '{*Sailthru zephyr code is used for full functionality*}
+            <div id="main">
+                <table width="700">
+                    <tr>
+                        <td>
+                            <h2><p>Hello {profile.vars.name}</p></h2>
+                            <p>Did you forget the following items in your cart?</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td colspan="2">
+                                            <div><span style="display:block;text-align:center;color:white;font-size:13px;font-weight:bold;padding:15px;text-shadow:0 -1px 1px #af301f;white-space:nowrap;text-transform:uppercase;letter-spacing:1;background-color:#d14836;min-height:29px;line-height:29px;margin:0 0 0 0;border:1px solid #af301f;margin-top:5px"><a href="{profile.purchase_incomplete.items[0].vars.checkout_url}">Re-Order Now!</a></span></div>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {sum = 0}
+                                {foreach profile.purchase_incomplete.items as i}
+                                    <table width="650" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px 0;background:#fff;border:1px solid #e5e5e5">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding:20px"><a href="{i.url}"><img width="180" height="135" border="0" alt="{i.title}" src="{i.vars.image_url}"></a></td>
+                                                <td width="420" valign="top" style="padding:20px 10px 20px 0">
+                                                    <div style="padding:5px 0;color:#333;font-size:18px;font-weight:bold;line-height:21px">{i.title}</div>
+                                                    <div style="padding:0 0 5px 0;color:#999;line-height:21px;margin:0px">{i.vars.currency}{i.price/100}</div>
+                                                    <div style="color:#999;font-weight:bold;line-height:21px;margin:0px">{i.description}</div>
+                                                    <div><span style="display:block;text-align:center;width:120px;border-left:1px solid #b43e2e;border-right:1px solid #b43e2e;color:white;font-size:13px;font-weight:bold;padding:0 15px;text-shadow:0 -1px 1px #af301f;white-space:nowrap;text-transform:uppercase;letter-spacing:1;background-color:#d14836;min-height:29px;line-height:29px;margin:0 0 0 0;border:1px solid #af301f;margin-top:5px"><a href="{i.url}">Buy Now</a></span></div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                {/foreach}
+                                <tr>
+                                    <td align="left" valign="top" style="padding:3px 9px" colspan="2"></td>
+                                    <td align="right" valign="top" style="padding:3px 9px"></td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                            <p><small>If you believe this has been sent to you in error, please safely <a href="{optout_confirm_url}">unsubscribe</a>.</small></p>
+                            {beacon}
+                        </td>
+                    </tr>
+                </table>
+            </div>';
+    }
+
 }

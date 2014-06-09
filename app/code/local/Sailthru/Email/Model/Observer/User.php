@@ -19,7 +19,7 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Abstract
         if($this->_isEnabled && $this->_email) {
             try{
                 $subscriber = $observer->getEvent()->getSubscriber();
-                $response = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
+                $response = Mage::getModel('sailthruemail/client_user')->sendSubscriberData($subscriber);
             } catch (Exception $e) {
                 Mage::logException($e);
             }

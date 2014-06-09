@@ -30,16 +30,14 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
             return false;
         }
 
-        Mage::log('Sailthru module is enabled, sending email in Sailthru_Email_Model_Newsletter_Template');
-
         $email = '';
+
         if ($subscriber instanceof Mage_Newsletter_Model_Subscriber) {
             $email = $subscriber->getSubscriberEmail();
             if (is_null($name) && ($subscriber->hasCustomerFirstname() || $subscriber->hasCustomerLastname()) ) {
                 $name = $subscriber->getCustomerFirstname() . ' ' . $subscriber->getCustomerLastname();
             }
-        }
-        else {
+        } else {
             $email = (string) $subscriber;
         }
 

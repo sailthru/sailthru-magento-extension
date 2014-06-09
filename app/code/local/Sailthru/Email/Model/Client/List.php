@@ -1,5 +1,13 @@
 <?php
-class Sailthru_Email_Model_List  extends Mage_Core_Model_Abstract
+/**
+ * Client List Model
+ *
+ * @category  Sailthru
+ * @package   Sailthru_Email
+ *
+ */
+
+class Sailthru_Email_Model_List  extends Sailthru_Email_Model_Client
 {
     const STATUS_SUBSCRIBED     = 1;
     const STATUS_NOT_ACTIVE     = 2;

@@ -8,13 +8,8 @@
  */
 class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 {
-
-    public function  __construct()
-    {
-        parent::__construct();
-    }
     /**
-     * Get customer data object
+     * Create array of customer values for API
      *
      * @param Mage_Customer_Model_Customer $customer
      * @return array
@@ -32,7 +27,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 $zipcode= '';
             }
 
-
             $data = array(
                 'id' => $customer->getEmail(),
                 'key' => 'email',
@@ -47,9 +41,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                     'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
                     'lastName' => $customer->getLastname(),
                     'address' => $address,
-                    //'attributes' => $customer->getAttributes(),
                     'storeID' => $customer->getStoreId(),
-                    //'websiteId' => $customer->getWebsiteStoreId(),
                     'groupId' => $customer->getGroupId(),
                     'taxClassId' => $customer->getTaxClassId(),
                     'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
@@ -69,6 +61,12 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         }
     }
 
+    /**
+     * Create array of address values for API
+     *
+     * @param Varien Object $address
+     * @return array
+     */
     public function getAddress($address)
     {
         if ($address) {
@@ -93,10 +91,12 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      *
      * @param Mage_Customer_Model_Customer $customer
      * @return array
+     *
+     * @todo add optin/optout functionality
      */
     public function sendCustomerData(Mage_Customer_Model_Customer $customer)
     {
-        $this->_eventType = 'orderCustomerData';
+        $this->_eventType = 'customer';
 
         try {
             $data = $this->getCustomerData($customer);
@@ -110,8 +110,18 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         return $this;
     }
 
-    public function sendSubscriberData($subscriber)
+    /**
+     * Send subscriber data through API
+     *
+     * @param Mage_Newsletter_Model_Subscriber $subscriber
+     * @return array
+     *
+     * @todo add unsubscribe functionality
+     */
+    public function sendSubscriberData(Mage_Newsletter_Model_Subscriber $subscriber)
     {
+        $this->_eventType = 'subscriber';
+
         try {
             $data = array('id' => $subscriber->getSubscriberEmail(),
                 'key' => 'email',
@@ -134,22 +144,21 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             );
             $response = $this->apiPost('user', $data);
             $this->setCookie($response);
+         } catch(Sailthru_Email_Model_Client_Exception $e) {
+             Mage::logException($e);
         } catch(Exception $e) {
             Mage::logException($e);
         }
         return $this;
     }
 
-    public function setCookie($response)
-    {
-        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
-            Mage::getSingleton('customer/session')->setSailthruHid($response['keys']['cookie']);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    /**
+     * Send login data through API
+     *
+     * @param Mage_Customer_Model_Customer $customer
+     * @throws Sailthru_Email_Model_Client_Exception
+     * @return boolean
+     */
     public function login(Mage_Customer_Model_Customer $customer)
     {
         try {
@@ -183,7 +192,9 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         }
     }
 
-
+    /**
+     * Logout by deleting Sailthru session var
+     */
     public function logout()
     {
         try {

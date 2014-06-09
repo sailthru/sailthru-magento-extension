@@ -9,7 +9,6 @@
 
 abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
 {
-
     /**
      *
      * Current Store Id
@@ -26,8 +25,7 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
     protected $_email = null;
 
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->_storeId = Mage::app()->getStore()->getStoreId();
 
         if(Mage::helper('sailthruemail')->isEnabled($this->_storeId)) {
@@ -38,6 +36,15 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
                 $this->_email = $this->_customer->getEmail();
             }
         }
+    }
+
+    /**
+     * Get sailthru_bid cookie value
+     *
+     * @return string
+     */
+    public function getMessageId() {
+        return isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
     }
 
     /**
@@ -93,6 +100,14 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
         }
     }
 
+    public function setCookie($response) {
+        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
+            Mage::getSingleton('customer/session')->setSailthruHid($response['keys']['cookie']);
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function log($data,$tag="INFO") {
        Mage::log(array($tag=>$data),null,'sailthru.log');
     }

@@ -72,8 +72,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      */
     protected $_eventType = null;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->_apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
         $this->_apiSecret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
         $this->_apiUri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
