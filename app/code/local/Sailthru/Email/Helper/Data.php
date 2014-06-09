@@ -10,7 +10,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         * Config paths to use
         */
     const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
-    const XML_PATH_LOG_PATH                                 = 'sailthru/api/log_path';
+    const XML_PATH_ENABLE_LOGGING                           = 'sailthru/api/enable_logging';
     const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru/email/default_list';
     const XML_PATH_DEFAULT_NEWSLETTER_LIST                  = 'sailthru/email/newsletter_list';
     const XML_PATH_SENDER_EMAIL                             = 'sailthru/email/sender_email';
@@ -111,6 +111,13 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
     }
+
+
+    public function isLoggingEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ENABLE_LOGGING, $store);
+    }
+
 
     public function formatAmount($amount = null)
     {

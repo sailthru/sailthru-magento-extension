@@ -108,7 +108,9 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
             return false;
         }
     }
-    public function log($data,$tag="INFO") {
-       Mage::log(array($tag=>$data),null,'sailthru.log');
+    public function log($data) {
+        if (Mage::helper('sailthruemail')->isLoggingEnabled($this->_storeId)) {
+            Mage::log($data,null,'sailthru.log');
+        }
     }
 }

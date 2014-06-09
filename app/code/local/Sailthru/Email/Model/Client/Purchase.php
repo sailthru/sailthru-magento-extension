@@ -237,22 +237,27 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             $this->_eventType = 'abandonedCart';
 
             $storeId = $quote->getStoreId();
+            $reminderTemplate = Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $storeId);
 
             $newTemplate = array(
-                    "template" => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $storeId),
-                    'content_html' => $this->_getContent(),
-                    'subject' => Mage::getStoreConfig('sailthru/email/abandoned_subject', $storeId),
-                    'from_name' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $storeId),
-                    'from_email' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $storeId),
-                    'is_link_tracking' => 1,
-                    'is_google_analytics' => 1
-            );
+                           'template' => $reminderTemplate,
+                           'content_html' => $this->_getContent(),
+                           'subject' => Mage::getStoreConfig('sailthru/email/abandoned_subject', $storeId),
+                           'from_name' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_name', $storeId),
+                           'from_email' => Mage::getStoreConfig('sailthru/email/abandoned_cart_sender_email', $storeId),
+                           'is_link_tracking' => 1,
+                           'is_google_analytics' => 1
+                            );
 
-            $create_template = $this->apiPost('template', $newTemplate);
+            $templateResponse = $this->apiPost('template', $newTemplate);
 
             //Send Purchase Data
-            $response = $this->apiPost('purchase', $data);
-            $data = array('email' => $email, 'incomplete' => 1, 'items' => $this->_getCartItems());
+            $data = array(
+                    'email' => $email,
+                    'incomplete' => 1,
+                    'items' => $this->_getItems($quote->getAllVisibleItems()),
+                    'reminder_template' => $reminderTemplate
+                    );
             $response = $this->apiPost("purchase", $data);
             return true;
         } catch (Exception $e) {
