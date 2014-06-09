@@ -123,36 +123,45 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     {
         try {
             $data = array();
+            $configurableSkus = array();
+
             foreach($items as $item) {
                 $_item = array();
-
+                $_vars = array();
                 if ($item->getProductType() == 'configurable') {
+                    $parentIds[] = $item->getParentItemId();
                     $options = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
-                    $_item['title'] = $options['simple_name'];
                     $_item['id'] = $options['simple_sku'];
-                    if ($vars = $this->_getVars($options)) {
-                        $_item['vars'] = $vars;
-                    }
-                } else {
+                    $_item['title'] = $options['simple_name'];
+                    $_vars = $this->_getVars($options);
+                    $configurableSkus[] = $options['simple_sku'];
+                } elseif (!in_array($item->getSku(),$configurableSkus)) {
                     $_item['id'] = $item->getSku();
-
                     $_item['title'] = $item->getName();
-                }
-
-                if (get_class($item) == 'Mage_Sales_Model_Order_Item' ) {
-                    $_item['qty'] = intval($item->getQtyOrdered());
                 } else {
-                    $_item['qty'] = intval($item->getQty());
+                    $_item['id'] = null;
                 }
 
-                $_item['url'] = $item->getProduct()->getProductUrl();
-                $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getPrice());
+                if ($_item['id']) {
+                    if (get_class($item) == 'Mage_Sales_Model_Order_Item' ) {
+                        $_item['qty'] = intval($item->getQtyOrdered());
+                    } else {
+                        $_item['qty'] = intval($item->getQty());
+                    }
 
-                if ($tags = $this->_getTags($item->getProductId())) {
-                    $_item['tags'] = $tags;
+                    $_item['url'] = $item->getProduct()->getProductUrl();
+                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getPrice());
+
+                    if ($_vars) {
+                        $_item['vars'] = $_vars;
+                    }
+
+                    if ($tags = $this->_getTags($item->getProductId())) {
+                        $_item['tags'] = $tags;
+                    }
+
+                    $data[] = $_item;
                 }
-
-                $data[] = $_item;
             }
             return $data;
         } catch (Exception $e) {
