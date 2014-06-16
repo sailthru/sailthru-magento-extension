@@ -17,6 +17,8 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      */
     public function deleteProduct(Mage_Catalog_Model_Product $product)
     {
+        $this->_eventType = 'adminDeleteProduct';
+
         try {
             $data = $this->getProductData($product);
             $response = $this->apiDelete('content', $data);
@@ -34,9 +36,11 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      */
     public function saveProduct(Mage_Catalog_Model_Product $product)
     {
+        $this->_eventType = 'adminSaveProduct';
+
         try {
             $data = $this->getProductData($product);
-            $response = $this->apiPost('content', $productData);
+            $response = $this->apiPost('content', $data);
         } catch(Exception $e) {
             Mage::logException($e);
         }
@@ -59,7 +63,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'tags' => htmlspecialchars($product->getMetaKeyword()),
                 'vars' => array('price' => $product->getPrice(),
                     'sku' => $product->getSku(),
-                    'description' => htmlspecialchars($product->getDescription()),
+                    'description' => urlencode($product->getDescription()),
                     'storeId' => '',
                     'typeId' => $product->getTypeId(),
                     'status' => $product->getStatus(),
@@ -92,23 +96,38 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
             );
 
             // Add product images
-            if($product->getImage()) {
+            if(self::validateProductImage($product->getImage())) {
                 $data['vars']['imageUrl'] = $product->getImageUrl();
             }
 
-            if($product->getSmallImage()) {
-                $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width=88,$height =77);
+            if(self::validateProductImage($product->getSmallImage())) {
+                $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width = 88, $height = 77);
             }
 
-            if($product->getThumbnail()) {
-                $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width=75,$height=75);
+            if(self::validateProductImage($product->getThumbnail())) {
+                $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width = 75, $height = 75);
             }
+
+            return $data;
+
 
             return $data;
         } catch(Exception $e) {
             Mage::logException($e);
         }
 
+    }
+
+    private static function validateProductImage($image) {
+        if(empty($image)) {
+            return false;
+        }
+
+        if('no_selection' == $image) {
+            return false;
+        }
+
+        return true;
     }
 
 }

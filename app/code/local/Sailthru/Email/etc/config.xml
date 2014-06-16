@@ -166,16 +166,16 @@
             </newsletter>
         </routers>
     </frontend>
-   <!-- <adminhtml>
+    <adminhtml>
         <events>
-             <catalog_controller_product_delete>
+             <catalog_product_delete_after>
                 <observers>
-                    <sailthru_catalog_controller_product_delete>
+                    <sailthru_catalog_product_delete_after>
                         <class>Sailthru_Email_Model_Observer_Content</class>
                         <method>deleteProduct</method>
-                    </sailthru_catalog_controller_product_delete>
+                    </sailthru_catalog_product_delete_after>
                 </observers>
-            </catalog_controller_product_delete> 
+            </catalog_product_delete_after> 
             <catalog_product_save_after>
                 <observers>
                     <sailthru_catalog_product_save_after>
@@ -186,7 +186,6 @@
             </catalog_product_save_after>
         </events>
     </adminhtml>
-     --> 
    <admin>
         <routers>
             <sailthruemail>
