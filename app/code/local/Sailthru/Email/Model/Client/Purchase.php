@@ -20,33 +20,40 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     public function sendCart(Mage_Sales_Model_Quote $quote, $email = null, $eventType = null)
     {
         try{
-            if ($eventType){
-                $this->_eventType = $eventType;
-            }
+            /**
+             * only send abandoned cart data once
+             */
+            if ($quote->getId() != Mage::getSingleton('checkout/session')->getSailthuAbandonedCartId()) {
 
-            if (!$email) {
-                if(!$email = $quote->getCustomerEmail()) {
-                    Mage::logException("Unable to post purchase: customer email is not defined.");
-                    return false;
+                if ($eventType){
+                    $this->_eventType = $eventType;
                 }
+
+                if (!$email) {
+                    if(!$email = $quote->getCustomerEmail()) {
+                        Mage::logException("Unable to post purchase: customer email is not defined.");
+                        return false;
+                    }
+                }
+
+                $data = array(
+                        'email' => $email,
+                        'items' => $this->_getItems($quote->getAllVisibleItems()),
+                        'incomplete' => 1,
+                        'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
+                        'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
+                        'message_id' => $this->getMessageId()
+                        );
+
+                $response = $this->apiPost('purchase', $data);
+
+                if (array_key_exists('error',$response)){
+                    return $this->handleError($response, $quote, $email);
+                }
+                Mage::getSingleton('checkout/session')->setSailthuAbandonedCartId($quote->getId());
             }
 
-            $data = array(
-                    'email' => $email,
-                    'items' => $this->_getItems($quote->getAllVisibleItems()),
-                    'incomplete' => 1,
-                    'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
-                    'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
-                    'message_id' => $this->getMessageId()
-                    );
-
-            $response = $this->apiPost('purchase', $data);
-
-            if (array_key_exists('error',$response)){
-                return $this->handleError($response, $quote, $email);
-            } else {
-                return true;
-            }
+            return true;
         } catch (Exception $e) {
             Mage::logException($e);
         }
