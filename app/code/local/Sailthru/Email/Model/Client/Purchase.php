@@ -141,7 +141,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $_item['title'] = $options['simple_name'];
                     $_vars = $this->_getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
-                } elseif (!in_array($item->getSku(),$configurableSkus)) {
+                } elseif (!in_array($item->getSku(),$configurableSkus) && $item->getProductType() != 'bundle') {
                     $_item['id'] = $item->getSku();
                     $_item['title'] = $item->getName();
                 } else {
