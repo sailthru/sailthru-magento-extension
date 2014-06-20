@@ -96,7 +96,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     'adjustments' => $this->_getAdjustments($order),
                     'message_id' => $this->getMessageId(),
                     'send_template' => 'purchase receipt',
-                    'date' => $order->getCreatedAt() . ' ' . Mage::app()->getLocale()->getTimeZone(),
                     'tenders' => $this->_getTenders($order)
                     );
             /**
@@ -177,7 +176,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     protected function _getAdjustments(Mage_Sales_Model_Order $order)
     {
-        if ($order = $order->getBaseDiscountAmount()) {
+        if ($order->getBaseDiscountAmount()) {
             return array(
                    'title' => 'Sale',
                    'price' => Mage::helper('sailthruemail')->formatAmount($order->getBaseDiscountAmount())
@@ -190,20 +189,21 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     /**
      * Get payment information
      * @param Mage_Sales_Model_Order $order
-     * @return array
+     * @return mixed
      */
     protected function _getTenders(Mage_Sales_Model_Order $order)
     {
-        $tenders = array();
 
-        if ($payment = $order->getPayment()) {
-           $tenders[] = array(
-                   'title' => $payment->getCcType(),
-                   'price' => Mage::helper('sailthruemail')->formatAmount($payment->getBaseAmountOrdered())
-                    );
+        if ($order->getPayment()) {
+           return array(
+                      array(
+                          'title' => $order->getPayment()->getCcType(),
+                          'price' => Mage::helper('sailthruemail')->formatAmount($order->getPayment()->getBaseAmountOrdered())
+                           )
+                       );
+        } else {
+            return '';
         }
-
-        return $tenders;
     }
     /**
      * Get product meta keywords
