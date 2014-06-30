@@ -102,8 +102,8 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     'items' => $this->_getItems($order->getAllVisibleItems()),
                     'adjustments' => $this->_getAdjustments($order),
                     'message_id' => $this->getMessageId(),
-                    'send_template' => 'purchase receipt',
-                    'tenders' => $this->_getTenders($order)
+                    'send_template' => 'purchase receipt'//,
+                    //'tenders' => $this->_getTenders($order)
                     );
             /**
              * Send order data to purchase API
