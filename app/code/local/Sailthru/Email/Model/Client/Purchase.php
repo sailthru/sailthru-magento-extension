@@ -202,12 +202,16 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     {
 
         if ($order->getPayment()) {
-           return array(
-                      array(
+           $tenders = array(
+                        array(
                           'title' => $order->getPayment()->getCcType(),
                           'price' => Mage::helper('sailthruemail')->formatAmount($order->getPayment()->getBaseAmountOrdered())
                            )
                        );
+            if ($tenders['title'] == null) {
+                return '';
+            }
+            return $tenders;
         } else {
             return '';
         }
