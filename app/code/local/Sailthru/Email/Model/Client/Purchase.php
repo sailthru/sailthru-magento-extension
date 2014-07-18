@@ -160,13 +160,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
                     if ($_vars) {
                         $_item['vars'] = $_vars;
-                        if (validateProductImage($item->getProduct()->getImage())) {
-                            $_item['vars']['image'] = $item->getProduct()->getImageUrl();
-                        }
-                    } else {
-                        if (validateProductImage($item->getProduct()->getImage())) {
-                            $_item['vars']['image'] = $item->getProduct()->getImageUrl();
-                        }
                     }
                     
                     if ($tags = $this->_getTags($item->getProductId())) {
@@ -231,23 +224,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     protected function _getTags($productId)
     {
         return Mage::getResourceModel('catalog/product')->getAttributeRawValue($productId, 'meta_keyword', $this->_storeId);
-    }
-
-    /**
-     * Validate Image Exists
-     * @param object $image
-     * @return boolean
-     */
-    private static function validateProductImage($image) {
-        if(empty($image)) {
-            return false;
-        }
-
-        if('no_selection' == $image) {
-            return false;
-        }
-
-        return true;
     }
     
     
