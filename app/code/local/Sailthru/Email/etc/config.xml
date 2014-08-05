@@ -145,7 +145,7 @@
                         <method>pushIncompletePurchaseOrderToSailthru</method>
                     </sailthru_checkout_cart_product_add_after>
                 </observers>
-            </checkout_cart_product_add_after> 
+            </checkout_cart_product_add_after>
             <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>
@@ -181,7 +181,7 @@
                         <method>pushIncompletePurchaseOrderToSailthru</method>
                     </sailthru_sales_quote_remove_item>
                 </observers>
-            </sales_quote_remove_item> 
+            </sales_quote_remove_item>
             <checkout_type_onepage_save_order>
                 <observers>
                     <sailthru_checkout_type_onepage_save_order>
@@ -213,7 +213,7 @@
                     <sailthru_checkout_quote_destroy>
                         <type>Singleton</type>
                         <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushPurchaseOrderSuccessToSailthru2</method>
+                        <method>pushPurchaseOrderSuccessToSailthru</method>
                     </sailthru_checkout_quote_destroy>
                 </observers>
             </checkout_quote_destroy>
@@ -273,7 +273,7 @@
                         <method>deleteProduct</method>
                     </sailthru_catalog_product_delete_after>
                 </observers>
-            </catalog_product_delete_after> 
+            </catalog_product_delete_after>
             <catalog_product_save_after>
                 <observers>
                     <sales_quote>
