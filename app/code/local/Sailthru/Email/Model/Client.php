@@ -1,5 +1,10 @@
 <?php
 /**
+ * Client Model
+ *
+ * @category  Sailthru
+ * @package   Sailthru_Email
+ * @author    Kwadwo Juantuah <support@sailthru.com>
  *
  * Makes HTTP Request to Sailthru API server
  * Response from server depends on the format being queried
@@ -7,34 +12,39 @@
  * XML format is also available but not has not been tested thoroughly
  *
  */
-class Sailthru_Client {
+class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
+{
+
     /**
      *
      * Sailthru API Key
      * @var string
      */
-    protected $api_key;
+    protected $_apiKey;
 
     /**
      *
      * Sailthru Secret
      * @var string
      */
-    protected $secret;
+    protected $_apiSecret;
 
     /**
      *
      * Sailthru API URL, can be different for different users according to their settings
      * @var string
      */
-    protected $api_uri = 'https://api.sailthru.com';
+    protected $_apiUri;
 
     /**
      *
      * cURL or non-cURL request
      * @var string
      */
-    protected $http_request_type;
+    protected $_httpRequestType;
+
+
+    protected $_httpHeaders;
 
     /**
      *
@@ -42,54 +52,39 @@ class Sailthru_Client {
      * Even, if you modify user-agent, please try to include 'PHP5' somewhere in the user-agent
      * @var String
      */
-    protected $user_agent_string;
+    protected $_userAgentString;
 
     /**
      * Get information regarding last response from server
      * @var type
      */
-    private $lastResponseInfo = null;
+    protected $_lastResponseInfo;
 
 
     /**
      * File Upload Flag variable
-    */
-    private $fileUpload = false;
-
-    private $httpHeaders = array("User-Agent: Sailthru API PHP5 Client");
-
-    private $log_path = null;
-
-    private $log_handle = null;
+     */
+    protected $_fileUpload = false;
 
     /**
-     * Instantiate a new client; constructor optionally takes overrides for api_uri and whether
-     * to share the version of PHP that is being used.
-     *
-     * @param string $api_key
-     * @param string $secret
-     * @param string $api_uri
-     * @param boolean $show_version
+     * Event type (add,delete,update) for logging
+     * @var string
      */
-    public function  __construct($api_key, $secret, $api_uri = false) {
-        $this->api_key = $api_key;
-        $this->secret = $secret;
-        if ($api_uri !== false) {
-            $this->api_uri = $api_uri;
-        }
+    protected $_eventType = null;
 
-        $this->http_request_type = function_exists('curl_init') ? 'httpRequestCurl' : 'httpRequestWithoutCurl';
+    public function __construct() {
+        $this->_apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
+        $this->_apiSecret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
+        $this->_apiUri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
+        $this->_httpHeaders = array('User-Agent: Sailthru API PHP5 Client');
+        $this->_httpRequestType = function_exists('curl_init') ? 'httpRequestCurl' : 'httpRequestWithoutCurl';
+        $this->_fileUpload = false;
     }
 
     public function setHttpHeaders(array $headers) {
-        $this->httpHeaders = array_merge($this->httpHeaders, $headers);
+        $this->_httpHeaders = array_merge($this->_httpHeaders, $headers);
         return true;
     }
-
-    public function setLogPath($log_path) {
-        $this->log_path = $log_path;
-    }
-
 
     /**
      * Remotely send an email template to a single email address.
@@ -626,7 +621,6 @@ class Sailthru_Client {
         return $this->apiPost('alert', $data);
     }
 
-
     /**
      * Remove an alert from a user's settings.
      * @link http://docs.sailthru.com/api/alert
@@ -756,7 +750,7 @@ class Sailthru_Client {
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         $send = $this->getSend($params['send_id']);
@@ -768,7 +762,6 @@ class Sailthru_Client {
         }
         return true;
     }
-
 
     /**
      *
@@ -789,12 +782,11 @@ class Sailthru_Client {
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         return true;
     }
-
 
     /**
      *
@@ -814,7 +806,7 @@ class Sailthru_Client {
         }
         $sig = $params['sig'];
         unset($params['sig']);
-        if ($sig != Sailthru_Util::getSignatureHash($params, $this->secret)) {
+        if ($sig != $this->getSignatureHash($params, $this->_secret)) {
             return false;
         }
         if (isset($params['send_id'])) {
@@ -1116,13 +1108,13 @@ class Sailthru_Client {
      * @param array $headers
      * @return string
      */
-    private function httpRequestCurl($url, array $data, $method = 'POST') {
+    protected function httpRequestCurl($url, array $data, $method = 'POST') {
         $ch = curl_init();
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
-            if ($this->fileUpload === true) {
+            if ($this->_fileUpload === true) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                $this->fileUpload = false;
+                $this->_fileUpload = false;
             }
             else {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data, '', '&'));
@@ -1137,12 +1129,12 @@ class Sailthru_Client {
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->httpHeaders);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->_httpHeaders);
         $data = curl_exec($ch);
-        $this->lastResponseInfo = curl_getinfo($ch);
+        $this->_lastResponseInfo = curl_getinfo($ch);
         curl_close($ch);
         if (!$data) {
-            throw new Sailthru_Client_Exception("Bad response received from $url");
+            throw new Sailthru_Email_Model_Client_Exception("Bad response received from $url");
         }
         return $data;
     }
@@ -1156,10 +1148,10 @@ class Sailthru_Client {
      * @param array $headers
      * @return string
      */
-    private function httpRequestWithoutCurl($url, $data, $method = 'POST') {
-        if ($this->fileUpload === true) {
-            $this->fileUpload = false;
-            throw new Sailthru_Client_Exception('cURL extension is required for the request with file upload');
+    protected function httpRequestWithoutCurl($url, $data, $method = 'POST') {
+        if ($this->_fileUpload === true) {
+            $this->_fileUpload = false;
+            throw new Sailthru_Email_Model_Client_Exception('cURL extension is required for the request with file upload');
         }
 
         $params = array('http' => array('method' => $method));
@@ -1168,15 +1160,15 @@ class Sailthru_Client {
         } else {
             $url .= '?' . http_build_query($data, '', '&');
         }
-        $params['http']['header'] = "User-Agent: {$this->user_agent_string}\nContent-Type: application/x-www-form-urlencoded";
+        $params['http']['header'] = 'User-Agent: {' . $this->_userAgentString . '}\nContent-Type: application/x-www-form-urlencoded';
         $ctx = stream_context_create($params);
         $fp = @fopen($url, 'rb', false, $ctx);
         if (!$fp) {
-            throw new Sailthru_Client_Exception("Unable to open stream: $url");
+            throw new Sailthru_Email_Model_Client_Exception("Unable to open stream: $url");
         }
         $response = @stream_get_contents($fp);
         if ($response === false) {
-            throw new Sailthru_Client_Exception("No response received from stream: $url");
+            throw new Sailthru_Email_Model_Client_Exception("No response received from stream: $url");
         }
         return $response;
     }
@@ -1190,16 +1182,19 @@ class Sailthru_Client {
      * @param array $headers
      * @return string
      */
-    protected function httpRequest($url, $data, $method = 'POST') {
-        $this->log(array("url"=>$url,"method"=>$method),"API");
-        $this->log(array("url"=>$url,"request"=>$data['json']),$method." REQUEST");
-        $response = $this->{$this->http_request_type}($url, $data, $method);
-        $this->log(array("url"=>$url,"response"=>$response),$method." RESPONSE");
-        $json = json_decode($response, true);
-        if ($json === NULL) {
-            throw new Sailthru_Client_Exception("Response: {$response} is not a valid JSON");
+    protected function _httpRequest($url, $data, $method = 'POST') {
+        try {
+            $this->log(array('url'=>$url,'request'=>$data['json'],'http_request_type'=>$this->_httpRequestType,'event_type'=>$this->_eventType),$method.' REQUEST');
+            $response = $this->{$this->_httpRequestType}($url, $data, $method);
+            $this->log(array('url'=>$url,'response'=>$response),$method.' RESPONSE');
+            $json = json_decode($response, true);
+            if ($json === NULL) {
+                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+            }
+            return $json;
+        } catch (Exception $e) {
+            Mage::logException($e);
         }
-        return $json;
     }
 
 
@@ -1210,19 +1205,19 @@ class Sailthru_Client {
      * @param array $data
      * @return array
      */
-    public  function apiPost($action, $data, array $binary_data_param = array()) {
+    public function apiPost($action, $data, array $binary_data_param = array()) {
         $binary_data = array();
         if (!empty ($binary_data_param)) {
             foreach ($binary_data_param as $param) {
                 if (isset($data[$param]) && file_exists($data[$param])) {
-                    $binary_data[$param] = "@{$data[$param]}";
+                    $binary_data[$param] = '@{' . $data[$param] . '}';
                     unset($data[$param]);
-                    $this->fileUpload = true;
+                    $this->_fileUpload = true;
                 }
             }
         }
         $payload = $this->prepareJsonPayload($data, $binary_data);
-        return $this->httpRequest("$this->api_uri/$action", $payload, 'POST');
+        return $this->_httpRequest($this->_apiUri . '/' . $action, $payload, 'POST');
     }
 
 
@@ -1234,7 +1229,8 @@ class Sailthru_Client {
      * @return array
      */
     public function apiGet($action, $data = array(), $method = 'GET') {
-        return $this->httpRequest("{$this->api_uri}/{$action}", $this->prepareJsonPayload($data), $method);
+        $payload = $this->prepareJsonPayload($data);
+        return $this->_httpRequest($this->_apiUri . '/' . $action, $payload, $method);
     }
 
 
@@ -1256,57 +1252,22 @@ class Sailthru_Client {
      * @return array or null
      */
     public function getLastResponseInfo() {
-        return $this->lastResponseInfo;
+        return $this->_lastResponseInfo;
     }
-
 
     /**
      * Prepare JSON payload
      */
     protected function prepareJsonPayload(array $data, array $binary_data = array()) {
         $payload =  array(
-            'api_key' => $this->api_key,
+            'api_key' => $this->_apiKey,
             'format' => 'json', //<3 XML
             'json' => json_encode($data)
         );
-        $payload['sig'] = Sailthru_Util::getSignatureHash($payload, $this->secret);
+        $payload['sig'] = $this->getSignatureHash($payload, $this->_apiSecret);
         if (!empty($binary_data)) {
             $payload = array_merge($payload, $binary_data);
         }
         return $payload;
-    }
-
-    public function startLogging() {
-        if ($this->log_handle) {
-            return true; ##persistent handle
-        }
-        if (!$this->log_handle && !empty($this->log_path)) {
-            $this->log_handle = fopen($this->log_path,"a");
-            return false;
-        }
-        return false;
-    }
-
-    public function stopLogging() {
-        if ($this->log_handle) {
-            fclose($this->log_handle);
-            $this->log_handle = null;
-        }
-    }
-
-    public function log($data,$tag="INFO") {
-        if (empty($this->log_path)) {
-            return false;
-        }
-        $persistent = $this->startLogging();
-        if (is_array($data) || is_object($data)) {
-            $data = json_encode($data);
-        }
-        $date = new DateTime(null, new DateTimeZone('America/New_York'));
-        fwrite($this->log_handle,"[$tag][".$date->format('Y-m-d H:i:sP')."] $data\n");
-        if (!$persistent) {
-            $this->stopLogging();
-        }
-        return true;
     }
 }

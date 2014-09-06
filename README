@@ -1,28 +1,26 @@
---------------------------
-Sailthru Magento Extension
---------------------------
+---------------------------------------
+Sailthru Magento Extension Beta Program
+---------------------------------------
 
-For installation instructions, documentation, and examples please visit:
-http://getstarted.sailthru.com/developers/api-libraries/magento
-
-A simple client library to remotely access the `Sailthru REST API` as per http://getstarted.sailthru.com/developers/api
+A basic Magento extension, utulizing the Sailthru php client library to easily integrate a Magento store with the `Sailthru REST API`. For more information on using our Rest API -http://getstarted.sailthru.com/developers/api
+For questions or troubleshooting send an email to jlewis@sailthru.com.
 
 This extension does the following:
 
-        1. Overrides all emails sent through Magento to be sent through Sailthru, allowing records of the emails to be kept.
-        2. Maintains carts and sends abandoned cart emails, improving your rate of sale.
-        3. Records all orders submitted.
-        4. Adds all registered users along with their info to an email list, for easy and custom eBlasts.
-        5. Adds subscribers to a separate list for simple newsletters.
-        6. Adds Horizon and Sailthru Purchase API integration for learning user's interests.
-	7. Adds Concierge for providing onsite, personalized product recommendations
+        1. Adds Horizon javascript to product pages to collect user interest data.
+        2. Overrides all emails sent through Magento to be sent through Sailthru, allowing personalization or just records of the emails to be kept.
+        3. Maintains carts and sends abandoned cart emails, improving your rate of sale.
+        4. Records all orders submitted.
+        5. Adds all registered users along with their info to an email list, for easy and custom eBlasts.
+        6. Adds subscribers to a separate list for simple newsletters.
+        7. Adds Horizon and Sailthru Purchase API integration for learning user's interests.
+	8. Adds Concierge for providing onsite, personalized product recommendations
 
 
 ===Manual Installation===
 
 Step 1: Download Magento extension
-  Note: You can also clone the latest branch under development using this URL instead:
-  https://github.com/sailthru/sailthru-magento-extension/tarball/dev
+  Note: Be sure to use the dev_lyons branch for the Beta Program.
 
 
 cd /tmp

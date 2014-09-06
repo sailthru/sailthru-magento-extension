@@ -2,10 +2,7 @@
 <form action="<?php echo $this->getFormAction(); ?>" name="blast" id="blast" method="POST">
     <label>Select a <a href="https://sailthru.com/admin/templates">template</a></label><br />
     <select id="template" name="template">
-        <?php
-            date_default_timezone_set('America/New_York');
-            $sailthru = Mage::helper('sailthruemail')->newSailthruClient();
-            $temps = $sailthru->getTemplates();
+        <?php $temps = Mage::getModel('sailthruemail/client')->getTemplates();
             for($i = 0; $i < count($temps["templates"]); $i++) {
                 ?><option value="<?php echo $temps['templates'][$i]['name']; ?>"><?php echo $temps['templates'][$i]['name']; ?></option><?php
             }
@@ -13,7 +10,7 @@
     </select><br /><br />
     <label>Select a <a href="https://sailthru.com/admin/lists">member list</a></label><br />
     <select id="list" name="list">
-        <?php $lists = $sailthru->getLists();
+        <?php $lists = Mage::getModel('sailthruemail/client')->getLists();
             for($i = 0; $i < count($lists["lists"]); $i++) {
                 ?><option value="<?php echo $lists['lists'][$i]['name']; ?>"><?php echo $lists['lists'][$i]['name']." (".(0+$lists['lists'][$i]['email_count'])." members)"; ?></option><?php
             } ?>

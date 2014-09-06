@@ -1,12 +1,13 @@
 <?php
 /**
+ * Newsletter Template Model
  *
  * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
 
-class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Template 
+class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Template
 {
     /**
      * Send mail to subscriber
@@ -24,21 +25,19 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
         if (!Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
             return parent::send($subscriber, $variables, $name, $queue);
         }
-        
+
         if (!$this->isValidForSend()) {
             return false;
         }
-        
-        Mage::log('Sailthru module is enabled, sending email in Sailthru_Email_Model_Newsletter_Template');
 
         $email = '';
+
         if ($subscriber instanceof Mage_Newsletter_Model_Subscriber) {
             $email = $subscriber->getSubscriberEmail();
             if (is_null($name) && ($subscriber->hasCustomerFirstname() || $subscriber->hasCustomerLastname()) ) {
                 $name = $subscriber->getCustomerFirstname() . ' ' . $subscriber->getCustomerLastname();
             }
-        }
-        else {
+        } else {
             $email = (string) $subscriber;
         }
 
@@ -97,6 +96,3 @@ class Sailthru_Email_Model_Newsletter_Template extends Mage_Newsletter_Model_Tem
         return true;
     }
 }
-
-
-?>

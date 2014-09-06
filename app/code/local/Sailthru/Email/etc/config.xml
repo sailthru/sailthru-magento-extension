@@ -9,41 +9,25 @@
 <config>
     <modules>
         <Sailthru_Email>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </Sailthru_Email>
     </modules>
     <global>
         <models>
            <sailthruemail>
                 <class>Sailthru_Email_Model</class>
-                <resourceModel>sailthruemail_mysql4</resourceModel>
             </sailthruemail>
-            <!--<sailthruemail_mysql4>
-                <class>Sailthru_Email_Model_Mysql4</class>
-                <entities>
-                    <email_log><table>sailthruemail_email_log</table></email_log>
-                </entities>
-            </sailthruemail_mysql4>
+            <core>
+                <rewrite>
+                    <email_template>Sailthru_Email_Model_Email_Template</email_template>
+                </rewrite>
+            </core>
             <newsletter>
                 <rewrite>
                     <template>Sailthru_Email_Model_Newsletter_Template</template>
                 </rewrite>
-            </newsletter> -->
-            <core>
-                <rewrite>
-                    <!--<email>Sailthru_Email_Model_Email</email>-->  <!--http://getstarted.sailthru.com/developers/smtp-auth-send-->
-                    <email_template>Sailthru_Email_Model_Email_Template</email_template>
-                </rewrite>
-            </core>
+            </newsletter>
         </models>
-      <!--  <resources>
-            <sailthruemail_setup>
-                <setup>
-                    <module>Sailthru_Email</module>
-                    <class>Sailthru_Email_Model_Resource_Setup</class>
-                </setup>
-            </sailthruemail_setup>
-        </resources> -->
         <blocks>
             <sailthruemail>
                 <class>Sailthru_Email_Block</class>
@@ -54,42 +38,6 @@
                 <class>Sailthru_Email_Helper</class>
             </sailthruemail>
         </helpers>
-        <events>
-            <newsletter_subscriber_save_before>
-                <observers>
-                    <sailthru_newsletter_subscriber_save_before>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>subscriberHandler</method>
-                    </sailthru_newsletter_subscriber_save_before>
-                </observers>
-            </newsletter_subscriber_save_before>
-            <newsletter_subscriber_delete_after>
-                <observers>
-                    <sailthru_newsletter_subscriber_delete_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>subscriberHandler</method>
-                    </sailthru_newsletter_subscriber_delete_after>
-                </observers>
-            </newsletter_subscriber_delete_after>
-            <customer_save_after>
-                <observers>
-                    <sailthru_update_customer>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>customerHandler</method>
-                    </sailthru_update_customer>
-                </observers>
-            </customer_save_after>
-            <!--
-            <sales_order_place_after>
-                <observers>
-                    <sailthru_global_sales_order_place_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>updateSalesAfterSubmit</method>
-                    </sailthru_global_sales_order_place_after>
-                </observers>
-            </sales_order_place_after>
-            -->
-        </events>
     </global>
     <frontend>
         <translate>
@@ -105,126 +53,80 @@
             <customer_register_success>
                 <observers>
                     <sailthru_register_success>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>customerHandler</method>
+                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <method>registration</method>
                     </sailthru_register_success>
                 </observers>
             </customer_register_success>
             <customer_login>
                 <observers>
                     <sailthru_customer_login>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>setSailthruCookie</method>
+                        <type>singleton</type>
+                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <method>login</method>
                     </sailthru_customer_login>
                 </observers>
             </customer_login>
             <customer_logout>
                 <observers>
                     <sailthru_customer_logout>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>unsetSailthruCookie</method>
+                        <type>singleton</type>
+                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <method>logout</method>
                     </sailthru_customer_logout>
                 </observers>
             </customer_logout>
-      <!--      <customer_customer_authenticated>
-                <observers>
-                    <sailthru_customer_customer_authenticated>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>setSailthruCookie</method>
-                    </sailthru_customer_customer_authenticated>
-                </observers>
-            </customer_customer_authenticated> -->
-            <checkout_cart_product_add_after>
-                <observers>
-                    <sailthru_checkout_cart_product_add_after>
-                        <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_checkout_cart_product_add_after>
-                </observers>
-            </checkout_cart_product_add_after> 
             <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <type>singleton</type>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>updateItemInCart</method>
                     </sailthru_checkout_cart_update_items_after>
                 </observers>
             </checkout_cart_update_items_after>
-            <checkout_cart_save_after>
-                <observers>
-                    <sailthru_checkout_cart_save_after>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_checkout_cart_save_after>
-                </observers>
-            </checkout_cart_save_after>
-            <checkout_cart_product_update_after>
-                <observers>
-                    <sailthru_checkout_cart_product_update_after>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_checkout_cart_product_update_after>
-                </observers>
-            </checkout_cart_product_update_after>
             <sales_quote_remove_item>
                 <observers>
                     <sailthru_sales_quote_remove_item>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>removeItemFromCart</method>
                     </sailthru_sales_quote_remove_item>
                 </observers>
-            </sales_quote_remove_item> 
-            <checkout_type_onepage_save_order>
+            </sales_quote_remove_item>
+            <checkout_cart_product_add_after>
                 <observers>
-                    <sailthru_checkout_type_onepage_save_order>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_checkout_type_onepage_save_order>
+                    <sailthru_checkout_cart_product_add_after>
+                        <type>singleton</type>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>addItemToCart</method>
+                    </sailthru_checkout_cart_product_add_after>
                 </observers>
-            </checkout_type_onepage_save_order>
-            <checkout_controller_onepage_save_shipping_method>
+            </checkout_cart_product_add_after>
+            <sales_order_place_after>
                 <observers>
-                    <sailthru_checkout_controller_onepage_save_shipping_method>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_checkout_controller_onepage_save_shipping_method>
+                    <sailthru_sales_order_place_after>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>placeOrder</method>
+                    </sailthru_sales_order_place_after>
                 </observers>
-            </checkout_controller_onepage_save_shipping_method>
-       <!--    <sales_quote_save_after>
+            </sales_order_place_after>
+            <newsletter_subscriber_save_before>
                 <observers>
-                    <sailthru_sales_quote_save_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushIncompletePurchaseOrderToSailthru</method>
-                    </sailthru_sales_quote_save_after>
+                    <sailthru_newsletter_subscriber_save_before>
+                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <method>subscriberSave</method>
+                    </sailthru_newsletter_subscriber_save_before>
                 </observers>
-            </sales_quote_save_after> -->
-            <checkout_quote_destroy>
+            </newsletter_subscriber_save_before>
+            <newsletter_subscriber_delete_after>
                 <observers>
-                    <sailthru_checkout_quote_destroy>
-                        <type>Singleton</type>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushPurchaseOrderSuccessToSailthru2</method>
-                    </sailthru_checkout_quote_destroy>
+                    <sailthru_newsletter_subscriber_delete_after>
+                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <method>subscriberDelete</method>
+                    </sailthru_newsletter_subscriber_delete_after>
                 </observers>
-            </checkout_quote_destroy>
-            <checkout_submit_all_after>
-                <observers>
-                    <sailthru_checkout_submit_all_after>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>pushPurchaseOrderSuccessToSailthru</method>
-                    </sailthru_checkout_submit_all_after>
-                </observers>
-            </checkout_submit_all_after>
+            </newsletter_subscriber_delete_after>
      </events>
         <layout>
             <updates>
@@ -241,7 +143,7 @@
                     <frontName>email</frontName>
                 </args>
             </sailthruemail>
-     <!--       <checkout>
+            <checkout>
                 <args>
                     <modules>
                         <Sailthru_Email before="Mage_Checkout">Sailthru_Email</Sailthru_Email>
@@ -254,7 +156,7 @@
                         <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
                     </modules>
                 </args>
-            </customer> -->
+            </customer> 
             <newsletter>
                 <args>
                     <modules>
@@ -269,27 +171,19 @@
              <catalog_product_delete_after>
                 <observers>
                     <sailthru_catalog_product_delete_after>
-                        <class>Sailthru_Email_Model_Observer</class>
+                        <class>Sailthru_Email_Model_Observer_Content</class>
                         <method>deleteProduct</method>
                     </sailthru_catalog_product_delete_after>
                 </observers>
             </catalog_product_delete_after> 
             <catalog_product_save_after>
                 <observers>
-                    <sales_quote>
-                        <class>Sailthru_Email_Model_Observer</class>
+                    <sailthru_catalog_product_save_after>
+                        <class>Sailthru_Email_Model_Observer_Content</class>
                         <method>saveProduct</method>
-                    </sales_quote>
+                    </sailthru_catalog_product_save_after>
                 </observers>
             </catalog_product_save_after>
-            <catalog_product_status_update>
-                <observers>
-                    <sales_quote>
-                        <class>Sailthru_Email_Model_Observer</class>
-                        <method>saveProduct</method>
-                    </sales_quote>
-                </observers>
-            </catalog_product_status_update>
         </events>
     </adminhtml>
    <admin>
@@ -303,4 +197,11 @@
             </sailthruemail>
         </routers>
     </admin>
+    <default>
+        <sailthru>
+            <api>
+                <uri><![CDATA[https://api.sailthru.com]]></uri>
+            </api>
+       </sailthru>
+    </default>
 </config>
