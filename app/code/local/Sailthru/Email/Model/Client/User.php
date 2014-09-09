@@ -198,7 +198,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     public function logout()
     {
         try {
-            Mage::getSingleton('customer/session')->unsSailthruHid();
+            Mage::getModel('core/cookie')->delete('sailthru_hid');
         } catch (Exception $e) {
             Mage::logException($e);
         }
