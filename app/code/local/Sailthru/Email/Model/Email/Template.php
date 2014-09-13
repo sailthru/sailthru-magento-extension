@@ -96,7 +96,12 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
         //sailthru//
         try {
-            $template_name = $this->getId();
+            if ($this->getData('template_code')) {
+                $template_name = $this->getData('template_code');
+            } else {
+                $template_name = $this->getId();
+            }
+            
             $options = array(
                 'behalf_email' => $this->getSenderEmail(),
             );
@@ -110,7 +115,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             }
 
             $client =  Mage::getModel('sailthruemail/client');
-            $client->multisend($template_name, $emails, $vars, $evars, $options);
+            $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
 
             if(isset($response["error"]) && $response['error'] == 14) {
                 //Create template if it does not already exist
