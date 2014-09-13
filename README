@@ -1,19 +1,18 @@
-Updates to this file coming 9/17/14
-
 ---------------------------------------
 Sailthru Magento Extension Beta Program
 ---------------------------------------
 
 A basic Magento extension, utulizing the Sailthru php client library to easily integrate a Magento store with the `Sailthru REST API`. For more information on using our Rest API -http://getstarted.sailthru.com/developers/api
-For questions or troubleshooting send an email to jlewis@sailthru.com.
+For questions or troubleshooting please email support@sailthru.com with the subject line "Magento Plugin".
 
 This extension does the following:
 
-        1. Adds Horizon javascript to product pages to collect user interest data.
-        2. Overrides all emails sent through Magento to be sent through Sailthru, allowing personalization or just records of the emails to be kept.
-        3. Maintains carts and sends abandoned cart emails, improving your rate of sale.
-        4. Records all orders submitted.
-        5. Adds all registered users along with their info to an email list, for easy and custom eBlasts.
+        1. Adds Horizon javascript to product pages, that collects content, pageviews, and user interest data.
+        2. Overrides all emails sent through Magento to be sent through Sailthru, allowing personalization and creates a record of the email and clickthroughs.
+        3. Records all orders submitted, allowing email atribution, reporting, and furthering your customization data in Sailthru.
+        4. Creates abandoned cart emails, improving your rate of sale.
+        5. Ports existing existing users into the Sailthru system on their login.
+        6. Ports registering users to a Sailthru list you set, allowing easy eblasts.
         6. Adds subscribers to a separate list for simple newsletters.
         7. Adds Horizon and Sailthru Purchase API integration for learning user's interests.
 	8. Adds Concierge for providing onsite, personalized product recommendations
@@ -22,8 +21,6 @@ This extension does the following:
 ===Manual Installation===
 
 Step 1: Download Magento extension
-  Note: Be sure to use the dev_lyons branch for the Beta Program.
-
 
 cd /tmp
 mkdir sailthru-magento
@@ -43,3 +40,8 @@ Step 3: You will need to login to your admin account, clear Magento's cache, log
 
 
 Step 4: Add your Sailthru API key and secret and other Sailthru settings on Magento's configurations page.
+
+Step 5: In your my.sailthru.com interface create an "Abandoned Cart" template and "Purchase Receipt" template. Add {parse(content)}{beacon} to the code tab.
+Personalize the subject line and other fields to your preference. Make sure you set a verified email address!
+
+Step 6: Enjoy the power of Sailthru.
