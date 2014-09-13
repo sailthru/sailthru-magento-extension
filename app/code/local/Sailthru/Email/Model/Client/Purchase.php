@@ -20,39 +20,35 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     public function sendCart(Mage_Sales_Model_Quote $quote, $email = null, $eventType = null)
     {
         try{
-            /**
-             * only send abandoned cart data once
-             */
-            if ($quote->getId() != Mage::getSingleton('checkout/session')->getSailthuAbandonedCartId()) {
 
-                if ($eventType){
-                    $this->_eventType = $eventType;
-                }
-
-                if (!$email) {
-                    if(!$email = $quote->getCustomerEmail()) {
-                        Mage::logException("Unable to post purchase: customer email is not defined.");
-                        return false;
-                    }
-                }
-
-                $data = array(
-                        'email' => $email,
-                        'items' => $this->_getItems($quote->getAllVisibleItems()),
-                        'incomplete' => 1,
-                        'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
-                        'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
-                        'message_id' => $this->getMessageId()
-                        );
-
-                $response = $this->apiPost('purchase', $data);
-
-                if (array_key_exists('error',$response)){
-                    return $this->handleError($response, $quote, $email);
-                }
-                Mage::getSingleton('checkout/session')->setSailthuAbandonedCartId($quote->getId());
+            if ($eventType){
+                $this->_eventType = $eventType;
             }
 
+            if (!$email) {
+                if(!$email = $quote->getCustomerEmail()) {
+                    Mage::logException("Unable to post purchase: customer email is not defined.");
+                    return false;
+                }
+            }
+
+            $data = array(
+                    'email' => $email,
+                    'items' => $this->_getItems($quote->getAllVisibleItems()),
+                    'incomplete' => 1,
+                    'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
+                    'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
+                    'message_id' => $this->getMessageId()
+                    );
+
+            $response = $this->apiPost('purchase', $data);
+
+            if (array_key_exists('error',$response)){
+                return $this->handleError($response, $quote, $email);
+            }
+            
+            Mage::getSingleton('checkout/session')->setSailthuAbandonedCartId($quote->getId());
+            
             return true;
         } catch (Exception $e) {
             Mage::logException($e);
@@ -133,13 +129,13 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
             foreach($items as $item) {
                 $_item = array();
-                $_vars = array();
+                $_item['vars'] = array();
                 if ($item->getProductType() == 'configurable') {
                     $parentIds[] = $item->getParentItemId();
                     $options = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
                     $_item['id'] = $options['simple_sku'];
                     $_item['title'] = $options['simple_name'];
-                    $_vars = $this->_getVars($options);
+                    $_item['vars'] = $this->_getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
                 } elseif (!in_array($item->getSku(),$configurableSkus) && $item->getProductType() != 'bundle') {
                     $_item['id'] = $item->getSku();
@@ -158,8 +154,12 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $_item['url'] = $item->getProduct()->getProductUrl();
                     $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getPrice());
 
-                    if ($_vars) {
-                        $_item['vars'] = $_vars;
+                    if (!isset($_item['vars']['image'])) {
+                        if ($item->getProduct()->hasImage()) {
+                             $_item['vars']['image'] = $item->getProduct()->getImageUrl();
+                        } elseif ($item->getProduct()->hasSmallImage()) {
+                             $_item['vars']['image'] = $item->getProduct()->getSmallImageUrl();
+                        }
                     }
                     
                     if ($tags = $this->_getTags($item->getProductId())) {
