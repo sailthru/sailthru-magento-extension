@@ -115,7 +115,7 @@
                 <observers>
                     <sailthru_newsletter_subscriber_save_before>
                         <class>Sailthru_Email_Model_Observer_User</class>
-                        <method>subscriberSave</method>
+                        <method>subscription</method>
                     </sailthru_newsletter_subscriber_save_before>
                 </observers>
             </newsletter_subscriber_save_before>
@@ -123,7 +123,7 @@
                 <observers>
                     <sailthru_newsletter_subscriber_delete_after>
                         <class>Sailthru_Email_Model_Observer_User</class>
-                        <method>subscriberDelete</method>
+                        <method>subscription</method>
                     </sailthru_newsletter_subscriber_delete_after>
                 </observers>
             </newsletter_subscriber_delete_after>
