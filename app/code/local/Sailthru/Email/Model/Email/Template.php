@@ -146,9 +146,11 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      * @param   array $vars varianles which can be used in template
      * @param   int|null $storeId
      * @return  Mage_Core_Model_Email_Template
-     */
+     * 
+     * Create as send is being deprecated
     public function sendTransactional($templateId, $sender, $email, $name, $vars=array(), $storeId=null)
     {
         return $this;
     }
+    */
 }
