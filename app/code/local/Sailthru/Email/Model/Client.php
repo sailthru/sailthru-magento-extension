@@ -4,8 +4,12 @@
  *
  * @category  Sailthru
  * @package   Sailthru_Email
- * @author    Kwadwo Juantuah <support@sailthru.com>
+ * @author    Sailthru Dev Team <support@sailthru.com>
  *
+ * 
+ * The entire Sailthru PHP API Client Library. This class will be useful for extending any functionality beyond the default 
+ * Plugin. 
+ * 
  * Makes HTTP Request to Sailthru API server
  * Response from server depends on the format being queried
  * if 'json' format is requested, client will recieve JSON object and 'php' is requested, client will recieve PHP array
