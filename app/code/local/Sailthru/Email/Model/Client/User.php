@@ -100,8 +100,11 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 
         try {
             $data = $this->getCustomerData($customer);
-            $response = $this->apiPost('user', $data);
-            $this->setCookie($response);
+            if ($response = $this->apiPost('user',$data)) {
+                $this->setCookie($response);
+            } else {
+                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+            }
         } catch(Sailthru_Email_Model_Client_Exception $e) {
              Mage::logException($e);
         } catch(Exception $e) {
@@ -116,7 +119,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * @param Mage_Newsletter_Model_Subscriber $subscriber
      * @return array
      *
-     * @todo add unsubscribe functionality
      */
     public function sendSubscriberData(Mage_Newsletter_Model_Subscriber $subscriber)
     {
@@ -140,10 +142,13 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'fields' => array('keys' => 1),
                 //Hacky way to prevent user from getting campaigns if they are not subscribed
                 //An example is when a user has to confirm email before before getting newsletters.
-                'optout_email' => ($subscriber->getSubscriberStatus() != 1) ? 'blast' : 'none',
+                'optout_email' => ($subscriber->isSubscribed()) ? 'none' : 'blast',
             );
-            $response = $this->apiPost('user', $data);
-            $this->setCookie($response);
+            if ($response = $this->apiPost('user',$data)) {
+                $this->setCookie($response);
+            } else {
+                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
+            }
          } catch(Sailthru_Email_Model_Client_Exception $e) {
              Mage::logException($e);
         } catch(Exception $e) {
