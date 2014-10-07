@@ -9,13 +9,24 @@
 class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstract
 {
 
+    protected $_isAbandonedEnabled = false;
+
+    protected $_isTransactionalsEnabled = false;
+    
+    
+    public function __construct() {
+        $this->_isAbandonedEnabled = Mage::helper('sailthruemail')->sendAbandonedCartEmails();
+        $this->_isTransactionalsEnabled = Mage::helper('sailthruemail')->isTransactionalEmailEnabled;
+        parent::__construct();
+    }
+
     public function addItemToCart(Varien_Event_Observer $observer)
     {
         if (!$this->_isEnabled) {
             return;
         }
         
-        if(Mage::helper('sailthruemail')->sendAbandonedCartEmails() && $this->_email) {
+        if($this->_isAbandonedEnabled && $this->_email && $this->_isTransactionalsEnabled) {
             try{
                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'addItemToCart');
             } catch (Exception $e) {
@@ -31,7 +42,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
             return;
         }
         
-        if(Mage::helper('sailthruemail')->sendAbandonedCartEmails() && $this->_email) {
+        if($this->_isAbandonedEnabled && $this->_email && $this->_isTransactionalsEnabled) {
             try{
                 if ($hasChanges = $observer->getCart()->hasDataChanges()) {
                     $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(),$this->_email,'updateItemInCart');
@@ -49,7 +60,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
             return;
         }
         
-        if(Mage::helper('sailthruemail')->sendAbandonedCartEmails() && $this->_email) {
+        if($this->_isAbandonedEnabled && $this->_email && $this->_isTransactionalsEnabled) {
             try{
                  $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
             } catch (Exception $e) {
