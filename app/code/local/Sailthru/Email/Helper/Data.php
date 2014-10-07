@@ -19,7 +19,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_CONCIERGE_ENABLED                        = 'sailthru/horizon/concierge_enabled';
     const XML_PATH_REMINDER_TIME                            = 'sailthru/email/reminder_time';
     const XML_PATH_TRANSACTION_EMAIL_ENABLED                = 'sailthru/email/enable_transactional_emails';
-    const XML_PATH_ABANDONED_CART_EMAIL_ENABLED             = 'sailthru/email/enable_abandoned_cart_emails';
+    const XML_PATH_ABANDONED_CART_EMAIL_ENABLED             = 'sailthru/email/abandoned_cart';
     const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
 
     /**
