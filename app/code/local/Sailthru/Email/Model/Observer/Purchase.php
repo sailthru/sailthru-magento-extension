@@ -11,7 +11,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function addItemToCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_email) {
+        if($this->_isEnabled && $this->_email && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
             try{
                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'addItemToCart');
             } catch (Exception $e) {
@@ -23,7 +23,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function updateItemInCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_email) {
+        if($this->_isEnabled && $this->_email && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
             try{
                 if ($hasChanges = $observer->getCart()->hasDataChanges()) {
                     $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(),$this->_email,'updateItemInCart');
@@ -37,7 +37,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function removeItemFromCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_email) {
+        if($this->_isEnabled && $this->_email && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
             try{
                  $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
             } catch (Exception $e) {
