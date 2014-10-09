@@ -106,10 +106,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
              */
             $responsePurchase = $this->apiPost('purchase', $data);
 
-            /**
-             * Send customer data to user API
-             */
-            //$responseUser = Mage::getModel('sailthruemail/client_user')->sendCustomerData($customer);
         }catch (Exception $e) {
             Mage::logException($e);
             return false;
