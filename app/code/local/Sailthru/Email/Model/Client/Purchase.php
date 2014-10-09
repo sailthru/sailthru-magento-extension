@@ -88,13 +88,13 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * any scheduled abandoned cart email.
      *
      */
-    public function sendOrder(Mage_Sales_Model_Order $order, $customer)
+    public function sendOrder(Mage_Sales_Model_Order $order)
     {
         try{
             $this->_eventType = 'placeOrder';
 
             $data = array(
-                    'email' => $customer->getEmail(),
+                    'email' => $order->getCustomerEmail(),
                     'items' => $this->_getItems($order->getAllVisibleItems()),
                     'adjustments' => $this->_getAdjustments($order),
                     'message_id' => $this->getMessageId(),
