@@ -79,9 +79,9 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
      */
     public function placeOrder(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $this->_email) {
+        if($this->_isEnabled && $observer->getOrder()->getCustomerEmail()) {
             try{
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendOrder($observer->getOrder(),$this->_customer);
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendOrder($observer->getOrder());
             } catch (Exception $e) {
                 Mage::logException($e);
             }
