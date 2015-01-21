@@ -63,6 +63,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'price' => $product->getPrice(),
                 'description' => urlencode($product->getDescription()),
                 'tags' => htmlspecialchars($product->getMetaKeyword()),
+                'images' => array();
                 'vars' => array('sku' => $product->getSku(),
                     'storeId' => '',
                     'typeId' => $product->getTypeId(),
@@ -97,15 +98,15 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 
             // Add product images
             if(self::validateProductImage($product->getImage())) {
-                $data['vars']['imageUrl'] = $product->getImageUrl();
+                $data['images']['full'] = array ("url" => $product->getImageUrl());
             }
 
             if(self::validateProductImage($product->getSmallImage())) {
-                $data['vars']['smallImageUrl'] = $product->getSmallImageUrl($width = 88, $height = 77);
+                $data['images']['smallImage'] = array("url" => $product->getSmallImageUrl($width = 88, $height = 77));
             }
 
             if(self::validateProductImage($product->getThumbnail())) {
-                $data['vars']['thumbnailUrl'] = $product->getThumbnailUrl($width = 75, $height = 75);
+                $data['images']['thumb'] = array("url" => $product->getThumbnailUrl($width = 75, $height = 75));
             }
 
             return $data;
