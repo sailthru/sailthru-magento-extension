@@ -63,7 +63,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'price' => $product->getPrice(),
                 'description' => urlencode($product->getDescription()),
                 'tags' => htmlspecialchars($product->getMetaKeyword()),
-                'images' => array();
+                'images' => array(),
                 'vars' => array('sku' => $product->getSku(),
                     'storeId' => '',
                     'typeId' => $product->getTypeId(),
@@ -92,7 +92,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                     'isVirtual'  => $product->isVirtual(),
                     'isRecurring' => $product->isRecurring(),
                     'isInStock'  => $product->isInStock(),
-                    'weight'  => $product->getSku(),
+                    'weight'  => $product->getSku()
                 )
             );
 
