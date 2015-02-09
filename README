@@ -1,8 +1,8 @@
----------------------------------------
-Sailthru Magento Extension Beta Program
----------------------------------------
+---------------------------
+Sailthru Magento Extension
+---------------------------
 
-A basic Magento extension, utulizing the Sailthru php client library to easily integrate a Magento store with the `Sailthru REST API`. For more information on using our Rest API -http://getstarted.sailthru.com/developers/api
+A basic Magento extension that will provide Sailthru's base functionality or provide a base to build further functionality by utilizing the Sailthru php client library to easily integrate a Magento store with the `Sailthru REST API`. For more information on using our Rest API -http://getstarted.sailthru.com/developers/api
 For questions or troubleshooting please email support@sailthru.com with the subject line "Magento Plugin".
 
 This extension does the following:
