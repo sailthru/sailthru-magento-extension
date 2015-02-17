@@ -45,3 +45,6 @@ Step 5: In your my.sailthru.com interface create an "Abandoned Cart" template an
 Personalize the subject line and other fields to your preference. Make sure you set a verified email address!
 
 Step 6: Enjoy the power of Sailthru.
+
+
+===Tested on Magento Community Edition 1.8 / 1.9===
