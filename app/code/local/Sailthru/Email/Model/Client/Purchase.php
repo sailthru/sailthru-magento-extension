@@ -186,9 +186,11 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     {
         if ($order->getBaseDiscountAmount()) {
             return array(
-                   'title' => 'Sale',
-                   'price' => Mage::helper('sailthruemail')->formatAmount($order->getBaseDiscountAmount())
-                   );
+                array(
+                    'title' => 'Sale',
+                    'price' => Mage::helper('sailthruemail')->formatAmount($order->getBaseDiscountAmount())
+                )
+            );
         }
 
         return array();
