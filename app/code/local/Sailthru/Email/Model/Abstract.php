@@ -102,7 +102,9 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
 
     public function setCookie($response) {
         if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
-            Mage::getModel('core/cookie')->set('sailthru_hid',$response['keys']['cookie'],null,null,'.sailthru.com',null,false);
+            $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
+            $domain = $domain_parts[sizeof($domain_parts)-2] . '.' . $domain_parts[sizeof($domain_parts)-1];
+            Mage::getModel('core/cookie')->set('sailthru_hid',$response['keys']['cookie'],null,null,$domain,null,false);
             return true;
         } else {
             return false;
