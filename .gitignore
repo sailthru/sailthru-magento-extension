@@ -211,3 +211,4 @@ skin/
 var/cache
 var/package
 var/session
+var/.htaccess
