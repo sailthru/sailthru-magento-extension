@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package>
+    <name>Sailthru_Email</name>
+    <version>1.2.0</version>
+    <stability>stable</stability>
+    <license uri="http://www.opensource.org/licenses/osl-3.0.php">OSL v3.0</license>
+    <channel>local</channel>
+    <extends/>
+    <summary>The Sailthru extension enables you route all transactional emails through Sailthru as well as utilize the powerful suite of products from Sailthru that enable each Merchant to truly personalize email communication. </summary>
+    <description>This extension enables you to fully integrate with Sailthru's powerful suite of products:&#xD;
+&#xD;
+Transactional Emails&#xD;
+&#xD;
+The extension overwrites Magento's default send functionality to route all transactional emails through Sailthru.  The templates that already exist in Magento are created in Sailthru the first time such a template is sent and you are able to track delivery rate on each transactional email.  All transactional emails can also utilize Sailthru's triggers that can for example, specify an email to be sent if a user opens or clicks on an email or makes a purchase.&#xD;
+&#xD;
+Abandoned Cart Emails&#xD;
+&#xD;
+The extension makes it really easy to send abandoned cart emails.  All you have to do is to specify the time after an item is added to cart (and a purchase is not made) that the abandoned cart email should be sent. An API call is made when a customer adds an item to their cart and this schedules the email to be sent. &#xD;
+&#xD;
+Purchase API&#xD;
+&#xD;
+Sailthru's purchase API creates a profile that has all the purchases that a user has made as well as current items that are in their cart.  This makes it really easy to be able to personalize either transactional emails or newsletters to customers based on their unique profiles and interests. &#xD;
+&#xD;
+Horizon&#xD;
+&#xD;
+Horizon is Sailthru's unique behavioral-tracking product. Horizon gathers data on your users' individual interests based on activity on your website or mobile app.&#xD;
+&#xD;
+Armed with that intelligence, you can dynamically target users based on their purchase, browsing, and explored interests. Horizon-personalized content boosts clicks, pageviews and user engagement.&#xD;
+&#xD;
+Concierge&#xD;
+&#xD;
+Concierge is a Horizon-powered on-site recommendation tool, allowing a small 'slider' to appear in a user's browser window at the end of an article. The slider will suggest another story based on a user's interest.&#xD;
+</description>
+    <notes>Improvements have been made to the data that is pushed pushed out to Sailthru and more admin options have been added to the backend to specify the name, email and template for the abandoned cart as well as lists that users should be added to when they sign up.</notes>
+    <authors><author><name>Kwadwo Juantuah</name><user>sailthru</user><email>kjuantuah@sailthru.com</email></author></authors>
+    <date>2015-09-29</date>
+    <time>17:26:23</time>
+    <contents><target name="magelocal"><dir name="Sailthru"><dir name="Email"><dir name="Block"><file name="Form.php" hash="2da5212646030e90b8dce98707df0014"/><file name="Horizon.php" hash="64a848ef8bd3d5a29b8da5921387c5b7"/></dir><dir name="Helper"><file name="Data.php" hash="58e0fc5dfec55091e23d167f95998cbf"/></dir><dir name="Model"><file name="Abstract.php" hash="e7f1ec947915f6e030ec69c479d5e159"/><dir name="Client"><file name="Content.php" hash="17611a9b2a3f358cfde91676451b491d"/><file name="Exception.php" hash="8ca3b3c6e195344bafdfdef7c092cbdc"/><file name="List.php" hash="739b15cb853cc4232102a9bf2044bb90"/><file name="Purchase.php" hash="232057912d04f16ce02b36ccde31e943"/><file name="User.php" hash="276963f0864ef1c9647c82e9334e01c6"/></dir><file name="Client.php" hash="caf0bbed9d11d9a167626dd3b472ec3e"/><dir name="Email"><file name="Template.php" hash="94344456bd4d543db80fded91800d6bf"/></dir><dir name="Newsletter"><file name="Template.php" hash="490bbace9960e211c5a5f94d0ec0b1de"/></dir><dir name="Observer"><file name="Content.php" hash="f3da72e473209c47f1577543513bf065"/><dir name="Purchase"><file name="Abandoned.php" hash="c7fd1f4c638c9d0e0781b0b7155b4c02"/></dir><file name="Purchase.php" hash="4cb73e3746df1101207b7eb840c34ddc"/><file name="User.php" hash="2405e06e1250bc793ff908653b70198f"/></dir><file name="Observer.php" hash="a72c2551ab8dfd5735421e73e1188aa0"/></dir><dir name="controllers"><file name="AdminController.php" hash="7d236bc6415f5b44d7137811e55998de"/><file name="IndexController.php" hash="f21fe7e884d254ead56f08e702948ebd"/><file name="OnepageController.php" hash="c8fe9157b3184e3c62f9b563588a215f"/></dir><dir name="etc"><file name="adminhtml.xml" hash="77f2c08dc9941ba454256619036cc211"/><file name="config.xml" hash="94e864d57581981473b2fa3fb9f9e0a8"/><file name="system.xml" hash="63995ce60a5c68a0d1c358f4396d6d52"/></dir></dir></dir><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="sailthru.xml" hash=""/></dir><dir name="template"><dir name="sailthru"><file name="horizon.phtml" hash=""/></dir></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Sailthru_Email.xml" hash="78b9936a42f39f86fc7620dbcb37f68f"/></dir></target><target name="magedesign"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="template"><dir name="sailthruemail"><file name="form.phtml" hash="87d0b8f2b549b26c5244a7d586d13692"/></dir></dir></dir></dir></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.3.3</min><max>5.5.29</max></php><extension><name>curl</name><min/><max/></extension></required></dependencies>
+</package>

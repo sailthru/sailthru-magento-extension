@@ -1,0 +1,126 @@
+<_>
+   <form_key>OQmUvP4tP0taHifo</form_key>
+   <name>Sailthru_Email</name>
+   <channel>local</channel>
+   <version_ids>
+      <version_ids>2</version_ids>
+   </version_ids>
+   <summary>The Sailthru extension enables you route all transactional emails through Sailthru as well as utilize the powerful suite of products from Sailthru that enable each Merchant to truly personalize email communication. </summary>
+   <description>This extension enables you to fully integrate with Sailthru&apos;s powerful suite of products:
+
+Transactional Emails
+
+The extension overwrites Magento&apos;s default send functionality to route all transactional emails through Sailthru.  The templates that already exist in Magento are created in Sailthru the first time such a template is sent and you are able to track delivery rate on each transactional email.  All transactional emails can also utilize Sailthru&apos;s triggers that can for example, specify an email to be sent if a user opens or clicks on an email or makes a purchase.
+
+Abandoned Cart Emails
+
+The extension makes it really easy to send abandoned cart emails.  All you have to do is to specify the time after an item is added to cart (and a purchase is not made) that the abandoned cart email should be sent. An API call is made when a customer adds an item to their cart and this schedules the email to be sent. 
+
+Purchase API
+
+Sailthru&apos;s purchase API creates a profile that has all the purchases that a user has made as well as current items that are in their cart.  This makes it really easy to be able to personalize either transactional emails or newsletters to customers based on their unique profiles and interests. 
+
+Horizon
+
+Horizon is Sailthru&apos;s unique behavioral-tracking product. Horizon gathers data on your users&apos; individual interests based on activity on your website or mobile app.
+
+Armed with that intelligence, you can dynamically target users based on their purchase, browsing, and explored interests. Horizon-personalized content boosts clicks, pageviews and user engagement.
+
+Concierge
+
+Concierge is a Horizon-powered on-site recommendation tool, allowing a small &apos;slider&apos; to appear in a user&apos;s browser window at the end of an article. The slider will suggest another story based on a user&apos;s interest.
+</description>
+   <license>OSL v3.0</license>
+   <license_uri>http://www.opensource.org/licenses/osl-3.0.php</license_uri>
+   <version>1.2.0</version>
+   <stability>stable</stability>
+   <notes>Improvements have been made to the data that is pushed pushed out to Sailthru and more admin options have been added to the backend to specify the name, email and template for the abandoned cart as well as lists that users should be added to when they sign up.</notes>
+   <authors>
+      <name>
+         <name>Kwadwo Juantuah</name>
+      </name>
+      <user>
+         <user>sailthru</user>
+      </user>
+      <email>
+         <email>kjuantuah@sailthru.com</email>
+      </email>
+   </authors>
+   <depends_php_min>5.3.3</depends_php_min>
+   <depends_php_max>5.5.29</depends_php_max>
+   <depends>
+      <package>
+         <name>
+            <name/>
+         </name>
+         <channel>
+            <channel/>
+         </channel>
+         <min>
+            <min/>
+         </min>
+         <max>
+            <max/>
+         </max>
+         <files>
+            <files>  </files>
+         </files>
+      </package>
+      <extension>
+         <name>
+            <name>Core</name>
+            <name>curl</name>
+         </name>
+         <min>
+            <min/>
+            <min/>
+         </min>
+         <max>
+            <max/>
+            <max/>
+         </max>
+      </extension>
+   </depends>
+   <contents>
+      <target>
+         <target>magelocal</target>
+         <target>magelocal</target>
+         <target>mageetc</target>
+         <target>magelocal</target>
+         <target>magelocal</target>
+         <target>magedesign</target>
+      </target>
+      <path>
+         <path/>
+         <path>Sailthru/Email</path>
+         <path>modules/Sailthru_Email.xml</path>
+         <path>frontend/base/default/layout/sailthru.xml</path>
+         <path>frontend/base/default/template/sailthru/horizon.phtml</path>
+         <path>adminhtml/default/default/template/sailthruemail/form.phtml</path>
+      </path>
+      <type>
+         <type>file</type>
+         <type>dir</type>
+         <type>file</type>
+         <type>file</type>
+         <type>file</type>
+         <type>file</type>
+      </type>
+      <include>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+      </include>
+      <ignore>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+      </ignore>
+   </contents>
+</_>
