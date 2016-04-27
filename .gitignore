@@ -212,3 +212,7 @@ var/cache
 var/package
 var/session
 var/.htaccess
+var/log
+var/report
+.gitignore
+README
