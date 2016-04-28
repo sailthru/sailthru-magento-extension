@@ -110,7 +110,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             $vars = null;
             $evars = array();
 
-            for($i = 0; $i < count($emails); $i++) {
+            $num_emails = count($emails);
+            for($i = 0; $i < $num_emails; $i++) {
                 $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
             }
 
