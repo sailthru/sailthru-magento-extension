@@ -1,4 +1,4 @@
-<?php
+kb<?php
 /**
  * Client Model
  *
@@ -1170,6 +1170,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         if ($response === false) {
             throw new Sailthru_Email_Model_Client_Exception("No response received from stream: $url");
         }
+        fclose($fp);
         return $response;
     }
 
