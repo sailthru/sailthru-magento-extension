@@ -33,7 +33,7 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
             $this->_session = Mage::getSingleton('customer/session');
             if ($this->_session->isLoggedIn()) {
                 $this->_customer = Mage::getModel('customer/customer')->load($this->_session->getId());
-                $this->_email = $this->_customer->getEmail();
+                $this->_email = Mage::getSingleton('customer/session')->getCustomer()->getEmail(); //$this->_customer->getEmail(); 
             }
         }
     }
