@@ -1,10 +1,18 @@
 <?php
-class Sailthru_Email_Block_Form extends Mage_Adminhtml_Block_Template
+
+/*
+* Generates form for sending newsletter blasts
+*/
+
+class Sailthru_Email_Block_Form extends Mage_Adminhtml_Block_Widget_Form
 {
-    public function __construct()
+
+    public function _prepareForm()
     {
-        parent::__construct();
-        $this->setTemplate("sailthruemail/form.phtml");
+
+		$this->setTemplate("sailthruemail/form.phtml");
         $this->setFormAction(Mage::getUrl("*/*/post"));
+        return parent::_prepareForm();
+
     }
 }
