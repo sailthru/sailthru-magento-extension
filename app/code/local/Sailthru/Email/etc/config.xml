@@ -128,13 +128,6 @@
                 </observers>
             </newsletter_subscriber_delete_after>
      </events>
-        <layout>
-            <updates>
-                <sailthruemail>
-                    <file>sailthru.xml</file>
-                </sailthruemail>
-            </updates>
-        </layout>
         <routers>
             <sailthruemail>
                 <use>standard</use>
