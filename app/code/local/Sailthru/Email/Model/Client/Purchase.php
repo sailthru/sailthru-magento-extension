@@ -145,7 +145,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 }
 
                 if ($_item['id']) {
-                    if (get_class($item) == 'Mage_Sales_Model_Order_Item' ) {
+                    if ($item instanceof Mage_Sales_Model_Order_Item ) {
                         $_item['qty'] = intval($item->getQtyOrdered());
                     } else {
                         $_item['qty'] = intval($item->getQty());
