@@ -44,7 +44,8 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
      * @return string
      */
     public function getMessageId() {
-        return isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
+        $cookie_vals = $this->getRequest()->getCookie();
+        return isset($cookie_vals['sailthru_bid']) ? $cookie_vals['sailthru_bid'] : null;
     }
 
     /**

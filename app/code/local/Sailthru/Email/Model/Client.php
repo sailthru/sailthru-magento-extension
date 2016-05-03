@@ -738,7 +738,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @return boolean
      */
     public function receiveVerifyPost() {
-        $params = $_POST;
+        $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'send_id', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -770,7 +770,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @link http://docs.sailthru.com/api/postbacks
      */
     public function receiveOptoutPost() {
-         $params = $_POST;
+         $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -795,7 +795,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @link http://docs.sailthru.com/api/postbacks
      */
     public function receiveHardBouncePost(){
-        $params = $_POST;
+        $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
