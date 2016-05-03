@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * @category  Sailthru
+  * @package   Sailthru_Email
+  * @author    Kwadwo Juantuah <support@sailthru.com>
+  */
+-->
+<config>
+ <!--   <events>
+        <customer_prepare_save>
+            <observers>
+                <sailthru_admin_create_new_customer>
+                    <class>Sailthru_Email_Model_Observer</class>
+                    <method>createNewCustomer</method>
+                </sailthru_admin_create_new_customer>
+            </observers>
+        </customer_prepare_save>
+        <customer_save_after>
+            <observers>
+                <sailthru_subscribe_observer>
+                    <class>Sailthru_Email_Model_Observer</class>
+                    <method>createNewCustomer</method>
+                </sailthru_subscribe_observer>
+            </observers>
+        </customer_save_after>
+        <customer_delete_after>
+            <observers>
+                <sailthru_subscribe_observer>
+                    <class>Sailthru_Email_Model_Observer</class>
+                    <method>deleteCustomer</method>
+                </sailthru_subscribe_observer>
+            </observers>
+        </customer_delete_after> 
+    </events> -->
+    <menu>
+        <newsletter>
+            <children>
+                <sailthruemail_blast translate="title" module="sailthruemail">
+                    <title>Send a Campaign with Sailthru</title>
+                    <sort_order>20</sort_order>
+                    <action>sailthruemail/admin/index</action>
+                </sailthruemail_blast> 
+            </children>
+        </newsletter>
+    </menu> 
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <sailthru>
+                                        <title>Sailthru Settings</title>
+                                    </sailthru>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
