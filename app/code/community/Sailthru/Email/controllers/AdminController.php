@@ -15,7 +15,7 @@ class Sailthru_Email_AdminController extends Mage_Adminhtml_Controller_Action
             }
             $time = $post["day"]."-".$post["month"]."-".$post["year"]." ".$post["hour"].":".$post["minute"].$post["apm"];
             $success =  Mage::getModel('sailthruemail/client')->scheduleBlast("magento-blast-".date("mdY"), $post["list"], $time, NULL, NULL, NULL, NULL, NULL, array("copy_template" => $post["template"]));
-            if(count($success) == 2) {
+            if(isset($success["errormsg"])) {
                 Mage::throwException($this->__($success["errormsg"]));
             }
             //sailthru//
