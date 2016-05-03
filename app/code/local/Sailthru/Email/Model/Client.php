@@ -1096,9 +1096,9 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         } else {
             $expire = 0;
         }
-        return setcookie('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
+        // return setcookie('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
+        return Mage::getModel('core/cookie')->set('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
     }
-
 
     /**
      * Perform an HTTP request using the curl extension
