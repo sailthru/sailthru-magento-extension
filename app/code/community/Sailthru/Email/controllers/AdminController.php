@@ -6,6 +6,10 @@ class Sailthru_Email_AdminController extends Mage_Adminhtml_Controller_Action
         $this->loadLayout()->_addContent($this->getLayout()->createBlock("sailthruemail/form"))->renderLayout();
     }
 
+    protected function _isAllowed(){
+        return Mage::getSingleton('admin/session')->isAllowed('system/config');
+    }
+
     public function postAction()
     {
         $post = $this->getRequest()->getPost();
