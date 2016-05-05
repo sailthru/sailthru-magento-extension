@@ -164,7 +164,7 @@
              <catalog_product_delete_after>
                 <observers>
                     <sailthru_catalog_product_delete_after>
-                        <class>Sailthru_Email_Model_Observer_Content</class>
+                        <model>sailthruemail/observer_content</model>
                         <method>deleteProduct</method>
                     </sailthru_catalog_product_delete_after>
                 </observers>
@@ -172,7 +172,7 @@
             <catalog_product_save_after>
                 <observers>
                     <sailthru_catalog_product_save_after>
-                        <class>sailthruemail/observer_content</model>
+                        <model>sailthruemail/observer_content</model>
                         <method>saveProduct</method>
                     </sailthru_catalog_product_save_after>
                 </observers>
