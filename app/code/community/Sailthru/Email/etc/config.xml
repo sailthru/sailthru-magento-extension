@@ -143,20 +143,6 @@
                     </modules>
                 </args>
             </checkout>
-            <customer>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </customer> 
-            <newsletter>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Newsletter">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </newsletter>
         </routers>
     </frontend>
     <adminhtml>
