@@ -18,6 +18,8 @@ app/.htaccess
 app/Mage.php
 app/bootstrap.php
 app/code/core/
+app/code/community/Phoenix/
+app/code/community/Cm/
 app/design/adminhtml/default/default/etc/
 app/design/adminhtml/default/default/layout/
 app/design/adminhtml/default/default/locale/
