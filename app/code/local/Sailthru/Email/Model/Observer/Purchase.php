@@ -9,6 +9,21 @@
 class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstract
 {
 
+    public function emptyCart(Varien_Event_Observer $observer)
+    {
+        $quote = $observer->getCart()->getQuote();
+        $num_prods = $quote->getItemsCount();
+        $num_qty = $quote->getItemsQty();
+        if($quote->getItemsCount() == 0 && $this->_isEnabled && $this->_email) {
+            try{
+                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote,$this->_email,'EmptiedCart');
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
+        }
+        return $this;
+    }
+
     public function addItemToCart(Varien_Event_Observer $observer)
     {
         if($this->_isEnabled && $this->_email && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {

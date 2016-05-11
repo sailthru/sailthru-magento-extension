@@ -94,6 +94,14 @@
                     </sailthru_sales_quote_remove_item>
                 </observers>
             </sales_quote_remove_item>
+            <checkout_cart_save_after>
+                <observers>
+                    <sailthru_checkout_cart_save_after>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>emptyCart</method>
+                    </sailthru_checkout_cart_save_after>
+                </observers>
+            </checkout_cart_save_after>
             <checkout_cart_product_add_after>
                 <observers>
                     <sailthru_checkout_cart_product_add_after>
