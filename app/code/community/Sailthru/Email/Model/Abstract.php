@@ -44,7 +44,7 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
      * @return string
      */
     public function getMessageId() {
-        $cookie_vals = $this->getRequest()->getCookie();
+        $cookie_vals = Mage::getModel('core/cookie')->get();
         return isset($cookie_vals['sailthru_bid']) ? $cookie_vals['sailthru_bid'] : null;
     }
 
