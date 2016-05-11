@@ -152,7 +152,27 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     }
 
                     $_item['url'] = $item->getProduct()->getProductUrl();
-                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getPrice());
+                    
+                    $current_price = null;
+                    $reg_price = $item->getProduct()->getPrice();
+                    $special_price = $item->getProduct()->getSpecialPrice();
+                    $special_from = $item->getProduct()->getSpecialFromDate();
+                    $special_to = $item->getProduct()->getSpecialToDate();
+                    if (!is_null($special_price) AND
+                        (is_null($special_from) or (strtotime($special_from) < strtotime("Today"))) AND
+                        (is_null($special_to) or (strtotime($special_to) > strtotime("Today")))) {
+                        $current_price = $special_price;
+                    } else {
+                        $current_price = $reg_price;
+                    } 
+                    $_item["special_price"] = $special_price;
+                    $_item["special_from"] = $special_from;
+                    $_item["special_to"] = $special_to;
+                    $_item["reg_price"] = $reg_price;
+                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($current_price);
+
+
+
 
                     // Uncomment to pass Images as a var. May require reconfiguring per Magento Product Configurations.
                     // if (!isset($_item['vars']['image'])) {
