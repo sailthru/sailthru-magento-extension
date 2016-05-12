@@ -1,4 +1,4 @@
-kb<?php
+<?php
 /**
  * Client Model
  *
