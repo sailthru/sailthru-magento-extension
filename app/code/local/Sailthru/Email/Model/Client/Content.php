@@ -56,6 +56,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     public function getProductData(Mage_Catalog_Model_Product $product)
     {
         try {
+            $productTypeId = $product->getTypeId();
             $data = array('url' => $product->getProductUrl(),
                 'title' => htmlspecialchars($product->getName()),
                 //'date' => '',
@@ -66,7 +67,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'images' => array(),
                 'vars' => array('sku' => $product->getSku(),
                     'storeId' => '',
-                    'typeId' => $product->getTypeId(),
+                    'typeId' => $productTypeId,
                     'status' => $product->getStatus(),
                     'categoryId' => $product->getCategoryId(),
                     'categoryIds' => $product->getCategoryIds(),
@@ -96,6 +97,29 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 )
             );
 
+            $current_price = null;
+            $reg_price = null;
+            if ($productTypeId == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE){
+                $reg_price = $product->getPriceModel()->getTotalPrices($product, 'min');
+            } else {
+                $reg_price = $product->getPrice();
+            }
+            $special_price = $product->getSpecialPrice();
+            $special_from = $product->getSpecialFromDate();
+            $special_to = $product->getSpecialToDate();
+            if (!is_null($special_price) AND
+                (is_null($special_from) or (strtotime($special_from) < strtotime("Today"))) AND
+                (is_null($special_to) or (strtotime($special_to) > strtotime("Today")))) {
+                $current_price = $special_price;
+            } else {
+                $current_price = $reg_price;
+            } 
+            $data["special_price"] = $special_price;
+            $data["special_from"] = $special_from;
+            $data["special_to"] = $special_to;
+            $data["reg_price"] = $reg_price;
+            $data['price'] = Mage::helper('sailthruemail')->formatAmount($current_price);
+
             // Add product images
             if(self::validateProductImage($product->getImage())) {
                 $data['images']['full'] = array ("url" => $product->getImageUrl());
@@ -108,8 +132,6 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
             if(self::validateProductImage($product->getThumbnail())) {
                 $data['images']['thumb'] = array("url" => $product->getThumbnailUrl($width = 75, $height = 75));
             }
-
-            return $data;
 
 
             return $data;
