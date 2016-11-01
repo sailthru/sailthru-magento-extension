@@ -97,41 +97,27 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 )
             );
 
-            $current_price = null;
-            $reg_price = null;
-            if ($productTypeId == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE){
-                $reg_price = $product->getPriceModel()->getTotalPrices($product, 'min');
-            } else {
-                $reg_price = $product->getPrice();
-            }
-            $special_price = $product->getSpecialPrice();
-            $special_from = $product->getSpecialFromDate();
-            $special_to = $product->getSpecialToDate();
-            if (!is_null($special_price) AND
-                (is_null($special_from) or (strtotime($special_from) < strtotime("Today"))) AND
-                (is_null($special_to) or (strtotime($special_to) > strtotime("Today")))) {
-                $current_price = $special_price;
-            } else {
-                $current_price = $reg_price;
-            } 
-            $data["special_price"] = $special_price;
-            $data["special_from"] = $special_from;
-            $data["special_to"] = $special_to;
-            $data["reg_price"] = $reg_price;
-            $data['price'] = Mage::helper('sailthruemail')->formatAmount($current_price);
+            // PRICE-FIXING CODE
+            $data['price'] = Mage::helper('sailthruemail')->getPrice($product);
 
-            // Add product images
-            if(self::validateProductImage($product->getImage())) {
-                $data['images']['full'] = array ("url" => $product->getImageUrl());
-            }
+            // // Add product images
+            // if(self::validateProductImage($product->getImage())) {
+            //     $data['images']['full'] = array ("url" => $product->getImageUrl());
+            // }
 
-            if(self::validateProductImage($product->getSmallImage())) {
-                $data['images']['smallImage'] = array("url" => $product->getSmallImageUrl($width = 88, $height = 77));
-            }
+            // if(self::validateProductImage($product->getSmallImage())) {
+            //     $data['images']['smallImage'] = array("url" => $product->getSmallImageUrl($width = 88, $height = 77));
+            // }
 
-            if(self::validateProductImage($product->getThumbnail())) {
-                $data['images']['thumb'] = array("url" => $product->getThumbnailUrl($width = 75, $height = 75));
-            }
+            // if(self::validateProductImage($product->getThumbnail())) {
+            //     $data['images']['thumb'] = array("url" => $product->getThumbnailUrl($width = 75, $height = 75));
+            // }
+
+            $data['images'] = [
+                "full"     => Mage::helper('catalog/product')->getImageUrl($product),
+                "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
+                "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
+            ];
 
 
             return $data;
