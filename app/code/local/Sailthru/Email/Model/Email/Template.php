@@ -50,9 +50,12 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 $template_name = $this->getId();
             }
             
-            $options = array(
+            $options = [
                 'behalf_email' => $this->getSenderEmail(),
-            );
+            ];
+            if (count($this->_bccEmails) > 0){
+                $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
+            }
 
             for($i = 0; $i < count($emails); $i++) {
                 $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
