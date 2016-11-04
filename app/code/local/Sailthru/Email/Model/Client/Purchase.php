@@ -32,9 +32,18 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 }
             }
 
+            // prevent bundle items from being in cart seperately.
+            $items = $quote->getAllVisibleItems();
+            foreach ($items as $index => $item) {
+                $parent = $item->getParentItem();
+                if ($parent) {
+                    unset($items[$index]);
+                }
+            }
+
             $data = array(
                     'email' => $email,
-                    'items' => $this->_getItems($quote->getAllVisibleItems()),
+                    'items' => $this->_getItems($items),
                     'incomplete' => 1,
                     'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
                     'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
@@ -128,16 +137,19 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             $configurableSkus = array();
 
             foreach($items as $item) {
+                
                 $_item = array();
                 $_item['vars'] = array();
+
+                $options = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+
                 if ($item->getProductType() == 'configurable') {
                     $parentIds[] = $item->getParentItemId();
-                    $options = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
                     $_item['id'] = $options['simple_sku'];
                     $_item['title'] = $options['simple_name'];
                     $_item['vars'] = $this->_getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
-                } elseif (!in_array($item->getSku(),$configurableSkus) && $item->getProductType() != 'bundle') {
+                } elseif (!in_array($item->getSku(),$configurableSkus)) {
                     $_item['id'] = $item->getSku();
                     $_item['title'] = $item->getName();
                 } else {
@@ -152,7 +164,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     }
 
                     $_item['url'] = $item->getProduct()->getProductUrl();
-                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getPrice());
+                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getFinalPrice());
 
                     // Uncomment to pass Images as a var. May require reconfiguring per Magento Product Configurations.
                     // if (!isset($_item['vars']['image'])) {
