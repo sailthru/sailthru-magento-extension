@@ -32,9 +32,17 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 }
             }
 
+            // prevent bundle parts from surfacing
+            $items = $quote->getAllVisibleItems();
+            foreach ($items as $index => $item) {
+                if ($item->getParentItem()){
+                    unset($items[$index]);
+                }
+            }
+
             $data = array(
                     'email' => $email,
-                    'items' => $this->_getItems($quote->getAllVisibleItems()),
+                    'items' => $this->_getItems($items),
                     'incomplete' => 1,
                     'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
                     'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
@@ -139,7 +147,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $_item['title'] = $options['simple_name'];
                     $_item['vars'] = $this->_getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
-                } elseif (!in_array($item->getSku(),$configurableSkus) && $item->getProductType() != 'bundle') {
+                } elseif (!in_array($item->getSku(),$configurableSkus)) {
                     $_item['id'] = $item->getSku();
                     $_item['title'] = $item->getName();
                 } else {
@@ -155,7 +163,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
                     $_item['url'] = $item->getProduct()->getProductUrl();
                     
-                    $item['price'] = Mage::helper('sailthruemail')->getPrice($product);
+                    $_item['price'] = Mage::helper('sailthruemail')->getPrice($product);
                     $_item['vars']['price_info'] = [
                         "standard_price" => $product->getPrice(),
                         "special_price"  => $product->getSpecialPrice(),

@@ -130,23 +130,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     public function getPrice($product){
-        $current_price = null;
-        $reg_price = null;
-        if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE){
-            $reg_price = $product->getPriceModel()->getTotalPrices($product, 'min');
-        } else {
-            $reg_price = $product->getPrice();
-        }
-        $special_price = $product->getSpecialPrice();
-        $special_from = $product->getSpecialFromDate();
-        $special_to = $product->getSpecialToDate();
-        if (!is_null($special_price) AND
-            (is_null($special_from) or (strtotime($special_from) < strtotime("Today"))) AND
-            (is_null($special_to) or (strtotime($special_to) > strtotime("Today")))) {
-            $current_price = $special_price;
-        } else {
-            $current_price = $reg_price;
-        } 
+        $current_price = $product->getFinalPrice();
         $final_price = Mage::helper('sailthruemail')->formatAmount($current_price);
         return $final_price;
     }
