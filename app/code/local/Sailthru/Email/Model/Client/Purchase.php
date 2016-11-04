@@ -171,12 +171,12 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                         "special_to"     => $product->getSpecialToDate(),
                     ];
 
-                    // Uncomment to pass Images as a var. May require reconfiguring per Magento Product Configurations.
+                    // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
                     if (!isset($_item['vars']['image'])) {
                         $_item['vars']['image'] = [
                             "large"     => Mage::helper('catalog/product')->getImageUrl($product),
                             "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
-                            "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail'),
+                            "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
                         ];
                     }
                     
