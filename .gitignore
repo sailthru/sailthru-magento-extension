@@ -214,5 +214,3 @@ var/session
 var/.htaccess
 var/log
 var/report
-.gitignore
-README
