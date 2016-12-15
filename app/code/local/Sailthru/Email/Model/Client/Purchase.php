@@ -48,7 +48,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
                     'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
                     'message_id' => $this->getMessageId()
-                    );
+            );
 
             $response = $this->apiPost('purchase', $data);
 
@@ -102,14 +102,15 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         try{
             $this->_eventType = 'placeOrder';
 
-            $data = array(
+            $data = [
                     'email' => $order->getCustomerEmail(),
                     'items' => $this->_getItems($order->getAllVisibleItems()),
                     'adjustments' => $this->_getAdjustments($order),
                     'message_id' => $this->getMessageId(),
                     'send_template' => 'Purchase Receipt',
-                    'tenders' => $this->_getTenders($order)
-                    );
+                    'tenders' => $this->_getTenders($order),
+                    'purchase_keys' => ["extid" => $order->getIncrementId()]
+            ];
             /**
              * Send order data to purchase API
              */
