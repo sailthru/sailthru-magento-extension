@@ -46,8 +46,18 @@
     </menu> 
     <acl>
         <resources>
+            <all>
+                <title>Allow Everything Sailthru</title>
+            </all>
             <admin>
                 <children>
+                    <newsletter>
+                        <children>
+                            <sailthruemail_blast>
+                                <title>Send Blasts with Sailthru</title>
+                            </sailthruemail_blast>
+                        </children>
+                    </newsletter>
                     <system>
                         <children>
                             <config>

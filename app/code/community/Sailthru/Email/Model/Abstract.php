@@ -33,7 +33,7 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
             $this->_session = Mage::getSingleton('customer/session');
             if ($this->_session->isLoggedIn()) {
                 $this->_customer = Mage::getModel('customer/customer')->load($this->_session->getId());
-                $this->_email = $this->_customer->getEmail();
+                $this->_email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
             }
         }
     }
@@ -44,7 +44,8 @@ abstract class Sailthru_Email_Model_Abstract extends Mage_Core_Model_Abstract
      * @return string
      */
     public function getMessageId() {
-        return isset($_COOKIE['sailthru_bid']) ? $_COOKIE['sailthru_bid'] : null;
+        $cookie_vals = Mage::getModel('core/cookie')->get();
+        return isset($cookie_vals['sailthru_bid']) ? $cookie_vals['sailthru_bid'] : null;
     }
 
     /**
