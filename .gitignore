@@ -17,8 +17,9 @@ api.php
 app/.htaccess
 app/Mage.php
 app/bootstrap.php
-app/code/community/
 app/code/core/
+app/code/community/Phoenix/Moneybookers/
+app/code/community/Cm/RedisSession/
 app/design/adminhtml/default/default/etc/
 app/design/adminhtml/default/default/layout/
 app/design/adminhtml/default/default/locale/
@@ -212,3 +213,7 @@ var/cache
 var/package
 var/session
 var/.htaccess
+var/log
+var/report
+.gitignore
+README

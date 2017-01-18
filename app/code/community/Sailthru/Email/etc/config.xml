@@ -53,7 +53,7 @@
             <customer_register_success>
                 <observers>
                     <sailthru_register_success>
-                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <model>sailthruemail/observer_user</model>
                         <method>registration</method>
                     </sailthru_register_success>
                 </observers>
@@ -62,7 +62,7 @@
                 <observers>
                     <sailthru_customer_login>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <model>sailthruemail/observer_user</model>
                         <method>login</method>
                     </sailthru_customer_login>
                 </observers>
@@ -71,7 +71,7 @@
                 <observers>
                     <sailthru_customer_logout>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <model>sailthruemail/observer_user</model>
                         <method>logout</method>
                     </sailthru_customer_logout>
                 </observers>
@@ -80,7 +80,7 @@
                 <observers>
                     <sailthru_checkout_cart_update_items_after>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <model>sailthruemail/observer_purchase</model>
                         <method>updateItemInCart</method>
                     </sailthru_checkout_cart_update_items_after>
                 </observers>
@@ -89,16 +89,24 @@
                 <observers>
                     <sailthru_sales_quote_remove_item>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <model>sailthruemail/observer_purchase</model>
                         <method>removeItemFromCart</method>
                     </sailthru_sales_quote_remove_item>
                 </observers>
             </sales_quote_remove_item>
+            <checkout_cart_save_after>
+                <observers>
+                    <sailthru_checkout_cart_save_after>
+                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <method>emptyCart</method>
+                    </sailthru_checkout_cart_save_after>
+                </observers>
+            </checkout_cart_save_after>
             <checkout_cart_product_add_after>
                 <observers>
                     <sailthru_checkout_cart_product_add_after>
                         <type>singleton</type>
-                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <model>sailthruemail/observer_purchase</model>
                         <method>addItemToCart</method>
                     </sailthru_checkout_cart_product_add_after>
                 </observers>
@@ -106,7 +114,7 @@
             <sales_order_place_after>
                 <observers>
                     <sailthru_sales_order_place_after>
-                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <model>sailthruemail/observer_purchase</model>
                         <method>placeOrder</method>
                     </sailthru_sales_order_place_after>
                 </observers>
@@ -114,7 +122,7 @@
             <newsletter_subscriber_save_before>
                 <observers>
                     <sailthru_newsletter_subscriber_save_before>
-                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <model>sailthruemail/observer_user</model>
                         <method>subscription</method>
                     </sailthru_newsletter_subscriber_save_before>
                 </observers>
@@ -122,19 +130,12 @@
             <newsletter_subscriber_delete_after>
                 <observers>
                     <sailthru_newsletter_subscriber_delete_after>
-                        <class>Sailthru_Email_Model_Observer_User</class>
+                        <model>sailthruemail/observer_user</model>
                         <method>subscription</method>
                     </sailthru_newsletter_subscriber_delete_after>
                 </observers>
             </newsletter_subscriber_delete_after>
      </events>
-        <layout>
-            <updates>
-                <sailthruemail>
-                    <file>sailthru.xml</file>
-                </sailthruemail>
-            </updates>
-        </layout>
         <routers>
             <sailthruemail>
                 <use>standard</use>
@@ -150,20 +151,6 @@
                     </modules>
                 </args>
             </checkout>
-            <customer>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Customer">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </customer> 
-            <newsletter>
-                <args>
-                    <modules>
-                        <Sailthru_Email before="Mage_Newsletter">Sailthru_Email</Sailthru_Email>
-                    </modules>
-                </args>
-            </newsletter>
         </routers>
     </frontend>
     <adminhtml>
@@ -171,7 +158,7 @@
              <catalog_product_delete_after>
                 <observers>
                     <sailthru_catalog_product_delete_after>
-                        <class>Sailthru_Email_Model_Observer_Content</class>
+                        <model>sailthruemail/observer_content</model>
                         <method>deleteProduct</method>
                     </sailthru_catalog_product_delete_after>
                 </observers>
@@ -179,7 +166,7 @@
             <catalog_product_save_after>
                 <observers>
                     <sailthru_catalog_product_save_after>
-                        <class>Sailthru_Email_Model_Observer_Content</class>
+                        <model>sailthruemail/observer_content</model>
                         <method>saveProduct</method>
                     </sailthru_catalog_product_save_after>
                 </observers>

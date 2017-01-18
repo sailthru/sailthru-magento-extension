@@ -4,7 +4,7 @@
     <modules>
         <Sailthru_Email>
             <active>true</active>
-            <codePool>local</codePool>
+            <codePool>community</codePool>
         </Sailthru_Email>
     </modules>
 </config>
