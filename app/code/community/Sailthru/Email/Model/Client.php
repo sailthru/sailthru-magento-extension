@@ -738,7 +738,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @return boolean
      */
     public function receiveVerifyPost() {
-        $params = $_POST;
+        $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'send_id', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -770,7 +770,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @link http://docs.sailthru.com/api/postbacks
      */
     public function receiveOptoutPost() {
-         $params = $_POST;
+         $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -795,7 +795,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * @link http://docs.sailthru.com/api/postbacks
      */
     public function receiveHardBouncePost(){
-        $params = $_POST;
+        $params = $this->getRequest()->getPost();
         foreach (array('action', 'email', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -1096,9 +1096,9 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         } else {
             $expire = 0;
         }
-        return setcookie('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
+        // return setcookie('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
+        return Mage::getModel('core/cookie')->set('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
     }
-
 
     /**
      * Perform an HTTP request using the curl extension
@@ -1170,6 +1170,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
         if ($response === false) {
             throw new Sailthru_Email_Model_Client_Exception("No response received from stream: $url");
         }
+        fclose($fp);
         return $response;
     }
 
