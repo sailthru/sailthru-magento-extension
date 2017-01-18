@@ -3,7 +3,8 @@
     <label>Select a <a href="https://sailthru.com/admin/templates">template</a></label><br />
     <select id="template" name="template">
         <?php $temps = Mage::getModel('sailthruemail/client')->getTemplates();
-            for($i = 0; $i < count($temps["templates"]); $i++) {
+            $num_templates = count($temps["templates"]);
+            for($i = 0; $i < $num_templates; $i++) {
                 ?><option value="<?php echo $temps['templates'][$i]['name']; ?>"><?php echo $temps['templates'][$i]['name']; ?></option><?php
             }
         ?>
@@ -11,7 +12,8 @@
     <label>Select a <a href="https://sailthru.com/admin/lists">member list</a></label><br />
     <select id="list" name="list">
         <?php $lists = Mage::getModel('sailthruemail/client')->getLists();
-            for($i = 0; $i < count($lists["lists"]); $i++) {
+            $num_lists = count($lists["lists"]);
+            for($i = 0; $i < $num_lists; $i++) {
                 ?><option value="<?php echo $lists['lists'][$i]['name']; ?>"><?php echo $lists['lists'][$i]['name']." (".(0+$lists['lists'][$i]['email_count'])." members)"; ?></option><?php
             } ?>
     </select><br /><br />

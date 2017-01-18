@@ -39,60 +39,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         $names = is_array($name) ? $name : (array)$name;
         $names = array_values($names);
 
-        foreach ($emails as $key => $email) {
-            if (!isset($names[$key])) {
-                $names[$key] = substr($email, 0, strpos($email, '@'));
-            }
-        }
-        $variables['email'] = reset($emails);
-        $variables['name'] = reset($names);
-
-        ini_set('SMTP', Mage::getStoreConfig('system/smtp/host'));
-        ini_set('smtp_port', Mage::getStoreConfig('system/smtp/port'));
-
-        $mail = $this->getMail();
-        $setReturnPath = Mage::getStoreConfig(self::XML_PATH_SENDING_SET_RETURN_PATH);
-
-        switch ($setReturnPath) {
-            case 1:
-                $returnPathEmail = $this->getSenderEmail();
-                break;
-            case 2:
-                $returnPathEmail = Mage::getStoreConfig(self::XML_PATH_SENDING_RETURN_PATH_EMAIL);
-                break;
-            default:
-                $returnPathEmail = null;
-                break;
-        }
-
-        if ($returnPathEmail !== null) {
-            $mailTransport = new Zend_Mail_Transport_Sendmail("-f".$returnPathEmail);
-            Zend_Mail::setDefaultTransport($mailTransport);
-        }
-
-        foreach ($emails as $key => $email) {
-            $mail->addTo($email, '=?utf-8?B?' . base64_encode($names[$key]) . '?=');
-        }
-
         $this->setUseAbsoluteLinks(true);
         $text = $this->getProcessedTemplate($variables, true);
-
-        if($this->isPlain()) {
-            $mail->setBodyText($text);
-        } else {
-            $mail->setBodyHTML($text);
-        }
-
-        //Prevent Zend_Mail "Subject Set Twice" Error
-        $mail_subject = '=?utf-8?B?' . base64_encode($this->getProcessedTemplateSubject($variables)) . '?=';
-        $mail->clearSubject();
-        $mail->setSubject($mail_subject);
-
-        //Prevent Zend_Mail "From Set Twice" Error
-        $mail_from_email = $this->getSenderEmail();
-        $mail_from_name = $this->getSenderName();
-        $mail->clearFrom();
-        $mail->setFrom($mail_from_email, $mail_from_name);
 
         //sailthru//
         try {
@@ -102,15 +50,15 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 $template_name = $this->getId();
             }
             
-            $options = array(
+            $options = [
                 'behalf_email' => $this->getSenderEmail(),
-            );
+            ];
+            if (count($this->_bccEmails) > 0){
+                $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
+            }
 
-            $email = $emails;
-            $vars = null;
-            $evars = array();
-
-            for($i = 0; $i < count($emails); $i++) {
+            $num_emails = count($emails);
+            for($i = 0; $i < $num_emails; $i++) {
                 $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
             }
 
@@ -135,22 +83,4 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         return true;
     }
 
-
-    /**
-     * Override transactional emails
-     *
-     * @param   int $templateId
-     * @param   string|array $sender sneder informatio, can be declared as part of config path
-     * @param   string $email recipient email
-     * @param   string $name recipient name
-     * @param   array $vars varianles which can be used in template
-     * @param   int|null $storeId
-     * @return  Mage_Core_Model_Email_Template
-     * 
-     * Create as send is being deprecated
-    public function sendTransactional($templateId, $sender, $email, $name, $vars=array(), $storeId=null)
-    {
-        return $this;
-    }
-    */
 }

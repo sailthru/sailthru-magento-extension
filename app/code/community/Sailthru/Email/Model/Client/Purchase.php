@@ -47,7 +47,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
                     'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
                     'message_id' => $this->getMessageId()
-                    );
+            );
 
             $response = $this->apiPost('purchase', $data);
 
@@ -101,14 +101,15 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         try{
             $this->_eventType = 'placeOrder';
 
-            $data = array(
+            $data = [
                     'email' => $order->getCustomerEmail(),
                     'items' => $this->_getItems($order->getAllVisibleItems()),
                     'adjustments' => $this->_getAdjustments($order),
                     'message_id' => $this->getMessageId(),
                     'send_template' => 'Purchase Receipt',
-                    'tenders' => $this->_getTenders($order)
-                    );
+                    'tenders' => $this->_getTenders($order),
+                    'purchase_keys' => ["extid" => $order->getIncrementId()]
+            ];
             /**
              * Send order data to purchase API
              */
@@ -136,6 +137,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             $configurableSkus = array();
 
             foreach($items as $item) {
+                
                 $_item = array();
                 $_item['vars'] = array();
                 $product = $item->getProduct(); 
@@ -155,21 +157,14 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 }
 
                 if ($_item['id']) {
-                    if (get_class($item) == 'Mage_Sales_Model_Order_Item' ) {
+                    if ($item instanceof Mage_Sales_Model_Order_Item ) {
                         $_item['qty'] = intval($item->getQtyOrdered());
                     } else {
                         $_item['qty'] = intval($item->getQty());
                     }
 
                     $_item['url'] = $item->getProduct()->getProductUrl();
-                    
-                    $_item['price'] = Mage::helper('sailthruemail')->getPrice($product);
-                    $_item['vars']['price_info'] = [
-                        "standard_price" => $product->getPrice(),
-                        "special_price"  => $product->getSpecialPrice(),
-                        "special_from"   => $product->getSpecialFromDate(),
-                        "special_to"     => $product->getSpecialToDate(),
-                    ];
+                    $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getFinalPrice());
 
                     // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
                     if (!isset($_item['vars']['image'])) {
@@ -228,7 +223,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                           'price' => Mage::helper('sailthruemail')->formatAmount($order->getPayment()->getBaseAmountOrdered())
                            )
                        );
-            if ($tenders['title'] == null) {
+            if ($tenders[0]['title'] == null) {
                 return '';
             }
             return $tenders;
