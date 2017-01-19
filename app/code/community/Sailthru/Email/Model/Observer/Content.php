@@ -37,9 +37,15 @@ class Sailthru_Email_Model_Observer_Content extends Sailthru_Email_Model_Abstrac
     public function saveProduct(Varien_Event_Observer $observer)
     {
        if($this->_isEnabled) {
+            $product = $observer->getEvent()->getProduct();
+            $status = $product->getStatus();
+            $sailthruContent = Mage::getModel('sailthruemail/client_content');
             try{
-                $product = $observer->getEvent()->getProduct();
-                $response = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
+                if($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED){
+                    $response = $sailthruContent->saveProduct($product);
+                } elseif($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED){
+                    $response = $sailthruContent->deleteProduct($product);
+                }
             } catch (Exception $e) {
                 Mage::logException($e);
             }

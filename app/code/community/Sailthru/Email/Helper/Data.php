@@ -129,6 +129,12 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     }
 
+    public function getPrice($product){
+        $current_price = $product->getFinalPrice();
+        $final_price = Mage::helper('sailthruemail')->formatAmount($current_price);
+        return $final_price;
+    }
+
     public function debug($object)
     {
         echo '<pre>';
