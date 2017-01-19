@@ -1,6 +1,5 @@
 #Moddman commands
 app/code/community/Sailthru/Email                                           app/code/community/Sailthru/Email
-app/design/adminhtml/default/default/template/sailthruemail                 app/design/adminhtml/default/default/template/sailthruemail       
 app/design/frontend/base/default/layout/sailthru.xml                        app/design/frontend/base/default/layout/sailthru.xml       
 app/design/frontend/base/default/template/sailthru                          app/design/frontend/base/default/template/sailthru
 app/etc/modules/*                                                           app/etc/modules/
