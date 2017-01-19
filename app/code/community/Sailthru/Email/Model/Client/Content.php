@@ -56,6 +56,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     public function getProductData(Mage_Catalog_Model_Product $product)
     {
         try {
+            $productTypeId = $product->getTypeId();
             $data = array('url' => $product->getProductUrl(),
                 'title' => htmlspecialchars($product->getName()),
                 //'date' => '',
@@ -66,7 +67,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'images' => array(),
                 'vars' => array('sku' => $product->getSku(),
                     'storeId' => '',
-                    'typeId' => $product->getTypeId(),
+                    'typeId' => $productTypeId,
                     'status' => $product->getStatus(),
                     'categoryId' => $product->getCategoryId(),
                     'categoryIds' => $product->getCategoryIds(),
@@ -96,20 +97,15 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 )
             );
 
-            // Add product images
-            if(self::validateProductImage($product->getImage())) {
-                $data['images']['full'] = array ("url" => $product->getImageUrl());
-            }
+            // PRICE-FIXING CODE
+            $data['price'] = Mage::helper('sailthruemail')->getPrice($product);
 
-            if(self::validateProductImage($product->getSmallImage())) {
-                $data['images']['smallImage'] = array("url" => $product->getSmallImageUrl($width = 88, $height = 77));
-            }
-
-            if(self::validateProductImage($product->getThumbnail())) {
-                $data['images']['thumb'] = array("url" => $product->getThumbnailUrl($width = 75, $height = 75));
-            }
-
-            return $data;
+            // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
+            $data['images'] = [
+                "full"     => Mage::helper('catalog/product')->getImageUrl($product),
+                "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
+                "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
+            ];
 
 
             return $data;

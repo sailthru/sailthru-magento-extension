@@ -32,11 +32,10 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 }
             }
 
-            // prevent bundle items from being in cart seperately.
+            // prevent bundle parts from surfacing
             $items = $quote->getAllVisibleItems();
             foreach ($items as $index => $item) {
-                $parent = $item->getParentItem();
-                if ($parent) {
+                if ($item->getParentItem()){
                     unset($items[$index]);
                 }
             }
@@ -141,11 +140,11 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 
                 $_item = array();
                 $_item['vars'] = array();
-
-                $options = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
-
-                if ($item->getProductType() == 'configurable') {
+                $product = $item->getProduct(); 
+                $productType = $item->getProductType();
+                if ($productType == 'configurable') {
                     $parentIds[] = $item->getParentItemId();
+                    $options = $product->getTypeInstance(true)->getOrderOptions($product);
                     $_item['id'] = $options['simple_sku'];
                     $_item['title'] = $options['simple_name'];
                     $_item['vars'] = $this->_getVars($options);
@@ -167,14 +166,14 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $_item['url'] = $item->getProduct()->getProductUrl();
                     $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getFinalPrice());
 
-                    // Uncomment to pass Images as a var. May require reconfiguring per Magento Product Configurations.
-                    // if (!isset($_item['vars']['image'])) {
-                    //     if ($item->getProduct()->hasImage()) {
-                    //          $_item['vars']['image'] = $item->getProduct()->getImageUrl();
-                    //     } elseif ($item->getProduct()->hasSmallImage()) {
-                    //          $_item['vars']['image'] = $item->getProduct()->getSmallImageUrl();
-                    //     }
-                    // }
+                    // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
+                    if (!isset($_item['vars']['image'])) {
+                        $_item['vars']['image'] = [
+                            "large"     => Mage::helper('catalog/product')->getImageUrl($product),
+                            "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
+                            "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
+                        ];
+                    }
                     
                     if ($tags = $this->_getTags($item->getProductId())) {
                         $_item['tags'] = $tags;
