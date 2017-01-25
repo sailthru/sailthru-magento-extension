@@ -33,13 +33,13 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
              );
 
             if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
-                $vars += getAddressInfo($primaryBillingAddress, "billing_");
+                $vars = $vars + $this->getAddressInfo($primaryBillingAddress, "billing_");
             }
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
-                $vars += getAddressInfo($primaryShippingAddress, "shipping_");
+                $vars = $vars + $this->getAddressInfo($primaryShippingAddress, "shipping_");
             }
 
-            return $data;
+            return $vars;
         } catch(Exception $e) {
             Mage::logException($e);
         }
@@ -65,7 +65,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'key' => 'email',
                 'fields' => array('keys' => 1),
                 'keysconfict' => 'merge',
-                'vars' => $vars,
+                'vars' => $this->getCustomerVars($customer),
                 'lists' => array(Mage::helper('sailthruemail')->getMasterList() => 1)
             );
             $response = $this->apiPost('user', $data);
@@ -182,10 +182,10 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         ];
         if (!is_null($prefix)){
             $varsCopy = [];
-            foreach ($address_vars as $key => $value) {
+            foreach ($vars as $key => $value) {
                 $varsCopy["{$prefix}{$key}"] = $value;
             }
-            $vars = $varsCopy;
+            return $varsCopy;
         }
         return $vars;
     }
