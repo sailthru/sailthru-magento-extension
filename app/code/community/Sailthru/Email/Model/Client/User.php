@@ -120,45 +120,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         return $this;
     }
 
-    /**
-     * Send login data through API
-     *
-     * @param Mage_Customer_Model_Customer $customer
-     * @throws Sailthru_Email_Model_Client_Exception
-     * @return boolean
-     */
-    public function login(Mage_Customer_Model_Customer $customer)
-    {
-        try {
-            $this->_eventType = 'login';
-            $data = array(
-                    'id' => $customer->getEmail(),
-                    'key' => 'email',
-                    'fields' => array(
-                        'keys' => 1,
-                        'engagement' => 1,
-                        'activity' => 1,
-                        'email' => $customer->getEmail(),
-                        'extid' => $customer->getEntityId()
-                    ),
-                    'login' => array(
-                        'site' => Mage::helper('core/url')->getHomeUrl(),
-                        'ip' => Mage::helper('core/http')->getRemoteAddr(true),
-                        'user_agent' => Mage::helper('core/http')->getHttpUserAgent(true)
-                    )
-            );
-
-            if ($response = $this->apiPost('user',$data)) {
-                return $this->setCookie($response);
-            } else {
-                throw new Sailthru_Email_Model_Client_Exception("Response: {$response} is not a valid JSON");
-            }
-        } catch(Sailthru_Email_Model_Client_Exception $e) {
-            Mage::logException($e);
-        } catch(Exception $e) {
-            Mage::logException($e);
-        }
-    }
 
     /**
      * Logout by deleting Sailthru session var
