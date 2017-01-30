@@ -26,8 +26,8 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             }
 
             if (!$email) {
-                if(!$email = $quote->getCustomerEmail()) {
-                    Mage::logException("Unable to post purchase: customer email is not defined.");
+                $email = $quote->getCustomerEmail() ?: $this->useHid();
+                if(!$email) {
                     return false;
                 }
             }
@@ -300,6 +300,28 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             Mage::logException($e);
             return false;
         }
+    }
+
+    /**
+     * Get email from sailthru cookie.
+     * TODO: Add seperate config to check for anonymous abandon.
+     *
+     * @return string|bool
+     */
+    private function useHid(){
+        $this->log('trying to use Hid');
+        try {
+            $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
+            if ($cookie){
+                $response = $this->getUserByKey($cookie, 'cookie', ['keys' => 1]);
+                if (array_key_exists('keys', $response)){
+                    return $response['keys']['email'];
+                }
+            }
+        } catch (Exception $e){
+            $this->log($e);
+        }
+        return false;
     }
 
     /**
