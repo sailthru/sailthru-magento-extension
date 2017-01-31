@@ -25,10 +25,17 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $this->_eventType = $eventType;
             }
 
+            $cartTime = Mage::helper('sailthruemail')->getAbandonedCartReminderTime();
+            $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
+
             if (!$email) {
-                $email = $quote->getCustomerEmail() ?: $this->useHid();
-                if(!$email) {
+                $email = $quote->getCustomerEmail();
+                $hid_email = $this->useHid();
+                if(!$email and !$hid_email) {
                     return false;
+                } elseif ($hid){
+                    $email = $hid_email;
+                    $cartTempalte = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
                 }
             }
 
@@ -44,8 +51,8 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     'email' => $email,
                     'items' => $this->_getItems($items),
                     'incomplete' => 1,
-                    'reminder_time' => '+' . Mage::helper('sailthruemail')->getReminderTime() . ' min',
-                    'reminder_template' => Mage::getStoreConfig('sailthru/email/abandoned_cart_template', $quote->getStoreId()),
+                    'reminder_time' => '+' . $cartTime,
+                    'reminder_template' => $cartTemplate,
                     'message_id' => $this->getMessageId()
             );
 
@@ -95,7 +102,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * Notify Sailthru that a purchase has been made. This automatically cancels
      * any scheduled abandoned cart email.
      *
-     */
+     */ 
     public function sendOrder(Mage_Sales_Model_Order $order)
     {
         try{
@@ -309,17 +316,18 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * @return string|bool
      */
     private function useHid(){
-        $this->log('trying to use Hid');
-        try {
-            $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
-            if ($cookie){
-                $response = $this->getUserByKey($cookie, 'cookie', ['keys' => 1]);
-                if (array_key_exists('keys', $response)){
-                    return $response['keys']['email'];
+        if (Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
+            try {
+                $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
+                if ($cookie){
+                    $response = $this->getUserByKey($cookie, 'cookie', ['keys' => 1]);
+                    if (array_key_exists('keys', $response)){
+                        return $response['keys']['email'];
+                    }
                 }
+            } catch (Exception $e){
+                $this->log($e);
             }
-        } catch (Exception $e){
-            $this->log($e);
         }
         return false;
     }
