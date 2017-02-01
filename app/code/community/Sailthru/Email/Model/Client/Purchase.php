@@ -71,34 +71,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     }
 
     /**
-     * Route errors
-     *
-     * @param array $response
-     * @param Mage_Sales_Model_Quote $quote
-     * @param string $email
-     * @return boolean
-     *
-     * @todo For future iterations, use switch statement to handle multiple error messages.
-     */
-    public function handleError($response, $quote, $email)
-    {
-            if($response['error'] == 14) {
-                /**
-                 * Response Error 14 means that an unknown template was passed in the API call.
-                 * This normally happens for first time API calls or when the name of the template has
-                 * been changed, http://getstarted.sailthru.com/api/api-response-errors.  We'll
-                 * therefore need to create a template to pass in the call.  One condition for the
-                 * template to be created is that the sender email must be verified so please check
-                 * https://my.sailthru.com/verify to make sure that the send email is listed there.
-                 */
-                return $this->createAbandonedCartEmail($quote, $email);
-            } else {
-                Mage::throwException('Unknown purchase response error: ' . json_encode($response));
-            }
-
-    }
-
-    /**
      * Notify Sailthru that a purchase has been made. This automatically cancels
      * any scheduled abandoned cart email.
      *
