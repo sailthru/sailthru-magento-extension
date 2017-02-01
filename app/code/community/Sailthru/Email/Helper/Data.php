@@ -23,7 +23,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
     const XML_PATH_ANONYMOUS_CART                           = 'sailthru/anonymous_cart/enabled';
     const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru/anonymous_cart/template';
-    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru/anonymous_cart/reminder_time';
+    const XML_PATH_ANONYMOUS_CART_REMINDER_TIME             = 'sailthru/anonymous_cart/reminder_time';
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -121,13 +121,18 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
     }
 
-    public function isAnonymousCartEnabled($store=null)
+    public function isAnonymousCartEnabled($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART, $store);
     }
 
+    public function getAnonymousCartReminderTime($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_REMINDER_TIME, $store);
+    }
+
     public function getAnonymousCartTemplate($store = null)
-    
+    {
         return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_TEMPLATE, $store);
     }
     
