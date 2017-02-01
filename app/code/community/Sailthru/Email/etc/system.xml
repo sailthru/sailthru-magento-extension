@@ -117,14 +117,14 @@
                             <show_in_store>1</show_in_store>
                             <comment>Please note that you have to add this email to the list of <![CDATA[<a href="https://my.sailthru.com/verify" target="_blank">verified emails in MySailthru</a>]]>.</comment>
                         </abandoned_cart_sender_email>
-                        <abandoned_cart_sender_name translate="label comment">
+                         <abandoned_cart_sender_name translate="label comment">
                             <label>Abandoned Cart Sender Name</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </abandoned_cart_sender_name>
+                        </abandoned_cart_sender_name>-->
                         <abandoned_cart_template translate="label comment">
                             <label>Abandoned Cart Template</label>
                             <frontend_type>text</frontend_type>
@@ -134,7 +134,7 @@
                             <show_in_store>1</show_in_store>
                             <comment>Enter a name for your abandoned cart template.</comment>
                         </abandoned_cart_template>
-                        <abandoned_cart_subject translate="label comment">
+                         <abandoned_cart_subject translate="label comment">
                             <label>Abandoned Cart Subject</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>5</sort_order>
@@ -143,7 +143,7 @@
                             <show_in_store>1</show_in_store>
                         </abandoned_cart_subject>
                         <reminder_time translate="label comment">
-                            <label>Shopping Cart Reminder Time</label>
+                            <label>Abandoned Cart Delay Time</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
@@ -169,60 +169,53 @@
                             <show_in_store>1</show_in_store>
                             <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
                         </newsletter_list>
-                <!--        <list translate="label coment">
-                            <label>General Subscription</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>sailthru/system_config_source_list</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                             <show_in_website>0</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <can_be_empty>1</can_be_empty>
-                            <comment>Synchronize Magento's General Subscription List with this Sailthru list</comment>
-                        </list> -->
-                  <!--      <logenabled translate = "label comment">
-                            <label>Log all messages</label>
-                            <comment>This will log all outbound emails to the table sailthru_email_log and allow viewing withing the admin interface</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_sourceyesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </logenabled> -->
-                    <!--    <use_store_email translate="label">
-                            <label>Use Store Email Addresses for Reply-to</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </use_store_email>
-                        <default_list translate="label">
-                            <label>Default Email List</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they register.</comment>
-                        </default_list>
-                        <sender_email translate="label">
-                            <label>Admin Email Address</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The email address used for customer service.</comment>
-                        </sender_email> -->
                     </fields>
                 </email> 
+                <anonymous_cart translate="label">
+                    <label>Anonymous Abandoned Cart</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>3</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <enabled>
+                            <label>Enable</label>
+                            <comment>Send an abandoned cart (configurable template) to users based on Sailthru cookie.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>1</sort_order>
+                        </enabled>
+                        <template>
+                            <label>Template</label>
+                            <comment>Can be the same as regular abandoned cart, or use a different template to use a different strategy.</comment>
+                            <frontend_type>text</frontend_type>
+                            <!-- <source_model>adminhtml/system_config_source_yesno</source_model> -->
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enabled>1</enabled></depends>
+                            <sort_order>2</sort_order>
+                        </template>
+                        <reminder_time translate="label comment">
+                            <label>Delay Time</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enabled>1</enabled></depends>
+                            <comment>The delay before a reminder email is sent to a customer who abandoned their shopping cart. Cam select unit (min, days).</comment>
+                        </reminder_time>
+                    </fields>
+                </anonymous_cart>
                 <horizon translate="label">
                     <label>Horizon</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>3</sort_order>
+                    <sort_order>4</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
