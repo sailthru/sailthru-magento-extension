@@ -66,7 +66,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'fields' => array('keys' => 1),
                 'keysconfict' => 'merge',
                 'vars' => $this->getCustomerVars($customer),
-                'lists' => array(Mage::helper('sailthruemail')->getMasterList() => 1)
+                'lists' => array(Mage::helper('sailthruemail')->getDefaultList() => 1)
             );
             $response = $this->apiPost('user', $data);
             $this->setCookie($response);

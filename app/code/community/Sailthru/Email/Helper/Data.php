@@ -1,7 +1,6 @@
 <?php
 /**
  *
- * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
@@ -16,18 +15,23 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_NEWSLETTER_LIST                          = 'sailthru_users/management/newsletter_list';
     
     // Transactionals
-    const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactionals/email/enable_transactional_emails';
-    const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactionals/email/sender';
-    const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactionals'
-    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru_transactionals/email/abandoned_cart_template';
-    const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactionals/email/delay';
-    const XML_PATH_ANONYMOUS_CART_ENABLED                   = 'sailthru_transactionals/anonymous_cart/enabled';
-    const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactionals/anonymous_cart/template';
-    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactionals/anonymous_cart/delay';
+    const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactional/email/enable_transactional_emails';
+    const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
+    const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactional/abandoned_cart/enabled';
+    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru_transactional/abandoned_cart/template';
+    const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactional/abandoned_cart/delay';
+    const XML_PATH_ANONYMOUS_CART_ENABLED                   = 'sailthru_transactional/anonymous_cart/enabled';
+    const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactional/anonymous_cart/template';
+    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/delay';
 
     // Other
-    const XML_PATH_HORIZON_ENABLED                          = 'sailthru/horizon/active';
-    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/horizon/horizon_domain';
+    const XML_PATH_JS                                       = 'sailthru/js/js_select';
+    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/js/horizon_domain';
+    const XML_PATH_CUSTOMER_ID                              = 'sailthru/js/customer_id';
+    const JS_SPM                                            = 1;
+    const JS_HORIZON                                        = 2;
+
+
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -41,16 +45,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     public function isLoggingEnabled($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_ENABLE_LOGGING, $store);
-    }
-
-    /**
-     * Get Horizon domain
-     * @param type $store
-     * @return string
-     */
-    public function getHorizonDomain($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_HORIZON_DOMAIN, $store);
     }
 
     /**
@@ -97,9 +91,9 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_ENABLED, $store);
     }
 
-    public function getAbandonedCartReminderTime($store = null)
+    public function getAbandonedCartDelayTime($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_DELAY, $store);
     }
 
     public function getAbandonedCartTemplate($store = null)
@@ -109,12 +103,12 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     public function isAnonymousCartEnabled($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART, $store);
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_ENABLED, $store);
     }
 
-    public function getAnonymousCartReminderTime($store = null)
+    public function getAnonymousCartDelayTime($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_REMINDER_TIME, $store);
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_DELAY, $store);
     }
 
     public function getAnonymousCartTemplate($store = null)
@@ -122,16 +116,45 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_TEMPLATE, $store);
     }
     
-   /**
+    /**
      * Check to see if Horizon is enabled
      *
      * @return bool
      */
     public function isHorizonEnabled($store = null)
     {
-        return (boolean) Mage::getStoreConfig(self::XML_PATH_HORIZON_ENABLED, $store);
+        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_HORIZON);
     }
 
+    /**
+     * Check to see if PersonalizeJS is enabled
+     *
+     * @return bool
+     */
+    public function isPersonalizeJsEnabled($store = null)
+    {
+        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_SPM);
+    }
+
+    /**
+     * Get Horizon domain
+     * @param type $store
+     * @return string
+     */
+    public function getHorizonDomain($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_HORIZON_DOMAIN, $store);
+    }
+
+    /**
+     * Get Horizon domain
+     * @param type $store
+     * @return string
+     */
+    public function getCustomerId($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_CUSTOMER_ID, $store);
+    }
 
     public function formatAmount($amount = null)
     {

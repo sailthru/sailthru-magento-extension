@@ -25,18 +25,15 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $this->_eventType = $eventType;
             }
 
-            $cartTime = Mage::helper('sailthruemail')->getAbandonedCartReminderTime();
-            $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
-
-            $email = $email ?: $quote->getCustomerEmail();
-            if (!$email) {
-                $email = $this->useHid();
-                if(!$email) {
-                    return false;
-                } else {
-                    $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
-                    $cartTime = Mage::helper('sailthruemail')->getAnonymousCartReminderTime();
-                }
+            $email = $quote->getCustomerEmail();
+            if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
+                $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
+                $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
+            } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled and $email = $this->useHid()){
+                $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
+                $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
+            } else {
+                return false;
             }
 
             // prevent bundle parts from surfacing
@@ -287,7 +284,9 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @return string|bool
      */
-    private function useHid(){
+    private function useHid()
+    {
+        $this->log("checking for HID use");
         if (Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
             try {
                 $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');

@@ -9,12 +9,17 @@
 class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstract
 {
 
+    public function isCartEnabled()
+    {
+        return ($this->_isEnabled and (Mage::helper('sailthruemail')->isAbandonedCartEnabled() or Mage::helper('sailthruemail')->isAnonymousCartEnabled()));
+    }
+
     public function emptyCart(Varien_Event_Observer $observer)
     {
         $quote = $observer->getCart()->getQuote();
         $num_prods = $quote->getItemsCount();
         $num_qty = $quote->getItemsQty();
-        if($quote->getItemsCount() == 0 && $this->_isEnabled) {
+        if($quote->getItemsCount() == 0 && $this->isCartEnabled()) {
             try{
                  $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote,$this->_email,'EmptiedCart');
             } catch (Exception $e) {
@@ -26,7 +31,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function addItemToCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
+        if($this->isCartEnabled()) {
             try{
                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'addItemToCart');
             } catch (Exception $e) {
@@ -38,7 +43,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function updateItemInCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
+        if($this->isCartEnabled()) {
             try{
                 if ($hasChanges = $observer->getCart()->hasDataChanges()) {
                     $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(),$this->_email,'updateItemInCart');
@@ -52,7 +57,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstra
 
     public function removeItemFromCart(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && Mage::getStoreConfig('sailthru/email/abandoned_cart')) {
+        if($this->isCartEnabled()) {
             try{
                  $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
             } catch (Exception $e) {
