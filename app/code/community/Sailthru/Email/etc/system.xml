@@ -16,10 +16,10 @@
     <sections>
         <sailthru translate="label" module="sailthruemail">
             <class>separator-top</class>
-            <label>Settings</label>
+            <label>Setup</label>
             <tab>sailthruemail</tab>
             <frontend_type>text</frontend_type>
-            <sort_order>99</sort_order>
+            <sort_order>1</sort_order>
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
@@ -80,8 +80,59 @@
                         </enable_logging>
                     </fields>
                 </api>
+                <js translate="label">
+                    <label>Sailthru Javascript Deployment</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>4</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <js_select translate="label comment">
+                            <label>Use Sailthru Javascript</label>
+                            <comment>Deploy Sailthru Javascript on your Magento site. Use PersonalizeJS for latest features.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrujs</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>1</sort_order>
+                        </js_select>
+                        <horizon_domain translate="label">
+                            <label>Horizon Domain</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><js_select>2</js_select></depends>
+                        </horizon_domain>
+                        <customer_id translate="label">
+                            <label>Customer ID</label>
+                            <comment>Used for PersonalizeJS. Can be found <![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]>.</comment>
+                            <frontend_type>text</frontend_type>
+                            <depends><js_select>1</js_select></depends>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>2</sort_order>
+                        </customer_id>
+                    </fields>
+                </js>
+            </groups>
+        </sailthru>
+        <sailthru_transactional>
+            <class>separator-top</class>
+            <label>Transactionals</label>
+            <tab>sailthruemail</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>2</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
                 <email translate="label">
-                    <label>Email and Newsletters</label>
+                    <label>Transactional</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
@@ -89,16 +140,57 @@
                     <show_in_store>1</show_in_store>
                     <fields>
                         <enable_transactional_emails translate="label comment">
-                            <label>Enable Transactional Emails</label>
-                            <comment>Send transactional Emails through Sailthru</comment>
+                            <label>Deliver Magento transactionals through Sailthru</label>
+                            <comment>Let Sailthru delvier any mail coming from your Magento store, improving it's deliverability.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>0</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <sort_order>1</sort_order>
                         </enable_transactional_emails>
-                        <abandoned_cart translate="label comment">
+                        <sender>
+                            <label>Magento Transactional Sender</label>
+                            <comment>Sailthru-verified email address to use for emails sent from Magento.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Verifiedemails</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>2</sort_order>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                        </sender>
+                        <use_purchase_template translate="label">
+                            <label>Send a Sailthru-powered purchase receipt</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>3</sort_order>
+                        </use_purchase_template>
+                        <purchase_template translate="label">
+                            <label>Purchase Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><use_purchase_template>1</use_purchase_template></depends>
+                            <sort_order>4</sort_order>
+                        </purchase_template>
+                    </fields>
+                </email> 
+                <abandoned_cart translate="label">
+                    <label>Abandoned Cart</label>
+                    <comment>Send emails automatically to logged-in customers with abandoned items in their cart.</comment>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <enabled translate="label comment">
                             <label>Enable Abandoned Cart Emails</label>
                             <frontend_type>select</frontend_type>
                             <sort_order>1</sort_order>
@@ -106,43 +198,19 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>Send emails automatically to customers with abandoned items in their cart.</comment>
-                        </abandoned_cart>
-                        <abandoned_cart_sender_email translate="label comment">
-                            <label>Abandoned Cart Sender Email</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>Please note that you have to add this email to the list of <![CDATA[<a href="https://my.sailthru.com/verify" target="_blank">verified emails in MySailthru</a>]]>.</comment>
-                        </abandoned_cart_sender_email>
-                         <abandoned_cart_sender_name translate="label comment">
-                            <label>Abandoned Cart Sender Name</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </abandoned_cart_sender_name>-->
-                        <abandoned_cart_template translate="label comment">
+                        </enabled>
+                        <template translate="label comment">
                             <label>Abandoned Cart Template</label>
-                            <frontend_type>text</frontend_type>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>Enter a name for your abandoned cart template.</comment>
-                        </abandoned_cart_template>
-                         <abandoned_cart_subject translate="label comment">
-                            <label>Abandoned Cart Subject</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>5</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </abandoned_cart_subject>
-                        <reminder_time translate="label comment">
+                            <depends><enabled>1</enabled></depends>
+                        </template>
+                        <delay> translate="label comment">
                             <label>Abandoned Cart Delay Time</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>6</sort_order>
@@ -150,29 +218,13 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart.</comment>
-                        </reminder_time>
-                        <default_list translate="label comment">
-                            <label>Default Master List</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>7</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">default master list</a>]]> that all subscribers and customers are added to.</comment>
-                        </default_list>
-                        <newsletter_list translate="label comment">
-                            <label>Newsletter Email List</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>8</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
-                        </newsletter_list>
+                            <depends><enabled>1</enabled></depends>
+                        </delay>
                     </fields>
-                </email> 
+                </abandoned_cart>
                 <anonymous_cart translate="label">
                     <label>Anonymous Abandoned Cart</label>
+                    <comment>Send an abandoned cart to users who are not logged-in, but have a valid Sailthru cookie.</comment>
                     <frontend_type>text</frontend_type>
                     <sort_order>3</sort_order>
                     <show_in_default>1</show_in_default>
@@ -181,7 +233,6 @@
                     <fields>
                         <enabled>
                             <label>Enable</label>
-                            <comment>Send an abandoned cart (configurable template) to users based on Sailthru cookie.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
@@ -192,8 +243,8 @@
                         <template>
                             <label>Template</label>
                             <comment>Can be the same as regular abandoned cart, or use a different template to use a different strategy.</comment>
-                            <frontend_type>text</frontend_type>
-                            <!-- <source_model>adminhtml/system_config_source_yesno</source_model> -->
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -212,64 +263,71 @@
                         </reminder_time>
                     </fields>
                 </anonymous_cart>
-                <horizon translate="label">
-                    <label>Horizon</label>
+            </groups>
+        </sailthru_transactional>
+        <sailthru_users>
+            <class>separator-top</class>
+            <label>Users</label>
+            <tab>sailthruemail</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>3</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <management>
+                    <label>Sailthru User Management</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>4</sort_order>
+                    <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment>Complete the first three steps of <![CDATA[<a href="http://getstarted.sailthru.com/documentation/products/horizon/horizon-data-collection-setup" target="_blank">this page</a>]]> and fill out the "Horizon Domain" field below to complete Horizon setup</comment>
                     <fields>
-              <!--          <active translate="label">
-                            <label>Enable Horizon</label>
+                        <use_default_list translate="label comment">
+                            <label>Add all users to a Sailthru list</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <comment>All users, regardless of subscription status, will be added to this list on login or registration</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </use_default_list>
+                        <default_list translate="label comment">
+                            <label>Default Master List</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrulists</source_model>
+                            <depends><use_default_list>1</use_default_list></depends>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </active>-->
-                        <horizon_domain translate="label">
-                                <label>Horizon Domain</label>
-                                <frontend_type>text</frontend_type>
-                                <sort_order>1</sort_order>
-                                <show_in_default>1</show_in_default>
-                                <show_in_website>1</show_in_website>
-                                <show_in_store>1</show_in_store>
-                        </horizon_domain>
-                        <concierge_enabled translate="label">
-                                <label>Enable Concierge</label>
-                                <frontend_type>select</frontend_type>
-                                <sort_order>3</sort_order>
-                                <show_in_default>1</show_in_default>
-                                <show_in_website>1</show_in_website>
-                                <show_in_store>1</show_in_store>
-                                <source_model>adminhtml/system_config_source_yesno</source_model>
-                        </concierge_enabled>
-                    </fields>
-                </horizon>
-          <!--  <subscribers translate="label">
-                    <label>Subscribers</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>5</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <import_subscribers translate="label">
-                            <label>Import Existing subscribers to Sailthru</label>
+                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">default master list</a>]]> that all subscribers and customers are added to.</comment>
+                        </default_list>
+                        <enable_newsletter_hook translate="label comment">
+                            <label>Enable Newsletter Hook</label>
+                            <comment>The Sailthru plugin can capture subscriptions to the Magento newsletter module, and reflect those users into a Sailthru list.</comment>
                             <frontend_type>select</frontend_type>
-                            <sort_order>1</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>Import Existing Customers to Sailthru</comment>
-                        </import_subscribers>
+                        </enable_newsletter_hook>
+                        <newsletter_list translate="label comment">
+                            <sort_order>4</sort_order>
+                            <label>Newsletter Email List</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrulists</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enable_newsletter_hook>1</enable_newsletter_hook></depends>
+                            <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
+                        </newsletter_list>
                     </fields>
-                </subscribers> -->
+                </management>
             </groups>
-        </sailthru>
+        </sailthru_users>
     </sections>
 </config>

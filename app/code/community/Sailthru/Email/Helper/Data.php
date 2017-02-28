@@ -1,29 +1,37 @@
 <?php
 /**
  *
- * @category  Sailthru
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
 class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
-    /*
-        * Config paths to use
-        */
+
+    // API
     const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
     const XML_PATH_ENABLE_LOGGING                           = 'sailthru/api/enable_logging';
-    const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru/email/default_list';
-    const XML_PATH_DEFAULT_NEWSLETTER_LIST                  = 'sailthru/email/newsletter_list';
-    const XML_PATH_SENDER_EMAIL                             = 'sailthru/email/sender_email';
-    const XML_PATH_HORIZON_ENABLED                          = 'sailthru/horizon/active';
-    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/horizon/horizon_domain';
-    const XML_PATH_CONCIERGE_ENABLED                        = 'sailthru/horizon/concierge_enabled';
-    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru/email/abandoned_cart_template';
-    const XML_PATH_REMINDER_TIME                            = 'sailthru/email/reminder_time';
-    const XML_PATH_TRANSACTION_EMAIL_ENABLED                = 'sailthru/email/enable_transactional_emails';
-    const XML_PATH_IMPORT_SUBSCRIBERS                       = 'sailthru/subscribers/import_subscribers';
-    const XML_PATH_ANONYMOUS_CART                           = 'sailthru/anonymous_cart/enabled';
-    const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru/anonymous_cart/template';
-    const XML_PATH_ANONYMOUS_CART_REMINDER_TIME             = 'sailthru/anonymous_cart/reminder_time';
+    
+    // User Management
+    const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru_users/management/default_list';
+    const XML_PATH_NEWSLETTER_LIST                          = 'sailthru_users/management/newsletter_list';
+    
+    // Transactionals
+    const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactional/email/enable_transactional_emails';
+    const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
+    const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactional/abandoned_cart/enabled';
+    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru_transactional/abandoned_cart/template';
+    const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactional/abandoned_cart/delay';
+    const XML_PATH_ANONYMOUS_CART_ENABLED                   = 'sailthru_transactional/anonymous_cart/enabled';
+    const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactional/anonymous_cart/template';
+    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/delay';
+
+    // Other
+    const XML_PATH_JS                                       = 'sailthru/js/js_select';
+    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/js/horizon_domain';
+    const XML_PATH_CUSTOMER_ID                              = 'sailthru/js/customer_id';
+    const JS_SPM                                            = 1;
+    const JS_HORIZON                                        = 2;
+
+
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -34,16 +42,98 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return (boolean) Mage::getStoreConfig(self::XML_PATH_ENABLED, $store);
     }
 
+    public function isLoggingEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ENABLE_LOGGING, $store);
+    }
+
     /**
-     * Get log path
+     * Get list where all users will be added
      * @param type $store
      * @return string
      */
-    public function getLogPath($store = null)
+    public function getDefaultList($store = null)
     {
-        $log_path = Mage::getStoreConfig(self::XML_PATH_LOG_PATH, $store);
-        return !empty($log_path) ? $log_path : null;
+        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
+    }
 
+    /**
+     * Get Newsletter list
+     * @param type $store
+     * @return string
+     */
+    public function getNewsletterList($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_NEWSLETTER_LIST, $store);
+    }
+
+    /**
+     * Get transactional enabled flag
+     * @param store
+     * @return boolean int
+     */
+    public function isTransactionalEmailEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_EMAIL_ENABLED, $store);
+    }
+    /**
+     * Get sender for transactional email
+     * @param store
+     * @return string
+     */
+    public function getSenderEmail()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_EMAIL_SENDER, $store);
+    }
+
+    public function isAbandonedCartEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_ENABLED, $store);
+    }
+
+    public function getAbandonedCartDelayTime($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_DELAY, $store);
+    }
+
+    public function getAbandonedCartTemplate($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
+    }
+
+    public function isAnonymousCartEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_ENABLED, $store);
+    }
+
+    public function getAnonymousCartDelayTime($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_DELAY, $store);
+    }
+
+    public function getAnonymousCartTemplate($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_TEMPLATE, $store);
+    }
+
+    /**
+     * Check to see if Horizon is enabled
+     *
+     * @return bool
+     */
+    public function isHorizonEnabled($store = null)
+    {
+        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_HORIZON);
+    }
+
+    /**
+     * Check to see if PersonalizeJS is enabled
+     *
+     * @return bool
+     */
+    public function isPersonalizeJsEnabled($store = null)
+    {
+        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_SPM);
     }
 
     /**
@@ -57,89 +147,13 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     /**
-     * Get master list
+     * Get Horizon domain
      * @param type $store
      * @return string
      */
-    public function getMasterList($store = null)
+    public function getCustomerId($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
-    }
-
-    /**
-     * Check to see if Horizon is enabled
-     *
-     * @return bool
-     */
-    public function isHorizonEnabled($store = null)
-    {
-        return (boolean) Mage::getStoreConfig(self::XML_PATH_HORIZON_ENABLED, $store);
-    }
-
-    /**
-     * Check to see if Concierge is enabled
-     *
-     * @return bool
-     */
-    public function isConciergeEnabled($store = null)
-    {
-        return (boolean) Mage::getStoreConfig(self::XML_PATH_CONCIERGE_ENABLED, $store);
-    }
-
-    public function importSubscribers($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_IMPORT_SUBSCRIBERS, $store);
-    }
-
-    public function isTransactionalEmailEnabled($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_TRANSACTION_EMAIL_ENABLED, $store);
-    }
-
-    public function getSenderEmail()
-    {
-        return Mage::getStoreConfig(self::XML_PATH_SENDER_EMAIL);
-    }
-
-    public function getDefaultList($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
-    }
-
-    public function getNewsletterList($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_NEWSLETTER_LIST, $store);
-    }
-
-    public function getAbandonedCartReminderTime($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_REMINDER_TIME, $store);
-    }
-
-    public function getAbandonedCartTemplate($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
-    }
-
-    public function isAnonymousCartEnabled($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART, $store);
-    }
-
-    public function getAnonymousCartReminderTime($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_REMINDER_TIME, $store);
-    }
-
-    public function getAnonymousCartTemplate($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_TEMPLATE, $store);
-    }
-    
-
-    public function isLoggingEnabled($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ENABLE_LOGGING, $store);
+        return Mage::getStoreConfig(self::XML_PATH_CUSTOMER_ID, $store);
     }
 
     public function formatAmount($amount = null)

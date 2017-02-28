@@ -25,18 +25,15 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $this->_eventType = $eventType;
             }
 
-            $cartTime = Mage::helper('sailthruemail')->getAbandonedCartReminderTime();
-            $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
-
-            $email = $email ?: $quote->getCustomerEmail();
-            if (!$email) {
-                $email = $this->useHid();
-                if(!$email) {
-                    return false;
-                } else {
-                    $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
-                    $cartTime = Mage::helper('sailthruemail')->getAnonymousCartReminderTime();
-                }
+            $email = $quote->getCustomerEmail();
+            if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
+                $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
+                $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
+            } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled and $email = $this->useHid()){
+                $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
+                $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
+            } else {
+                return false;
             }
 
             // prevent bundle parts from surfacing
@@ -68,34 +65,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         } catch (Exception $e) {
             Mage::logException($e);
         }
-    }
-
-    /**
-     * Route errors
-     *
-     * @param array $response
-     * @param Mage_Sales_Model_Quote $quote
-     * @param string $email
-     * @return boolean
-     *
-     * @todo For future iterations, use switch statement to handle multiple error messages.
-     */
-    public function handleError($response, $quote, $email)
-    {
-            if($response['error'] == 14) {
-                /**
-                 * Response Error 14 means that an unknown template was passed in the API call.
-                 * This normally happens for first time API calls or when the name of the template has
-                 * been changed, http://getstarted.sailthru.com/api/api-response-errors.  We'll
-                 * therefore need to create a template to pass in the call.  One condition for the
-                 * template to be created is that the sender email must be verified so please check
-                 * https://my.sailthru.com/verify to make sure that the send email is listed there.
-                 */
-                return $this->createAbandonedCartEmail($quote, $email);
-            } else {
-                Mage::throwException('Unknown purchase response error: ' . json_encode($response));
-            }
-
     }
 
     /**
@@ -315,7 +284,9 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @return string|bool
      */
-    private function useHid(){
+    private function useHid()
+    {
+        $this->log("checking for HID use");
         if (Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
             try {
                 $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');

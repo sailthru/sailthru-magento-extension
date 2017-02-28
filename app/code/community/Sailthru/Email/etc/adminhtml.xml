@@ -21,6 +21,12 @@
                                     <sailthru>
                                         <title>Sailthru Settings</title>
                                     </sailthru>
+                                    <sailthru_transactional>
+                                        <title>Sailthru Mail Settings</title>
+                                    </sailthru_transactional>
+                                    <sailthru_users>
+                                        <title>Sailthru User Settings</title>
+                                    </sailthru_users>
                                 </children>
                             </config>
                         </children>
