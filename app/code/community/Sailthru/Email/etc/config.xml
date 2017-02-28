@@ -137,12 +137,12 @@
             </newsletter_subscriber_delete_after>
      </events>
         <routers>
-            <sailthruemail>
-                <use>standard</use>
-                <args>
-                    <module>Sailthru_Email</module>
-                    <frontName>email</frontName>
-                </args>
+        <sailthruemail>
+            <use>standard</use>
+            <args>
+                <module>Sailthru_Email</module>
+                <frontName>email</frontName>
+            </args>
             </sailthruemail>
             <checkout>
                 <args>
@@ -152,6 +152,13 @@
                 </args>
             </checkout>
         </routers>
+        <layout>
+            <updates>
+                <sailthruemail>
+                    <file>sailthru.xml</file>
+                </sailthruemail>
+            </updates>
+        </layout>
     </frontend>
     <adminhtml>
         <events>

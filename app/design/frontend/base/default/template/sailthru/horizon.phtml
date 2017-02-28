@@ -5,18 +5,10 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-
 ?>
-
-<?php   
-        //$domain = Mage::getStoreConfig('sailthru/horizon/horizon_domain');
-        $domain = Mage::helper('sailthruemail')->getHorizonDomain();
-        $concierge = Mage::helper('sailthruemail')->isConciergeEnabled() ? ", concierge: { from: 'top', threshold: 400}" : '';
-        //$concierge = Mage::getStoreConfig(Sailthru_Email_Helper_Data::XML_PATH_CONCIERGE_ENABLED) ? ', concierge: { from: "top", threshold: 10}' : 'not true';
-?>
-<!--BEGIN SAILTHRU HORIZON & CONCIERGE -->
+<!--BEGIN SAILTHRU HORIZON -->
 <script type="text/javascript">
-//<![CDATA[
+<![CDATA[
     (function() {
         function loadHorizon() {
             var s = document.createElement('script');
@@ -33,21 +25,10 @@
                 oldOnLoad();
             }
             Sailthru.setup({
-                domain: '<?php echo Mage::helper('sailthruemail')->getHorizonDomain()?>' <?php echo "$concierge"; ?>
+                domain: '<?php echo Mage::helper('sailthruemail')->getHorizonDomain(); ?>'
             });
         };
     })();
-//]]>
+]]>
 </script>
-<!-- END SAILTHRU HORIZON & CONCIERGE -->
-
-<!--BEGIN SAILTHRU TAGS-->
-<?php $product = Mage::registry('current_product'); ?>
-<meta name="sailthru.title" content="<?php echo htmlspecialchars($product->getName()); ?>" />
-<meta name="sailthru.tags" content="<?php echo htmlspecialchars($product->getMetaKeyword()); ?>" />
-<meta name="sailthru.description" content="<?php echo htmlspecialchars($product->getDescription()); ?>" />
-<meta name="sailthru.image.full" content="<?php echo htmlspecialchars($product->getImageUrl()); ?>" />
-<meta name="sailthru.image.thumb" content="<?php echo htmlspecialchars($product->getThumbnailUrl(50, 50)); ?>" />
-<meta name="sailthru.price" content="<?php echo htmlspecialchars($product->getPrice()*100); ?>" />
-<!--END SAILTHRU TAGS-->
-
+<!-- END SAILTHRU HORIZON -->
