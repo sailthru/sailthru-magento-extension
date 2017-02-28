@@ -7,28 +7,29 @@
  */
 ?>
 <!--BEGIN SAILTHRU HORIZON -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script type="text/javascript">
-<![CDATA[
-    (function() {
-        function loadHorizon() {
-            var s = document.createElement('script');
-            s.type = 'text/javascript';
-            s.async = true;
-            s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';
-            var x = document.getElementsByTagName('script')[0];
-            x.parentNode.insertBefore(s, x);
+jQuery.noConflict();
+(function() {
+    function loadHorizon() {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+    }
+    loadHorizon();
+    var oldOnLoad = window.onload;
+    window.onload = function() {
+        if (typeof oldOnLoad === 'function') {
+            oldOnLoad();
         }
-        loadHorizon();
-        var oldOnLoad = window.onload;
-        window.onload = function() {
-            if (typeof oldOnLoad === 'function') {
-                oldOnLoad();
-            }
-            Sailthru.setup({
-                domain: '<?php echo Mage::helper('sailthruemail')->getHorizonDomain(); ?>'
-            });
-        };
-    })();
-]]>
+        Sailthru.setup({
+            domain: '<?php echo Mage::helper('sailthruemail')->getHorizonDomain(); ?>',
+            useStoredTags: true
+        });
+    };
+})();
 </script>
 <!-- END SAILTHRU HORIZON -->
