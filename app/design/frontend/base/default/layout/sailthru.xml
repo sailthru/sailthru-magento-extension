@@ -9,7 +9,7 @@
                     </text>
                 </action>
             </block>
-            <block type="Sailthru_Email_Block_Horizon" name="sailthru_js" />
+            <block type="Sailthru_Email_Block_Js" name="sailthru_js" />
        </reference>
    </catalog_product_view>
 </layout>
