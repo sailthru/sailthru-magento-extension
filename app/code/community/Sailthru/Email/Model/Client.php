@@ -1260,6 +1260,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Email_Model_Abstract
      * Prepare JSON payload
      */
     protected function prepareJsonPayload(array $data, array $binary_data = array()) {
+        $data['integration'] = "Magento 1";
         $payload =  array(
             'api_key' => $this->_apiKey,
             'format' => 'json', //<3 XML
