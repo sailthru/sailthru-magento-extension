@@ -9,12 +9,19 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     // API
     const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
     const XML_PATH_ENABLE_LOGGING                           = 'sailthru/api/enable_logging';
-    
+
+    // Javascript
+    const XML_PATH_JS                                       = 'sailthru/js/js_select';
+    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/js/horizon_domain';
+    const XML_PATH_CUSTOMER_ID                              = 'sailthru/js/customer_id';
+    const JS_SPM                                            = 1;
+    const JS_HORIZON                                        = 2;
+
     // User Management
     const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru_users/management/default_list';
     const XML_PATH_NEWSLETTER_LIST                          = 'sailthru_users/management/newsletter_list';
     
-    // Transactionals
+    // Transactional
     const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactional/email/enable_transactional_emails';
     const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
     const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactional/abandoned_cart/enabled';
@@ -24,14 +31,13 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactional/anonymous_cart/template';
     const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/delay';
 
-    // Other
-    const XML_PATH_JS                                       = 'sailthru/js/js_select';
-    const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/js/horizon_domain';
-    const XML_PATH_CUSTOMER_ID                              = 'sailthru/js/customer_id';
-    const JS_SPM                                            = 1;
-    const JS_HORIZON                                        = 2;
-
-
+    // Content
+    const XML_PATH_PRODUCT_SYNC                             = 'sailthru_content/product_sync/enable';
+    const XML_PATH_PRODUCT_UPDATE_MASTER                    = 'sailthru_content/product_sync/master_products';
+    const XML_PATH_PRODUCT_UPDATE_VARIANT                   = 'sailthru_content/product_sync/variant_products';
+    const XML_PATH_TAGS_USE_SEO                             = 'sailthru_content/product_tags/use_seo';
+    const XML_PATH_TAGS_USE_CATEGORIES                      = 'sailthru_content/product_tags/use_categories';
+    const XML_PATH_TAGS_USE_ATTRIBUTES                      = 'sailthru_content/product_tags/use_attributes';
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -166,7 +172,105 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     }
 
-    public function getPrice($product){
+    /**
+     * Check if product sync is on
+     * @return bool
+     */
+    public function isProductSyncEnabled($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_PRODUCT_SYNC, $store));
+    }
+
+    /**
+     * Check if updating master products is enabled
+     * @return bool
+     */
+    public function updateMasterProducts($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_PRODUCT_UPDATE_MASTER, $store));
+    }
+
+    /**
+     * Check if updating variant products is enabled
+     * @return bool
+     */
+    public function updateVariantProducts($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_PRODUCT_UPDATE_VARIANT, $store));
+    }
+
+    public function tagsUseKeywords($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_SEO, $store));
+    }
+
+    public function tagsUseCategories($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_CATEGORIES, $store));
+    }
+
+    public function getTags(Mage_Catalog_Model_Product $product, $attributes = null, $categories = null)
+    {
+        $tags = '';
+        if ($this->tagsUseKeywords()) {
+            $keywords = htmlspecialchars($product->getMetaKeyword());
+            $tags .= "{$keywords},";
+        }
+        if ($this->tagsUseCategories()) {
+            if ($categories === null) {
+                $categories = $this->getCategories($product);
+            }
+            $tags .= implode(",", $categories);
+        }
+        try {
+            Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection();
+            Mage::log($attributes, null, "sailthru.log");
+            $attribute_str = '';
+            if ($this->tagsUseAttributes()) {
+                if ($attributes === null) {
+                    $attributes = $this->getProductAttributeValues($product);
+                }
+                foreach ($attributes as $key => $value) {
+                    if (!is_numeric($value)) {
+                        $attribute_str .= (($value == "Yes" or $value == "Enabled") ? $key : $value) . ",";
+                    }
+                }
+                $tags .= $attribute_str;
+            }
+        } catch (\Exception $e) {
+            $this->logger($e);
+        }
+        return $tags;
+    }
+    public function getProductAttributeValues($product)
+    {
+        $setId = $product->getAttributeSetId();
+        $attributeSet = $product->getAttributes();
+        $data = [];
+        foreach ($attributeSet as $attribute) {
+            $label = $attribute->getName();
+            if (!in_array($label, self::$unusedVarKeys)) {
+                $value = $attribute->getFrontend()->getValue($product);
+                if ($value and $label and $value != "No" and $value != " ") {
+                    $data[$label] = $value;
+                }
+            }
+        }
+        return $data;
+    }
+    public function getCategories($product)
+    {
+        $collection = $product->getCategoryCollection();
+        $items = $collection->addAttributeToSelect('name')->getItems();
+        $categories = [];
+        foreach ($items as $item) {
+            $categories[] = $item->getName();
+        }
+        return $categories;
+    }
+
+    public function getPrice($product)
+    {
         $current_price = $product->getFinalPrice();
         $final_price = Mage::helper('sailthruemail')->formatAmount($current_price);
         return $final_price;

@@ -127,4 +127,11 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         return true;
     }
 
+    private function generateSailthruTags(Mage_Catalog_Model_Product $product){
+        $tags = "";
+        if Mage::helper('sailthruemail')->tagsUseSEO() {
+            $tags = $ags + $product->getMetaKeyword()
+
+        }
+    }
 }
