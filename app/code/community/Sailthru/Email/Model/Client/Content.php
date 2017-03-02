@@ -13,7 +13,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      * Push product delete to Sailthru using Content API
      *
      * @param Mage_Catalog_Model_Product $product
-     * @return Sailthru_Email_Model_Client_Product
+     * @return Sailthru_Email_Model_Client_Content
      */
     public function deleteProduct(Mage_Catalog_Model_Product $product)
     {
@@ -32,7 +32,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      * Push product save to Sailthru using Content API
      *
      * @param Mage_Catalog_Model_Product $product
-     * @return Sailthru_Email_Model_Client_Product
+     * @return Sailthru_Email_Model_Client_Content
      */
     public function saveProduct(Mage_Catalog_Model_Product $product)
     {
@@ -40,7 +40,9 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 
         try {
             $data = $this->getProductData($product);
-            $response = $this->apiPost('content', $data);
+            if ($data) {
+                $response = $this->apiPost('content', $data);
+            }
         } catch(Exception $e) {
             Mage::logException($e);
         }
@@ -51,29 +53,40 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      * Create Product array from Mage_Catalog_Model_Product
      *
      * @param Mage_Catalog_Model_Product $product
-     * @return array
+     * @return array|false
      */
     public function getProductData(Mage_Catalog_Model_Product $product)
     {
+        $productType = $product->getTypeId();
+        $isMaster = ($productType == 'configurable');
+        $updateMaster = Mage::helper('sailthruemail')->updateMasterProducts();
+        if ($isMaster and !$updateMaster) {
+            return false;
+        }
+        $isSimple = ($productType == 'simple');
+        $parents = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
+        $isVariant = ($isSimple and $parents);
+        $updateVariants = Mage::helper('sailthruemail')->updateVariantProducts();
+        if ($isVariant and !$updateVariants) {
+            return false;
+        }
         try {
             $productTypeId = $product->getTypeId();
             $data = array('url' => $product->getProductUrl(),
                 'title' => htmlspecialchars($product->getName()),
-                //'date' => '',
-                'spider' => 1,
                 'price' => $product->getPrice(),
                 'description' => urlencode($product->getDescription()),
-                'tags' => htmlspecialchars($product->getMetaKeyword()),
-                'images' => array(),
+                'tags' => Mage::helper('sailthruemail')->getTags($product),
                 'vars' => array('sku' => $product->getSku(),
                     'storeId' => '',
                     'typeId' => $productTypeId,
                     'status' => $product->getStatus(),
                     'categoryId' => $product->getCategoryId(),
                     'categoryIds' => $product->getCategoryIds(),
+                    'category' => $product->getCategory(),
                     'websiteIds' => $product->getWebsiteIds(),
                     'storeIds'  => $product->getStoreIds(),
-                    //'attributes' => $product->getAttributes(),
+                    'attributes' => Mage::helper('sailthruemail')->getProductAttributeValues($product),
                     'groupPrice' => $product->getGroupPrice(),
                     'formatedPrice' => $product->getFormatedPrice(),
                     'calculatedFinalPrice' => $product->getCalculatedFinalPrice(),
@@ -93,7 +106,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                     'isVirtual'  => $product->isVirtual(),
                     'isRecurring' => $product->isRecurring(),
                     'isInStock'  => $product->isInStock(),
-                    'weight'  => $product->getSku()
+                    'weight'  => $product->getWeight()
                 )
             );
 
@@ -115,23 +128,4 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 
     }
 
-    private static function validateProductImage($image) {
-        if(empty($image)) {
-            return false;
-        }
-
-        if('no_selection' == $image) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function generateSailthruTags(Mage_Catalog_Model_Product $product){
-        $tags = "";
-        if Mage::helper('sailthruemail')->tagsUseSEO() {
-            $tags = $ags + $product->getMetaKeyword()
-
-        }
-    }
 }

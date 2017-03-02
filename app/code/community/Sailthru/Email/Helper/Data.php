@@ -88,7 +88,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
      * @param store
      * @return string
      */
-    public function getSenderEmail()
+    public function getSenderEmail($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_EMAIL_SENDER, $store);
     }
