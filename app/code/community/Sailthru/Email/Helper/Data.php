@@ -20,7 +20,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     // User Management
     const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru_users/management/default_list';
     const XML_PATH_NEWSLETTER_LIST                          = 'sailthru_users/management/newsletter_list';
-    
+
     // Transactional
     const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactional/email/enable_transactional_emails';
     const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
@@ -38,6 +38,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_TAGS_USE_SEO                             = 'sailthru_content/product_tags/use_seo';
     const XML_PATH_TAGS_USE_CATEGORIES                      = 'sailthru_content/product_tags/use_categories';
     const XML_PATH_TAGS_USE_ATTRIBUTES                      = 'sailthru_content/product_tags/use_attributes';
+    const XML_PATH_TAGS_ATTRIBUTE_CODES                     = 'sailthru_content/product_tags/attributes';
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -209,7 +210,22 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_CATEGORIES, $store));
     }
 
-    public function getTags(Mage_Catalog_Model_Product $product, $attributes = null, $categories = null)
+    public function tagsUseAttributes($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_ATTRIBUTES));
+    }
+
+    /**
+     * Get all applicable attributes for product tags
+     * @param null $store
+     * @return array
+     */
+    public function getUsableAttributeCodes($store = null)
+    {
+        return explode(",", Mage::getStoreConfig(self::XML_PATH_TAGS_ATTRIBUTE_CODES, $store));
+    }
+
+    public function getTags(Mage_Catalog_Model_Product $product)
     {
         $tags = '';
         if ($this->tagsUseKeywords()) {
@@ -217,46 +233,44 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
             $tags .= "{$keywords},";
         }
         if ($this->tagsUseCategories()) {
-            if ($categories === null) {
-                $categories = $this->getCategories($product);
-            }
+            $categories = $this->getCategories($product);
             $tags .= implode(",", $categories);
         }
-        try {
-            Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection();
-            Mage::log($attributes, null, "sailthru.log");
-            $attribute_str = '';
-            if ($this->tagsUseAttributes()) {
-                if ($attributes === null) {
-                    $attributes = $this->getProductAttributeValues($product);
-                }
+        if ($this->tagsUseAttributes()) {
+            try {
+                $attribute_str = '';
+                $attributes = $this->getProductAttributeValues($product);
                 foreach ($attributes as $key => $value) {
                     if (!is_numeric($value)) {
                         $attribute_str .= (($value == "Yes" or $value == "Enabled") ? $key : $value) . ",";
                     }
                 }
                 $tags .= $attribute_str;
+            } catch (Exception $e) {
+                Mage::log("Error building product tags:", null, "sailthru.log");
+                Mage::log($e->getMessage(), null, "sailthru.log");
             }
-        } catch (\Exception $e) {
-            $this->logger($e);
         }
+
         return $tags;
     }
+
     public function getProductAttributeValues($product)
     {
-        $setId = $product->getAttributeSetId();
-        $attributeSet = $product->getAttributes();
-        $data = [];
-        foreach ($attributeSet as $attribute) {
-            $label = $attribute->getName();
-            if (!in_array($label, self::$unusedVarKeys)) {
+        $values = [];
+
+        $usableAttributeCodes = $this->getUsableAttributeCodes();
+        $productAttributes = $product->getAttributes();
+        foreach ($productAttributes as $key => $attribute) {
+            if (in_array($key, $usableAttributeCodes)) {
+                $label = $attribute->getFrontendLabel();
                 $value = $attribute->getFrontend()->getValue($product);
                 if ($value and $label and $value != "No" and $value != " ") {
-                    $data[$label] = $value;
+                    $values[$label] = $value;
                 }
             }
         }
-        return $data;
+        return $values;
     }
     public function getCategories($product)
     {

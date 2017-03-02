@@ -429,14 +429,21 @@
                                     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
                                     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
                                     <script>
+                                        /*
                                         jQuery('select#sailthru_content_product_tags_attributes').chosen({
                                             placeholder_text_multiple: "Name, Color, etc."
                                         });
+                                        */
                                     </script>
                                 ]]>
                             </comment>
-                            <label>Select attributes to use for tags</label>
-                            <!--<depends><use_attributes>1</use_attributes></depends>-->
+                            <label>
+                                <![CDATA[
+                                    Usable Product Attributes<br />
+                                    <span style="font-size: 11px; font-style: italic;">Can select multiple / all</span>
+                                ]]>
+                            </label>
+                            <depends><use_attributes>1</use_attributes></depends>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>Sailthru_Email_Model_Config_Source_Productattributes</source_model>
                             <sort_order>7</sort_order>
