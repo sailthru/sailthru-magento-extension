@@ -12,6 +12,17 @@
  *
  */
 class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
+
+    const ORDER_EMAIL                   = 'sailthru_transactional/templates/order';
+    const SHIPPING_EMAIL                = 'sailthru_transactional/templates/shipping';
+    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/templates/reg_success';
+    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/templates/reg_confirm';
+    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/templates/reg_confirmed';
+    const RESET_PASSWORD_EMAIL          = 'sailthru_transactional/templates/reset_password';
+    const NEWSLETTER_CONFIRM_EMAIL      = 'sailthru_transactional/templates/newsletter_confirm';
+    const NEWSLETTER_CONFIRMED_EMAIL    = 'sailthru_transactional/templates/newsletter_confirmed';
+    const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/templates/newsletter_unsubscribe';
+
     /**
      * Send mail to recipient
      *
@@ -41,7 +52,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
         $this->setUseAbsoluteLinks(true);
         $text = $this->getProcessedTemplate($variables, true);
-
+        Mage::log("CLASS:", null, "sailthru.log");
+        Mage::log("These are the variables: ", null, "sailthru.log");
+//        Mage::log(var_export($variables, true), null, "sailthru.log");
+        $vars = $variables;
         //sailthru//
         try {
             if ($this->getData('template_code')) {
@@ -83,4 +97,51 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         return true;
     }
 
+    private function getTransactionalType()
+    {
+        $id = $this->getId();
+
+        if ($id == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_TEMPLATE) or
+            $id == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_GUEST_TEMPLATE))
+            return self::ORDER_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_TEMPLATE) or
+            $id == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_GUEST_TEMPLATE))
+            return self::SHIPPING_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_REGISTER_EMAIL_TEMPLATE))
+            return self::REGISTER_SUCCESS_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_CONFIRM_EMAIL_TEMPLATE))
+            return self::REGISTER_CONFIRM_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_CONFIRMED_EMAIL_TEMPLATE))
+            return self::REGISTER_CONFIRMED_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_REMIND_EMAIL_TEMPLATE))
+            return self::RESET_PASSWORD_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_CONFIRM_EMAIL_TEMPLATE))
+            return self::NEWSLETTER_CONFIRM_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_SUCCESS_EMAIL_TEMPLATE))
+            return self::NEWSLETTER_CONFIRMED_EMAIL;
+
+        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_UNSUBSCRIBE_EMAIL_TEMPLATE))
+            return self::NEWSLETTER_UNSUBSCRIBE_EMAIL;
+
+    }
+
+    // TODO: Fill in the vars needed in Sailthru for each template type
+    private function getTransactionalVars($transactionalType) {
+        switch ($transactionalType):
+            case self::SHIPPING_EMAIL:
+                return [];
+            case self::ORDER_EMAIL:
+                return [];
+            case self::REGISTER_SUCCESS_EMAIL:
+                return [];
+        endswitch;
+
+    }
 }
