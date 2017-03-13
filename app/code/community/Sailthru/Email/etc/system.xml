@@ -377,7 +377,14 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>Send simple products that do have parents. *Not Recommended*</comment>
+                            <comment>
+                                <![CDATA[
+                                    Send variants, e.g. "SHIRT - SMALL, RED" to Sailthru. Not recommended. 
+                                     <span style="font-size: 11px; font-style: italic; font-weight: bold;">
+                                        Note: must enable URL-fragments in Sailthru for this to work.
+                                     </span>
+                                ]]>
+                            </comment>
                         </variant_products>
                     </fields>
                 </product_sync>

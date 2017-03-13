@@ -31,26 +31,36 @@ class Sailthru_Email_Model_Observer_Content extends Sailthru_Email_Model_Abstrac
     /**
      * Push product to Sailthru using Content API
      *
-     * @param Varien_Event_Observer $observer
+     * @param Mage_Sales_Model_Observer $observer
      * @return Mage_Sales_Model_Observer
      */
-    public function saveProduct(Varien_Event_Observer $observer)
+    public function saveProduct(Mage_Sales_Model_Observer $observer)
     {
        if($this->_isEnabled) {
-            $product = $observer->getEvent()->getProduct();
-            $status = $product->getStatus();
-            $sailthruContent = Mage::getModel('sailthruemail/client_content');
-            try{
-                if($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED){
-                    $response = $sailthruContent->saveProduct($product);
-                } elseif($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED){
-                    $response = $sailthruContent->deleteProduct($product);
-                }
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
-        }
-        return $this;
+           $eventProduct = $observer->getEvent()->getProduct();
+           $productId = $eventProduct->getId();
+
+           $storeId = Mage::app()->getRequest()->getParam('store');
+           $appEmulation = Mage::getSingleton('core/app_emulation');
+           $stores = $storeId ? [$storeId] : $eventProduct->getStoreIds();
+           foreach ($stores as $storeId) {
+               $emulateData = $storeId ? $appEmulation->startEnvironmentEmulation($storeId) : null;
+               $product = Mage::getModel('catalog/product')->load($productId); // get the full product.
+               $status = $product->getStatus();
+               $sailthruContent = Mage::getModel('sailthruemail/client_content');
+               try {
+                   if ($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
+                       $response = $sailthruContent->saveProduct($product);
+                   } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
+                       $response = $sailthruContent->deleteProduct($product);
+                   }
+               } catch (Exception $e) {
+                   Mage::logException($e);
+               }
+               $appEmulation->stopEnvironmentEmulation($emulateData);
+           }
+       }
+       return $observer;
     }
 
 }

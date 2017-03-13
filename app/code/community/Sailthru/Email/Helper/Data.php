@@ -215,6 +215,15 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_ATTRIBUTES));
     }
 
+    public function getVariantUrl(Mage_Catalog_Model_Product $product, $parentId)
+    {
+        if ($product->getVisibility() == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE) {
+            $parent = Mage::getModel('catalog/product')->load($parentId);
+            return str_replace(" ", "_", "{$parent->getProductUrl()}#{$product->getSku()}");
+        }
+        return $product->getUrl();
+    }
+
     /**
      * Get all applicable attributes for product tags
      * @param null $store

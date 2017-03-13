@@ -37,6 +37,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     public function saveProduct(Mage_Catalog_Model_Product $product)
     {
         $this->_eventType = 'adminSaveProduct';
+        $this->log("Trying to save product!");
 
         try {
             $data = $this->getProductData($product);
@@ -58,21 +59,30 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     public function getProductData(Mage_Catalog_Model_Product $product)
     {
         $productType = $product->getTypeId();
-        $isMaster = ($productType == 'configurable');
+        $isMaster = ($productType == 'configurable' or $productType == 'bundle');
         $updateMaster = Mage::helper('sailthruemail')->updateMasterProducts();
         if ($isMaster and !$updateMaster) {
             return false;
         }
         $isSimple = ($productType == 'simple');
         $parents = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
-        $isVariant = ($isSimple and $parents);
+        $isVariant = ($isSimple and (sizeof($parents) == 1));
         $updateVariants = Mage::helper('sailthruemail')->updateVariantProducts();
         if ($isVariant and !$updateVariants) {
             return false;
         }
+
+        $url = $isVariant
+            ? Mage::helper('sailthruemail')->getVariantUrl($product, $parents[0])
+            : $product->getUrlInStore();
+
+        $this->log($url);
+
         try {
             $productTypeId = $product->getTypeId();
-            $data = array('url' => $product->getProductUrl(),
+            $data = array(
+                'url' => $url,
+                'keys' => ['sku' => $product->getSku()],
                 'title' => htmlspecialchars($product->getName()),
                 'price' => $product->getPrice(),
                 'description' => urlencode($product->getDescription()),
@@ -110,10 +120,12 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 )
             );
 
+            if ($isSimple) $data['inventory'] = $product->getSize();
+
             // PRICE-FIXING CODE
             $data['price'] = Mage::helper('sailthruemail')->getPrice($product);
 
-            // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
+            // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be inaccurate.
             $data['images'] = [
                 "full"     => Mage::helper('catalog/product')->getImageUrl($product),
                 "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
