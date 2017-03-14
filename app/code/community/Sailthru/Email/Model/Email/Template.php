@@ -23,6 +23,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
     const NEWSLETTER_CONFIRMED_EMAIL    = 'sailthru_transactional/templates/newsletter_confirmed';
     const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/templates/newsletter_unsubscribe';
 
+    private $_transactionalType;
+
     /**
      * Send mail to recipient
      *
@@ -50,6 +52,11 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         $names = is_array($name) ? $name : (array)$name;
         $names = array_values($names);
 
+        $this->_transactionalType = $this->getSailthruTransactionalType();
+        if ($template_name = Mage::getStoreConfig($this->_transactionalType)) {
+            $variables = $this->getSailthruVars($variables);
+        }
+
         $this->setUseAbsoluteLinks(true);
         $text = $this->getProcessedTemplate($variables, true);
         Mage::log("CLASS:", null, "sailthru.log");
@@ -58,15 +65,17 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         $vars = $variables;
         //sailthru//
         try {
-            if ($this->getData('template_code')) {
-                $template_name = $this->getData('template_code');
-            } else {
-                $template_name = $this->getId();
+            if (!$template_name) {
+                if ($this->getData('template_code')) {
+                    $template_name = $this->getData('template_code');
+                } else {
+                    $template_name = $this->getId();
+                }
             }
             
-            $options = [
-                'behalf_email' => $this->getSenderEmail(),
-            ];
+//            $options = [
+//                'behalf_email' => $this->getSenderEmail(),
+//            ];
             if (count($this->_bccEmails) > 0){
                 $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
             }
@@ -97,7 +106,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         return true;
     }
 
-    private function getTransactionalType()
+    private function getSailthruTransactionalType()
     {
         $id = $this->getId();
 
@@ -133,15 +142,32 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
     }
 
     // TODO: Fill in the vars needed in Sailthru for each template type
-    private function getTransactionalVars($transactionalType) {
-        switch ($transactionalType):
+    private function getSailthruVars($vars) {
+        switch ($this->_transactionalType):
             case self::SHIPPING_EMAIL:
-                return [];
-            case self::ORDER_EMAIL:
-                return [];
-            case self::REGISTER_SUCCESS_EMAIL:
-                return [];
+                return $this->getSailthruShippingVars($vars);
         endswitch;
 
     }
+
+    private function getSailthruShippingVars($vars) {
+        $order = $vars["order"];
+        $shipment = $vars["shipment"];
+
+        $sailVars = [
+                'is_guest'          => $order->getCustomerIsGuest(),
+                'orderStatus'       => $order->getStatus(),
+                'orderState'        => $order->getState(),
+                'coupon_code'       => $order->getCouponCode(),
+//                'items'             => Mage::getModel('sailthruemail/client_purchase')->_getItems($shipment->getAllItems()),
+                'createdAt'         => $shipment->getCreatedAt(),
+                'comment'       => $vars["comment"],
+                'payment_html'  => $vars["payment_html"],
+                'billingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
+                'shippingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress())
+            ];
+
+        return $sailVars;
+    }
+
 }

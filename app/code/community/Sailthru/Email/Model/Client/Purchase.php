@@ -106,7 +106,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @return type
      */
-    protected function _getItems($items)
+    public function _getItems($items)
     {
         try {
             $data = array();
