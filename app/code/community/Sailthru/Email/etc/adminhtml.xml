@@ -27,6 +27,9 @@
                                     <sailthru_users>
                                         <title>Sailthru User Settings</title>
                                     </sailthru_users>
+                                    <sailthru_content>
+                                        <title>Sailthru Contents Settings</title>
+                                    </sailthru_content>
                                 </children>
                             </config>
                         </children>

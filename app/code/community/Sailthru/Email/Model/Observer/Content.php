@@ -31,26 +31,49 @@ class Sailthru_Email_Model_Observer_Content extends Sailthru_Email_Model_Abstrac
     /**
      * Push product to Sailthru using Content API
      *
-     * @param Varien_Event_Observer $observer
+     * @param Mage_Sales_Model_Observer $observer
      * @return Mage_Sales_Model_Observer
      */
-    public function saveProduct(Varien_Event_Observer $observer)
+    public function saveProduct(Mage_Sales_Model_Observer $observer)
     {
-       if($this->_isEnabled) {
-            $product = $observer->getEvent()->getProduct();
-            $status = $product->getStatus();
-            $sailthruContent = Mage::getModel('sailthruemail/client_content');
-            try{
-                if($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED){
-                    $response = $sailthruContent->saveProduct($product);
-                } elseif($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED){
-                    $response = $sailthruContent->deleteProduct($product);
+        $eventProduct = $observer->getEvent()->getProduct();
+        $productId = $eventProduct->getId();
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $stores = $this->getScopedStores($eventProduct);
+        foreach ($stores as $storeId) {
+            if (Mage::helper('sailthruemail')->isEnabled($storeId) and Mage::helper('sailthruemail')->isProductSyncEnabled($storeId)) {
+                $emulateData = $appEmulation->startEnvironmentEmulation($storeId);
+                $product = Mage::getModel('catalog/product')->load($productId); // get the full product.
+                $status = $product->getStatus();
+                $sailthruContent = Mage::getModel('sailthruemail/client_content');
+                try {
+                    if ($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
+                        $response = $sailthruContent->saveProduct($product);
+                    } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
+                        $response = $sailthruContent->deleteProduct($product);
+                    }
+                } catch (Exception $e) {
+                    Mage::logException($e);
                 }
-            } catch (Exception $e) {
-                Mage::logException($e);
+                $appEmulation->stopEnvironmentEmulation($emulateData);
             }
         }
-        return $this;
+        return $observer;
+    }
+
+    private function getScopedStores(Mage_Catalog_Model_Product $product)
+    {
+        $storeId = Mage::app()->getRequest()->getParam('store');
+        if ($storeId) {
+            return [$storeId];
+        }
+        $storeIds = $product->getStoreIds();
+        $websiteId = Mage::app()->getRequest()->getParam('website');
+        if ($websiteId) {
+            $websiteStoreIds = Mage::getModel('core/website')->load($websiteId)->getStoreIds();
+            return array_intersect($storeIds, $websiteStoreIds);
+        }
+        return $storeIds;
     }
 
 }
