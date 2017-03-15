@@ -37,8 +37,6 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     public function saveProduct(Mage_Catalog_Model_Product $product)
     {
         $this->_eventType = 'adminSaveProduct';
-        $this->log("Trying to save product!");
-
         try {
             $data = $this->getProductData($product);
             if ($data) {
@@ -75,8 +73,6 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $url = $isVariant
             ? Mage::helper('sailthruemail')->getVariantUrl($product, $parents[0])
             : $product->getUrlInStore();
-
-        $this->log($url);
 
         try {
             $productTypeId = $product->getTypeId();
