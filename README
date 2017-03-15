@@ -47,4 +47,12 @@ Personalize the subject line and other fields to your preference. Make sure you 
 Step 6: Enjoy the power of Sailthru.
 
 
-===Tested on Magento Community Edition 1.8 / 1.9===
+===Modman Installation===
+This extension can be used with modman, https://github.com/colinmollenhour/modman
+
+Move into the base directory for your magento installation and run the following commands
+modman init
+modman clone git://github.com/sailthru/sailthru-magento-extension.git 
+
+To update the extension, you'll run this command
+modman update sailthru-magento-extension
