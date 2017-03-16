@@ -27,7 +27,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
                 'lastName' => $customer->getLastname(),
                 'storeID' => $customer->getStoreId(),
-                'groupId' => $customer->getGroupId(),
+                'group' => $this->getCustomerGroup($customer),
                 'taxClassId' => $customer->getTaxClassId(),
                 'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
              );
@@ -151,6 +151,12 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         return $vars;
     }
 
+    public function getCustomerGroup(Mage_Customer_Model_Customer $customer)
+    {
+        $groupId = $customer->getGroupId();
+        return Mage::getModel('customer/group')->load($groupId)->getCustomerGroupCode();
+
+    }
 
 
 }
