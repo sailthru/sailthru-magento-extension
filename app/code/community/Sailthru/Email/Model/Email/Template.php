@@ -80,10 +80,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
             }
 
-            $num_emails = count($emails);
-            for($i = 0; $i < $num_emails; $i++) {
-                $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
-            }
+//            $num_emails = count($emails);
+//            for($i = 0; $i < $num_emails; $i++) {
+//                $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
+//            }
 
             $client =  Mage::getModel('sailthruemail/client');
             $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
@@ -142,7 +142,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
     }
 
     // TODO: Fill in the vars needed in Sailthru for each template type
-    private function getSailthruVars($vars) {
+    private function getSailthruVars($vars)
+    {
         switch ($this->_transactionalType):
             case self::SHIPPING_EMAIL:
                 return $this->getSailthruShippingVars($vars);
@@ -150,9 +151,12 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
     }
 
-    private function getSailthruShippingVars($vars) {
+    private function getSailthruShippingVars($vars)
+    {
         $order = $vars["order"];
         $shipment = $vars["shipment"];
+//        $shipment = new Mage_Sales_Model_Order_Shipment()->$this->load(1);
+//        $order = new Mage_Sales_Model_Order();
 
         $sailVars = [
                 'is_guest'          => $order->getCustomerIsGuest(),
@@ -164,10 +168,31 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 'comment'       => $vars["comment"],
                 'payment_html'  => $vars["payment_html"],
                 'billingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
-                'shippingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress())
+                'shippingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
+                'shipmentId'        => $shipment->getIncrementId(),
+                'shipmentComment'   => $vars["comment"],
+                'orderId'           => $order->getIncrementId(),
+                'trackingDetails'    => $this->getTrackingDetails($shipment),
+                'shipmentItems'      => $shipment->getAllItems(),
             ];
 
         return $sailVars;
+    }
+
+    private function getTrackingDetails(Mage_Sales_Model_Order_Shipment $shipment)
+    {
+        $trackingDetails = [];
+        $tracks = $shipment->getAllTracks();
+        foreach ($tracks as $track) {
+            $track = $track->getNumberDetail();
+            if (get_class($track) == Mage_Shipping_Model_Tracking_Result_Error) {
+                $trackingDetails[] = $track->getAllData();
+                Mage::log($track, null, "sailthru.log");
+            } else {
+                $trackingDetails[] = $track;
+            }
+        }
+        return $trackingDetails;
     }
 
 }
