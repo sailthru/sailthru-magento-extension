@@ -18,7 +18,9 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const JS_HORIZON                                        = 2;
 
     // User Management
-    const XML_PATH_DEFAULT_EMAIL_LIST                       = 'sailthru_users/management/default_list';
+    const XML_PATH_USE_MASTER_LIST                          = 'sailthru_users/management/master_list_enable';
+    const XML_PATH_MASTER_LIST                              = 'sailthru_users/management/master_list';
+    const XML_PATH_USE_NEWSLETTER_LIST                      = 'sailthru_users/management/enable_newsletter_hook';
     const XML_PATH_NEWSLETTER_LIST                          = 'sailthru_users/management/newsletter_list';
 
     // Transactional
@@ -59,9 +61,14 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
      * @param type $store
      * @return string
      */
-    public function getDefaultList($store = null)
+    public function getMasterList($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_DEFAULT_EMAIL_LIST, $store);
+        return Mage::getStoreConfig(self::XML_PATH_MASTER_LIST, $store);
+    }
+
+    public function isMasterListEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_USE_MASTER_LIST, $store);
     }
 
     /**
@@ -74,6 +81,10 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return Mage::getStoreConfig(self::XML_PATH_NEWSLETTER_LIST, $store);
     }
 
+    public function isNewsletterListEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_USE_NEWSLETTER_LIST, $store);
+    }
     /**
      * Get transactional enabled flag
      * @param store

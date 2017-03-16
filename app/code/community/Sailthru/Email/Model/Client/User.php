@@ -14,7 +14,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * @param Mage_Customer_Model_Customer $customer
      * @return array
      */
-    public function getCustomerVars(Mage_Customer_Model_Customer $customer)
+    private function getCustomerVars(Mage_Customer_Model_Customer $customer)
     {
         try {
 
@@ -25,9 +25,13 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
                 'firstName' => $customer->getFirstname(),
                 'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
+                'fullName' => $customer->getFullName(),
                 'lastName' => $customer->getLastname(),
-                'storeID' => $customer->getStoreId(),
-                'group' => $this->getCustomerGroup($customer),
+                'website' => Mage::app()->getStore()->getWebsiteId(),
+                'store' => Mage::app()->getStore()->getName(),
+                'storeCode' => Mage::app()->getStore()->getCode(),
+                'storeId' => Mage::app()->getStore()->getId(),
+                'customerGroup' => $this->getCustomerGroup($customer),
                 'taxClassId' => $customer->getTaxClassId(),
                 'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
              );
@@ -50,24 +54,65 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * Send customer data through API
      *
      * @param Mage_Customer_Model_Customer $customer
-     * @return array
-     *
-     * @todo add optin/optout functionality
+     * @return void
      */
-    public function sendCustomerData(Mage_Customer_Model_Customer $customer)
+    public function postNewCustomer(Mage_Customer_Model_Customer $customer)
     {
-        $this->_eventType = 'customer';
-
+        $this->_eventType = 'Customer Registration';
         try {
-            $user_vars = $this->getCustomerVars($customer);
             $data = array(
                 'id' => $customer->getEmail(),
                 'key' => 'email',
                 'fields' => array('keys' => 1),
                 'keysconfict' => 'merge',
                 'vars' => $this->getCustomerVars($customer),
-                'lists' => array(Mage::helper('sailthruemail')->getDefaultList() => 1)
             );
+
+            $lists = [];
+            if (Mage::helper('sailthruemail')->isMasterListEnabled()
+                and $masterList = Mage::helper('sailthruemail')->getMasterList()) {
+                $lists[$masterList] = 1;
+            }
+            if ($customer->getIsSubscribed() and Mage::helper('sailthruemail')->isMasterListEnabled()
+                and $newsletterList = Mage::helper('sailthruemail')->getNewsletterList()) {
+                $lists[$newsletterList] = 1;
+            }
+            if ($lists) $data["lists"] = $lists;
+
+            $response = $this->apiPost('user', $data);
+            $this->setCookie($response);
+
+        } catch (Sailthru_Email_Model_Client_Exception $e) {
+            Mage::logException($e);
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+    /**
+     * Update user data, and drop cookie.
+     *
+     * @param Mage_Customer_Model_Customer $customer
+     * @return void
+     */
+    public function loginCustomer(Mage_Customer_Model_Customer $customer)
+    {
+        $this->_eventType = 'Customer Login';
+
+        try {
+            $data = array(
+                'id' => $customer->getEmail(),
+                'key' => 'email',
+                'fields' => array('keys' => 1),
+                'keysconfict' => 'merge',
+                'vars' => $this->getCustomerVars($customer),
+            );
+            $lists = [];
+            if (Mage::helper('sailthruemail')->isMasterListEnabled()
+                and $masterList = Mage::helper('sailthruemail')->getMasterList()) {
+                $lists[$masterList] = 1;
+            }
+            if ($lists) $data["lists"] = $lists;
             $response = $this->apiPost('user', $data);
             $this->setCookie($response);
         } catch(Sailthru_Email_Model_Client_Exception $e) {
@@ -75,7 +120,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         } catch(Exception $e) {
             Mage::logException($e);
         }
-        return $this;
     }
 
     /**
@@ -97,21 +141,12 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'keysconflict' => 'merge',
                  //this should be improved. Check to see if list is set.  Allow multiple lists.
                 'lists' => array(Mage::helper('sailthruemail')->getNewsletterList() => 1),
-                'vars' => array('subscriberId' => $subscriber->getSubscriberId(),
-                    'status' => $subscriber->getSubscriberStatus(),
-                    'Website' => Mage::app()->getStore()->getWebsiteId(),
-                    'Store' => Mage::app()->getStore()->getName(),
-                    'Store Code' => Mage::app()->getStore()->getCode(),
-                    'Store Id' => Mage::app()->getStore()->getId(),
-                    'fullName' => $subscriber->getSubscriberFullName(),
-                ),
-                'fields' => array('keys' => 1),
+                'vars' => $this->getCustomerVars(Mage::getModel('customer/customer')->load($subscriber->getCustomerId())),
                 //Hacky way to prevent user from getting campaigns if they are not subscribed
                 //An example is when a user has to confirm email before before getting newsletters.
                 'optout_email' => ($subscriber->getSubscriberStatus() != 1) ? 'blast' : 'none',
             );
             $response = $this->apiPost('user', $data);
-            $this->setCookie($response);
          } catch(Sailthru_Email_Model_Client_Exception $e) {
              Mage::logException($e);
         } catch(Exception $e) {

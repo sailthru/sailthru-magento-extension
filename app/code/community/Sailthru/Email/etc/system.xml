@@ -283,8 +283,8 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <use_default_list translate="label comment">
-                            <label>Add all users to a Sailthru list</label>
+                        <master_list_enable translate="label comment">
+                            <label>Add all customers to a Sailthru list on registration / login.</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>1</sort_order>
@@ -292,18 +292,18 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </use_default_list>
-                        <default_list translate="label comment">
-                            <label>Default Master List</label>
+                        </master_list_enable>
+                        <master_list translate="label comment">
+                            <label>Customer List</label>
                             <frontend_type>select</frontend_type>
                             <source_model>Sailthru_Email_Model_Config_Source_Sailthrulists</source_model>
-                            <depends><use_default_list>1</use_default_list></depends>
+                            <depends><master_list_enable>1</master_list_enable></depends>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">default master list</a>]]> that all subscribers and customers are added to.</comment>
-                        </default_list>
+                        </master_list>
                         <enable_newsletter_hook translate="label comment">
                             <label>Enable Newsletter Hook</label>
                             <comment>The Sailthru plugin can capture subscriptions to the Magento newsletter module, and reflect those users into a Sailthru list.</comment>
