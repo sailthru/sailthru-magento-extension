@@ -159,11 +159,12 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 //        $order = new Mage_Sales_Model_Order();
 
         $sailVars = [
+                'shipmentDescription' => $order->getShippingDescription(),
                 'is_guest'          => $order->getCustomerIsGuest(),
                 'orderStatus'       => $order->getStatus(),
                 'orderState'        => $order->getState(),
                 'coupon_code'       => $order->getCouponCode(),
-//                'items'             => Mage::getModel('sailthruemail/client_purchase')->_getItems($shipment->getAllItems()),
+                'items'             => $this->getShippingItems($shipment->getAllItems()),
                 'createdAt'         => $shipment->getCreatedAt(),
                 'comment'       => $vars["comment"],
                 'payment_html'  => $vars["payment_html"],
@@ -184,15 +185,25 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         $trackingDetails = [];
         $tracks = $shipment->getAllTracks();
         foreach ($tracks as $track) {
-            $track = $track->getNumberDetail();
-            if (get_class($track) == Mage_Shipping_Model_Tracking_Result_Error) {
-                $trackingDetails[] = $track->getAllData();
-                Mage::log($track, null, "sailthru.log");
-            } else {
-                $trackingDetails[] = $track;
-            }
+            $deets = ['by'=>$track->getTitle(), 'number'=>$track->getNumber()];
+            $trackingDetails[] = $deets;
+            Mage::log($deets, null, "sailthru.log");
         }
         return $trackingDetails;
     }
 
+    private function getShippingItems($items)
+    {
+        $itemsData = [];
+        foreach($items as $item) {
+            $item = $item->getOrderItem();
+            $itemData = [
+                "title" => $item->getName(),
+                "options" => $item->getProductOptions()["attributes_info"],
+            ];
+            Mage::log($itemData, null, "sailthru.log");
+            $itemsData[] = $itemData;
+        }
+        return $itemsData;
+    }
 }
