@@ -18,7 +18,6 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Abstract
     {
         if ($this->_isEnabled) {
             $subscriber = $observer->getEvent()->getSubscriber();
-            $subscriber = new Mage_Newsletter_Model_Subscriber();
             if ($this->_isEnabled && $subscriber->getEmail()) {
                 try {
                     Mage::log("\n\n**Subscription Fired!**\n\n", null, "sailthru.log");
