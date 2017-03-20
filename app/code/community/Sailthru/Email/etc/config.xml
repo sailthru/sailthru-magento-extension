@@ -9,7 +9,7 @@
 <config>
     <modules>
         <Sailthru_Email>
-            <version>1.2.0</version>
+            <version>2.0.0</version>
         </Sailthru_Email>
     </modules>
     <global>
@@ -38,6 +38,14 @@
                 <class>Sailthru_Email_Helper</class>
             </sailthruemail>
         </helpers>
+        <resources>
+            <sailthru_email_setup>
+                <setup>
+                    <module>Sailthru_Email</module>
+                    <class>Mage_Eav_Model_Entity_Setup</class>
+                </setup>
+            </sailthru_email_setup>
+        </resources>
     </global>
     <frontend>
         <translate>
