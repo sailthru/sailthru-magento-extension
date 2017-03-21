@@ -122,7 +122,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'store' => Mage::app()->getStore()->getName(),
             ]
         ];
-        if ($subscriber->getSubscriberFullName())
         if ($newsletterList = $this->_getNewsletterList() and
             in_array($subscriber->getStatus(), [
                 Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED,
