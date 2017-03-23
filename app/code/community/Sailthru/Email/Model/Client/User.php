@@ -60,15 +60,16 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     public function sendSubscriberData(Mage_Newsletter_Model_Subscriber $subscriber)
     {
         $this->_eventType = 'Subscription Update';
-
-        try {
-            $data = $this->_buildSubscriberPayload($subscriber);
-            $response = $this->apiPost('user', $data);
-            $this->setCookie($response);
-        } catch(Sailthru_Email_Model_Client_Exception $e) {
-            $this->log($e);
-        } catch(Exception $e) {
-            Mage::logException($e);
+        $data = $this->_buildSubscriberPayload($subscriber);
+        if ($data) {
+            try {
+                $response = $this->apiPost('user', $data);
+                $this->setCookie($response);
+            } catch (Sailthru_Email_Model_Client_Exception $e) {
+                $this->log($e);
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
         }
     }
 
@@ -110,7 +111,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      *
      * @param Mage_Newsletter_Model_Subscriber $subscriber
      *
-     * @return array
+     * @return array|null
      */
     private function _buildSubscriberPayload(Mage_Newsletter_Model_Subscriber $subscriber) {
         $data = [
@@ -128,6 +129,8 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 Mage_Newsletter_Model_Subscriber::STATUS_UNSUBSCRIBED]
             )) {
             $data["lists"][$newsletterList] = ($subscriber->getStatus() ==  Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED ? 1 : 0);
+        } else {
+            return null;
         }
 
         return $data;
@@ -189,7 +192,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * @return bool|string
      */
     private function _getNewsletterList() {
-        if (Mage::helper('sailthruemail')->isMasterListEnabled()
+        if (Mage::helper('sailthruemail')->isNewsletterListEnabled()
             and $newsletterList = Mage::helper('sailthruemail')->getNewsletterList()) {
             return $newsletterList;
         }
