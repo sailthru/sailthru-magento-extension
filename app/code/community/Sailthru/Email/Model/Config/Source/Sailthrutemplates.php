@@ -20,7 +20,7 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
         }
         $templates = $response["templates"];
         $tpl_options = [
-            ['value'=> 0, 'label'=>' ']
+            ['value'=> 0, 'label'=>'Use Magento template']
         ];
         foreach ($templates as $tpl) {
                 $tpl_options[] = [

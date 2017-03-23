@@ -15,12 +15,12 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
     const ORDER_EMAIL                   = 'sailthru_transactional/templates/order';
     const SHIPPING_EMAIL                = 'sailthru_transactional/templates/shipping';
-    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/templates/reg_success';
-    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/templates/reg_confirm';
-    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/templates/reg_confirmed';
+    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/templates/customer_register';
+    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/templates/customer_confirm';
+    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/templates/customer_confirmed';
     const RESET_PASSWORD_EMAIL          = 'sailthru_transactional/templates/reset_password';
     const NEWSLETTER_CONFIRM_EMAIL      = 'sailthru_transactional/templates/newsletter_confirm';
-    const NEWSLETTER_CONFIRMED_EMAIL    = 'sailthru_transactional/templates/newsletter_confirmed';
+    const NEWSLETTER_SUBSCRIBED_EMAIL   = 'sailthru_transactional/templates/newsletter_subscribed';
     const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/templates/newsletter_unsubscribe';
 
     private $_transactionalType;
@@ -134,7 +134,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             return self::NEWSLETTER_CONFIRM_EMAIL;
 
         if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_SUCCESS_EMAIL_TEMPLATE))
-            return self::NEWSLETTER_CONFIRMED_EMAIL;
+            return self::NEWSLETTER_SUBSCRIBED_EMAIL;
 
         if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_UNSUBSCRIBE_EMAIL_TEMPLATE))
             return self::NEWSLETTER_UNSUBSCRIBE_EMAIL;
@@ -146,64 +146,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
     {
         switch ($this->_transactionalType):
             case self::SHIPPING_EMAIL:
-                return $this->getSailthruShippingVars($vars);
+                return Mage::helper('sailthruemail/template')->getSailthruShippingVars($vars);
+            case self::REGISTER_SUCCESS_EMAIL:
+                return Mage::helper('sailthruemail/template')->getCustomerRegisterVars($vars);
         endswitch;
 
-    }
-
-    private function getSailthruShippingVars($vars)
-    {
-        $order = $vars["order"];
-        $shipment = $vars["shipment"];
-//        $shipment = new Mage_Sales_Model_Order_Shipment()->$this->load(1);
-//        $order = new Mage_Sales_Model_Order();
-
-        $sailVars = [
-                'shipmentDescription' => $order->getShippingDescription(),
-                'is_guest'          => $order->getCustomerIsGuest(),
-                'orderStatus'       => $order->getStatus(),
-                'orderState'        => $order->getState(),
-                'coupon_code'       => $order->getCouponCode(),
-                'items'             => $this->getShippingItems($shipment->getAllItems()),
-                'createdAt'         => $shipment->getCreatedAt(),
-                'comment'       => $vars["comment"],
-                'payment_html'  => $vars["payment_html"],
-                'billingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
-                'shippingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
-                'shipmentId'        => $shipment->getIncrementId(),
-                'shipmentComment'   => $vars["comment"],
-                'orderId'           => $order->getIncrementId(),
-                'trackingDetails'    => $this->getTrackingDetails($shipment),
-                'shipmentItems'      => $shipment->getAllItems(),
-            ];
-
-        return $sailVars;
-    }
-
-    private function getTrackingDetails(Mage_Sales_Model_Order_Shipment $shipment)
-    {
-        $trackingDetails = [];
-        $tracks = $shipment->getAllTracks();
-        foreach ($tracks as $track) {
-            $deets = ['by'=>$track->getTitle(), 'number'=>$track->getNumber()];
-            $trackingDetails[] = $deets;
-            Mage::log($deets, null, "sailthru.log");
-        }
-        return $trackingDetails;
-    }
-
-    private function getShippingItems($items)
-    {
-        $itemsData = [];
-        foreach($items as $item) {
-            $item = $item->getOrderItem();
-            $itemData = [
-                "title" => $item->getName(),
-                "options" => $item->getProductOptions()["attributes_info"],
-            ];
-            Mage::log($itemData, null, "sailthru.log");
-            $itemsData[] = $itemData;
-        }
-        return $itemsData;
     }
 }
