@@ -93,14 +93,9 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 
         if ($action == "signup" or $action == "update") {
             $data['vars'] = $this->_getCustomerVars($customer);
-            $lists = [];
-            if ($customer->getIsSubscribed() and $newsletterList = $this->_getNewsletterList()) {
-                $lists[$newsletterList] = 1;
-            }
             if ($action == "signup" and $masterList = $this->_getMasterList()) {
-                $lists[$masterList] = 1;
+                $data["lists"] = [$masterList => 1];
             }
-            $data["lists"] = $lists;
         }
 
         return $data;
@@ -115,8 +110,8 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      */
     private function _buildSubscriberPayload(Mage_Newsletter_Model_Subscriber $subscriber) {
         $data = [
-            'id'     => $subscriber->getData('sailthru_id') ?: $subscriber->getEmail(),
-            'key'    => $subscriber->getData('sailthru_id') ? "sid" : "email",
+            'id'     => $subscriber->getEmail(),
+            'key'    => "email",
             'fields' => ["keys" => 1],
             'vars'   => [
                 'website' => Mage::app()->getStore()->getWebsite()->getName(),
