@@ -153,7 +153,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'website' => Mage::app()->getStore()->getWebsite()->getName(),
                 'store' => Mage::app()->getStore()->getName(),
                 'customerGroup' => Mage::getModel('customer/group')->load($customer->getGroupId())->getCustomerGroupCode(),
-                'taxClassId' => $customer->getTaxClassId(),
                 'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
             );
 
