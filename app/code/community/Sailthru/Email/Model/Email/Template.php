@@ -35,10 +35,6 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      **/
     public function send($email, $name = null, array $variables = array())
     {
-        /**
-         * Return default parent method if Sailthru Extension
-         * or Transactional Email has not been enabled
-         */
         if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
             return parent::send($email, $name, $variables);
         }
@@ -54,44 +50,34 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
         $this->_transactionalType = $this->getSailthruTransactionalType();
         if ($template_name = Mage::getStoreConfig($this->_transactionalType)) {
-            $variables = $this->getSailthruVars($variables);
+            $vars = $this->getSailthruVars($variables);
+        } else {
+            $this->setUseAbsoluteLinks(true);
+            if ($this->getData('template_code')) {
+                $template_name = $this->getData('template_code');
+            } else {
+                $template_name = $this->getId();
+            }
+            $vars = [
+                "content" => $this->getProcessedTemplate($variables),
+                "subject" => $this->getProcessedTemplateSubject($variables)
+            ];
         }
 
-        $this->setUseAbsoluteLinks(true);
-        $text = $this->getProcessedTemplate($variables, true);
-        Mage::log("CLASS:", null, "sailthru.log");
-        Mage::log("These are the variables: ", null, "sailthru.log");
-//        Mage::log(var_export($variables, true), null, "sailthru.log");
-        $vars = $variables;
-        //sailthru//
-        try {
-            if (!$template_name) {
-                if ($this->getData('template_code')) {
-                    $template_name = $this->getData('template_code');
-                } else {
-                    $template_name = $this->getId();
-                }
-            }
-            
-//            $options = [
-//                'behalf_email' => $this->getSenderEmail(),
-//            ];
-            if (count($this->_bccEmails) > 0){
-                $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
-            }
+        $options = [];
+        if (count($this->_bccEmails) > 0){
+            $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
+        }
 
-//            $num_emails = count($emails);
-//            for($i = 0; $i < $num_emails; $i++) {
-//                $evars[$emails[$i]] = array("content" => $text, "subj" => $this->getProcessedTemplateSubject($variables));
-//            }
+        try {
 
             $client =  Mage::getModel('sailthruemail/client');
             $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
 
+            // Create template if it does not already exist
             if(isset($response["error"]) && $response['error'] == 14) {
-                //Create template if it does not already exist
-                $tempvars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
-                $tempsuccess = $client->saveTemplate($template_name, $tempvars);
+                $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
+                $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
                 $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
                 if($response["error"]) {
                     Mage::throwException($this->__($response["errormsg"]));
