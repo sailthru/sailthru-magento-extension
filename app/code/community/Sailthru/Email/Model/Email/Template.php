@@ -13,15 +13,15 @@
  */
 class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
 
-    const ORDER_EMAIL                   = 'sailthru_transactional/templates/order';
-    const SHIPPING_EMAIL                = 'sailthru_transactional/templates/shipping';
-    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/templates/customer_register';
-    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/templates/customer_confirm';
-    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/templates/customer_confirmed';
-    const RESET_PASSWORD_EMAIL          = 'sailthru_transactional/templates/reset_password';
-    const NEWSLETTER_CONFIRM_EMAIL      = 'sailthru_transactional/templates/newsletter_confirm';
-    const NEWSLETTER_SUBSCRIBED_EMAIL   = 'sailthru_transactional/templates/newsletter_subscribed';
-    const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/templates/newsletter_unsubscribe';
+    const ORDER_EMAIL                   = 'sailthru_transactional/email/order';
+    const SHIPPING_EMAIL                = 'sailthru_transactional/email/shipping';
+    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/email/customer_register';
+    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/email/customer_confirm';
+    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/email/customer_confirmed';
+    const RESET_PASSWORD_EMAIL          = 'sailthru_transactional/email/reset_password';
+    const NEWSLETTER_CONFIRM_EMAIL      = 'sailthru_transactional/email/newsletter_confirm';
+    const NEWSLETTER_SUBSCRIBED_EMAIL   = 'sailthru_transactional/email/newsletter_subscribed';
+    const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/email/newsletter_unsubscribe';
 
     private $_transactionalType;
 

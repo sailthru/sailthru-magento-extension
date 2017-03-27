@@ -140,46 +140,27 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <customer_register translate="label">
-                            <label>Customer Signup</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <sort_order>1</sort_order>
-                        </customer_register>
-                        <newsletter_subscribed translate="label">
-                            <label>Newsletter Subscribed</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <sort_order>2</sort_order>
-                        </newsletter_subscribed>
-                        <shipping translate="label">
-                            <label>Shipping Template</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <sort_order>3</sort_order>
-                        </shipping>
                     </fields>
                 </templates>
                 <email translate="label">
+                    <comment>
+                        <![CDATA[
+                        <span style="font-weight: bold; max-width: 650px; display: block;">
+                            Sailthru can send all of your Magento emails, enhancing deliverability as well as adding link and open-tracking.
+                            Some transactionals can be fully customized within Sailthru, while others will be dynamically created and delivered
+                            through Sailthru at send-time, if enabled.
+                         </span>
+                        ]]>
+                    </comment>
                     <label>Transactional</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>2</sort_order>
+                    <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
                         <enable_transactional_emails translate="label comment">
-                            <label>Deliver Magento transactionals through Sailthru</label>
-                            <comment>Let Sailthru delvier any mail coming from your Magento store, improving it's deliverability.</comment>
+                            <label>Deliver Magento emails through Sailthru</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <show_in_default>1</show_in_default>
@@ -188,8 +169,8 @@
                             <sort_order>1</sort_order>
                         </enable_transactional_emails>
                         <sender>
-                            <label>Magento Transactional Sender</label>
-                            <comment>Sailthru-verified email address to use for emails sent from Magento.</comment>
+                            <label>Sailthru Email Sender</label>
+                            <comment>Sailthru-verified email address to use for emails sent using Magento templates.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>Sailthru_Email_Model_Config_Source_Verifiedemails</source_model>
                             <show_in_default>1</show_in_default>
@@ -198,25 +179,46 @@
                             <sort_order>2</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                         </sender>
-                        <use_purchase_template translate="label">
-                            <label>Send a Sailthru-powered purchase receipt</label>
+                        <customer_register translate="label">
+                            <label>Customer Signup</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_OverrideTemplates</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <sort_order>3</sort_order>
-                        </use_purchase_template>
-                        <purchase_template translate="label">
-                            <label>Purchase Template</label>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                        </customer_register>
+                        <newsletter_subscribed translate="label">
+                            <label>Newsletter Subscribed</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>Sailthru_Email_Model_Config_Source_Sailthrutemplates</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_OverrideTemplates</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends><use_purchase_template>1</use_purchase_template></depends>
+                            <sort_order>3</sort_order>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                        </newsletter_subscribed>
+                        <purchase_template translate="label">
+                            <label>Purchase Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_OverrideTemplates</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                             <sort_order>4</sort_order>
                         </purchase_template>
+                        <shipping translate="label">
+                            <label>Shipping Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Sailthru_Email_Model_Config_Source_OverrideTemplates</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>5</sort_order>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                        </shipping>
                     </fields>
                 </email> 
                 <abandoned_cart translate="label">
