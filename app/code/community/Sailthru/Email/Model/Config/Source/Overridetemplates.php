@@ -1,11 +1,7 @@
 <?php
 
-/**
- * Used in creating options for List Selection from Sailthru, or inactive if API keys are invalid.
- *
- */
-class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Email_Model_Client
-{
+class Sailthru_Email_Model_Config_Source_Overridetemplates extends Sailthru_Email_Model_Client {
+
     /**
      * Options getter
      *
@@ -20,13 +16,13 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
         }
         $templates = $response["templates"];
         $tpl_options = [
-            ['value'=> 0, 'label'=>'']
+            ['value'=> 0, 'label'=>'Use Magento template']
         ];
         foreach ($templates as $tpl) {
-                $tpl_options[] = [
-                    'value' => $tpl['name'],
-                    'label' => __($tpl['name'])
-                ];
+            $tpl_options[] = [
+                'value' => $tpl['name'],
+                'label' => __($tpl['name'])
+            ];
         }
         return $tpl_options;
     }
