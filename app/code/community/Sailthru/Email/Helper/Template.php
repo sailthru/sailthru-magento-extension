@@ -60,6 +60,8 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
                 return $this->getShippingTemplateVars($vars);
             case self::REGISTER_SUCCESS_EMAIL:
                 return $this->getCustomerRegisterTemplateVars($vars);
+            case self::ORDER_EMAIL:
+                return $this->getOrderTemplateVars($vars);
         endswitch;
 
     }
@@ -80,7 +82,7 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         ];
     }
 
-    public function getPurchaseTemplateVars($vars)
+    public function getOrderTemplateVars($vars)
     {
         /** @var $order Mage_Sales_Model_Order
          *  @var $billingAddress Mage_Sales_Model_Order_Address
@@ -90,19 +92,20 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         $paymentHtmlBlock = $vars['payment_html'];
 
         $vars = [
-            'items'       => Mage::helper('sailthruemail/purchase')->getItems($order->getAllVisibleItems()),
+            'items'       => Mage::helper('sailthruemail/purchase')->getTemplateOrderItems($order->getAllVisibleItems()),
             'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order),
             'tenders'     => Mage::helper('sailthruemail/purchase')->getTenders($order),
             'paymentHTML' => $paymentHtmlBlock,
             'total'       => $order->getGrandTotal(),
             'subtotal'    => $order->getSubtotal(),
-            'status'      => $order->getStatusLabel(),
+            'orderStatus'      => $order->getStatusLabel(),
             'orderId'     => $order->getIncrementId(),
-            'date'        => $order->getCreatedAtDate(),
-        ] + Mage::helper('sailthruemail')->getAddressVars($billingAddress, 'billing');
+            'date'        => $order->getCreatedAt(),
+            'billAddress' => Mage::helper('sailthruemail')->getAddressVars($billingAddress)
+        ];
 
         if ($shippingAddress = $order->getShippingAddress()) {
-            $vars = $vars + Mage::helper('sailthruemail')->getAddressVars($shippingAddress, 'shipping');
+            $vars['shipAddress'] = Mage::helper('sailthruemail')->getAddressVars($shippingAddress);
         }
 
         return $vars;
