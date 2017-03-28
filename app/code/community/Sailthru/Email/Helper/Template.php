@@ -80,6 +80,33 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         ];
     }
 
+    public function getPurchaseTemplateVars($vars)
+    {
+        /** @var $order Mage_Sales_Model_Order
+         *  @var $billingAddress Mage_Sales_Model_Order_Address
+         */
+        $order = $vars['order'];
+        $billingAddress = $vars['billing'];
+        $paymentHtmlBlock = $vars['payment_html'];
+
+        $vars = [
+            'items'       => Mage::helper('sailthruemail/purchase')->getItems($order->getAllVisibleItems()),
+            'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order),
+            'tenders'     => Mage::helper('sailthruemail/purchase')->getTenders($order),
+            'paymentHTML' => $paymentHtmlBlock,
+            'total'       => $order->getGrandTotal(),
+            'subtotal'    => $order->getSubtotal(),
+            'status'      => $order->getStatusLabel(),
+            'orderId'     => $order->getIncrementId(),
+            'date'        => $order->getCreatedAtDate(),
+        ] + Mage::helper('sailthruemail')->getAddressVars($billingAddress, 'billing');
+
+        if ($shippingAddress = $order->getShippingAddress()) {
+            $vars = $vars + Mage::helper('sailthruemail')->getAddressVars($shippingAddress, 'shipping');
+        }
+
+        return $vars;
+    }
 
     /**
      * Processes Shipping Event variables into Sailthru Template variables
@@ -99,7 +126,7 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         $sailVars = [
             'shipmentDescription' => $order->getShippingDescription(),
             'is_guest'          => $order->getCustomerIsGuest(),
-            'orderStatus'       => $order->getStatus(),
+            'orderStatus'       => $order->getStatusLabel(),
             'orderState'        => $order->getState(),
             'coupon_code'       => $order->getCouponCode(),
             'items'             => $this->getShippingItems($shipment->getAllItems()),

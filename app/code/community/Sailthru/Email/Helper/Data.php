@@ -299,6 +299,31 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $final_price;
     }
 
+    /**
+     * Get vars for address information, optionally adding a prefix.
+     * @param Mage_Customer_Model_Address_Abstract $address
+     * @param string                               $prefix
+     *
+     * @return array
+     */
+    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null){
+        $vars = [
+            "city"          => $address->getCity(),
+            "state"         => $address->getRegion(),
+            "state_code"     => $address->getRegionCode(),
+            "country_code"   => $address->getCountry(),
+            "postal_code"        => $address->getPostcode(),
+        ];
+        if (!is_null($prefix)){
+            $varsCopy = [];
+            foreach ($vars as $key => $value) {
+                $varsCopy["{$prefix}{$key}"] = $value;
+            }
+            return $varsCopy;
+        }
+        return $vars;
+    }
+
     public function debug($object)
     {
         echo '<pre>';

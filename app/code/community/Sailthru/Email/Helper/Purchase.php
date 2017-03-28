@@ -69,20 +69,27 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
     /**
      * Get order adjustments
      * @param Mage_Sales_Model_Order $order
+     * @param string                 $action
      * @return array
      */
-    public function getAdjustments(Mage_Sales_Model_Order $order)
+    public function getPurchaseAdjustments(Mage_Sales_Model_Order $order, $action=null)
     {
-        if ($order->getBaseDiscountAmount()) {
-            return array(
-                array(
-                    'title' => 'Sale',
-                    'price' => Mage::helper('sailthruemail')->formatAmount($order->getBaseDiscountAmount())
-                )
-            );
+        $adjustments = array(
+                ['title' => 'Tax', 'price' => $order->getTaxAmount()],
+                ['title' => 'Shipping', 'price' => $order->getShippingAmount()]
+        );
+
+        if ($discount = $order->getDiscountAmount()) {
+            $adjustments[] = ['title' => 'Sale', 'price' => $order->getDiscountAmount()];
         }
 
-        return array();
+        if (strtolower($action) == "api") {
+            foreach ($adjustments as &$adjustment) {
+                $adjustment['price'] = Mage::helper('sailthruemail')->formatAmount($adjustment['price']);
+            }
+        }
+
+        return $adjustments;
     }
 
     /**

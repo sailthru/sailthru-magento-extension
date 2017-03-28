@@ -47,7 +47,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
             $data = array(
                     'email' => $email,
-                    'items' => $this->_getItems($items),
+                    'items' => Mage::helper('sailthruemail/purchase')->getItems($items),
                     'incomplete' => 1,
                     'reminder_time' => '+' . $cartTime,
                     'reminder_template' => $cartTemplate,
@@ -75,7 +75,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         $data = [
             'email' => $order->getCustomerEmail(),
             'items' => Mage::helper('sailthruemail/purchase')->getItems($order->getAllVisibleItems()),
-            'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order),
+            'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order, "api"),
             'message_id' => $this->getMessageId(),
             'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
             'purchase_keys' => ["extid" => $order->getIncrementId()]

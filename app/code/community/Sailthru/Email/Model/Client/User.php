@@ -33,10 +33,10 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
              );
 
             if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
-                $vars = $vars + $this->getAddressInfo($primaryBillingAddress, "billing_");
+                $vars = $vars + Mage::helper('sailthruemail')->getAddressVars($primaryBillingAddress, "billing_");
             }
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
-                $vars = $vars + $this->getAddressInfo($primaryShippingAddress, "shipping_");
+                $vars = $vars + Mage::helper('sailthruemail')->getAddressVars($primaryShippingAddress, "shipping_");
             }
 
             return $vars;
@@ -131,24 +131,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         } catch (Exception $e) {
             Mage::logException($e);
         }
-    }
-
-    public function getAddressInfo($address, $prefix=null){
-        $vars = [
-            "city"          => $address->getCity(),
-            "state"         => $address->getRegion(),
-            "state_code"     => $address->getRegionCode(),
-            "country_code"   => $address->getCountry(),
-            "postal_code"        => $address->getPostcode(),
-        ];
-        if (!is_null($prefix)){
-            $varsCopy = [];
-            foreach ($vars as $key => $value) {
-                $varsCopy["{$prefix}{$key}"] = $value;
-            }
-            return $varsCopy;
-        }
-        return $vars;
     }
 
     public function getCustomerGroup(Mage_Customer_Model_Customer $customer)
