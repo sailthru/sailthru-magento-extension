@@ -22,11 +22,6 @@
                     <email_template>Sailthru_Email_Model_Email_Template</email_template>
                 </rewrite>
             </core>
-            <newsletter>
-                <rewrite>
-                    <template>Sailthru_Email_Model_Newsletter_Template</template>
-                </rewrite>
-            </newsletter>
         </models>
         <blocks>
             <sailthruemail>
@@ -119,14 +114,14 @@
                     </sailthru_sales_order_place_after>
                 </observers>
             </sales_order_place_after>
-            <newsletter_subscriber_save_before>
+            <newsletter_subscriber_save_after>
                 <observers>
-                    <sailthru_newsletter_subscriber_save_before>
+                    <sailthru_newsletter_subscriber_save_after>
                         <model>sailthruemail/observer_user</model>
                         <method>subscription</method>
-                    </sailthru_newsletter_subscriber_save_before>
+                    </sailthru_newsletter_subscriber_save_after>
                 </observers>
-            </newsletter_subscriber_save_before>
+            </newsletter_subscriber_save_after>
             <newsletter_subscriber_delete_after>
                 <observers>
                     <sailthru_newsletter_subscriber_delete_after>

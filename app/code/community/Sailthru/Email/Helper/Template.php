@@ -98,7 +98,7 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
             'paymentHTML' => $paymentHtmlBlock,
             'total'       => $order->getGrandTotal(),
             'subtotal'    => $order->getSubtotal(),
-            'orderStatus'      => $order->getStatusLabel(),
+            'orderStatus' => $order->getStatusLabel(),
             'orderId'     => $order->getIncrementId(),
             'date'        => $order->getCreatedAt(),
             'billAddress' => Mage::helper('sailthruemail')->getAddressVars($billingAddress)
@@ -134,15 +134,15 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
             'coupon_code'       => $order->getCouponCode(),
             'items'             => $this->getShippingItems($shipment->getAllItems()),
             'createdAt'         => $shipment->getCreatedAt(),
-            'comment'       => $vars["comment"],
-            'payment_html'  => $vars["payment_html"],
-            'billingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
-            'shippingAddress' => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
+            'comment'           => $vars["comment"],
+            'payment_html'      => $vars["payment_html"],
+            'billingAddress'    => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
+            'shippingAddress'   => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
             'shipmentId'        => $shipment->getIncrementId(),
             'shipmentComment'   => $vars["comment"],
             'orderId'           => $order->getIncrementId(),
-            'trackingDetails'    => $this->getTrackingDetails($shipment),
-            'shipmentItems'      => $this->getShippingItems($shipment->getAllItems()),
+            'trackingDetails'   => $this->getTrackingDetails($shipment),
+            'shipmentItems'     => $this->getShippingItems($shipment->getAllItems()),
         ];
 
         return $sailVars;

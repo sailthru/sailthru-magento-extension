@@ -16,7 +16,6 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
 
                 $_item = array();
                 $product = $item->getProduct();
-                $productType = $item->getProductType();
                 $options = $product->getTypeInstance(true)->getOrderOptions($product)['attributes_info'];
                 if (!$options) {
                     $options = $item->getProductOptions()["attributes_info"];
