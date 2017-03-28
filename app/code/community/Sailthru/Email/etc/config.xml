@@ -70,6 +70,15 @@
                     </sailthru_customer_login>
                 </observers>
             </customer_login>
+            <customer_save_before>
+                <observers>
+                    <sailthru_customer_save>
+                        <type>singleton</type>
+                        <model>sailthruemail/observer_user</model>
+                        <method>update</method>
+                    </sailthru_customer_save>
+                </observers>
+            </customer_save_before>
             <customer_logout>
                 <observers>
                     <sailthru_customer_logout>
@@ -122,14 +131,14 @@
                     </sailthru_sales_order_place_after>
                 </observers>
             </sales_order_place_after>
-            <newsletter_subscriber_save_after>
+            <newsletter_subscriber_save_before>
                 <observers>
-                    <sailthru_newsletter_subscriber_save_after>
+                    <sailthru_newsletter_subscriber_save_before>
                         <model>sailthruemail/observer_user</model>
                         <method>subscription</method>
-                    </sailthru_newsletter_subscriber_save_after>
+                    </sailthru_newsletter_subscriber_save_before>
                 </observers>
-            </newsletter_subscriber_save_after>
+            </newsletter_subscriber_save_before>
             <newsletter_subscriber_delete_after>
                 <observers>
                     <sailthru_newsletter_subscriber_delete_after>
