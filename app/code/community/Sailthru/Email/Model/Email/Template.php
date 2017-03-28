@@ -13,16 +13,6 @@
  */
 class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
 
-    const ORDER_EMAIL                   = 'sailthru_transactional/email/order';
-    const SHIPPING_EMAIL                = 'sailthru_transactional/email/shipping';
-    const REGISTER_SUCCESS_EMAIL        = 'sailthru_transactional/email/customer_register';
-    const REGISTER_CONFIRM_EMAIL        = 'sailthru_transactional/email/customer_confirm';
-    const REGISTER_CONFIRMED_EMAIL      = 'sailthru_transactional/email/customer_confirmed';
-    const RESET_PASSWORD_EMAIL          = 'sailthru_transactional/email/reset_password';
-    const NEWSLETTER_CONFIRM_EMAIL      = 'sailthru_transactional/email/newsletter_confirm';
-    const NEWSLETTER_SUBSCRIBED_EMAIL   = 'sailthru_transactional/email/newsletter_subscribed';
-    const NEWSLETTER_UNSUBSCRIBE_EMAIL  = 'sailthru_transactional/email/newsletter_unsubscribe';
-
     private $_transactionalType;
 
     /**
@@ -45,12 +35,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         }
 
         $emails = array_values((array)$email);
-        $names = is_array($name) ? $name : (array)$name;
-        $names = array_values($names);
 
-        $this->_transactionalType = $this->getSailthruTransactionalType();
+        $this->_transactionalType = Mage::helper('sailthruemail/template')->getTransactionalType($this->getId());
         if ($template_name = Mage::getStoreConfig($this->_transactionalType)) {
-            $vars = $this->getSailthruVars($variables);
+            $vars = Mage::helper('sailthruemail/template')->getTransactionalVars($this->_transactionalType, $variables);
         } else {
             $this->setUseAbsoluteLinks(true);
             if ($this->getData('template_code')) {
@@ -92,50 +80,4 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
         return true;
     }
 
-    private function getSailthruTransactionalType()
-    {
-        $id = $this->getId();
-
-        if ($id == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_TEMPLATE) or
-            $id == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_GUEST_TEMPLATE))
-            return self::ORDER_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_TEMPLATE) or
-            $id == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_GUEST_TEMPLATE))
-            return self::SHIPPING_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_REGISTER_EMAIL_TEMPLATE))
-            return self::REGISTER_SUCCESS_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_CONFIRM_EMAIL_TEMPLATE))
-            return self::REGISTER_CONFIRM_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_CONFIRMED_EMAIL_TEMPLATE))
-            return self::REGISTER_CONFIRMED_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_REMIND_EMAIL_TEMPLATE))
-            return self::RESET_PASSWORD_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_CONFIRM_EMAIL_TEMPLATE))
-            return self::NEWSLETTER_CONFIRM_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_SUCCESS_EMAIL_TEMPLATE))
-            return self::NEWSLETTER_SUBSCRIBED_EMAIL;
-
-        if ($id == Mage::getStoreConfig(Mage_Newsletter_Model_Subscriber::XML_PATH_UNSUBSCRIBE_EMAIL_TEMPLATE))
-            return self::NEWSLETTER_UNSUBSCRIBE_EMAIL;
-
-    }
-
-    // TODO: Fill in the vars needed in Sailthru for each template type
-    private function getSailthruVars($vars)
-    {
-        switch ($this->_transactionalType):
-            case self::SHIPPING_EMAIL:
-                return Mage::helper('sailthruemail/template')->getSailthruShippingVars($vars);
-            case self::REGISTER_SUCCESS_EMAIL:
-                return Mage::helper('sailthruemail/template')->getCustomerRegisterVars($vars);
-        endswitch;
-
-    }
 }
