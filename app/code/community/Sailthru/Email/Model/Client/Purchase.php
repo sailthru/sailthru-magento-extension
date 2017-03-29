@@ -71,10 +71,11 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */ 
     public function sendOrder(Mage_Sales_Model_Order $order)
     {
+        $this->log("\n\nOrder Fired!\n\n");
         $this->_eventType = 'Place Order';
         $data = [
             'email' => $order->getCustomerEmail(),
-            'items' => Mage::helper('sailthruemail/purchase')->getItems($order->getAllVisibleItems()),
+            'items' => $this->getItems($order->getAllVisibleItems()),
             'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order, "api"),
             'message_id' => $this->getMessageId(),
             'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
@@ -94,6 +95,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     public function getItems($items)
     {
+        $this->log("GET ITEMS");
         try {
             $data = array();
             $configurableSkus = array();

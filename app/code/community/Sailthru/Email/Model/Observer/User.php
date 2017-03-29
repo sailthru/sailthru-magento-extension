@@ -40,9 +40,9 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Abstract {
 
     /**
      * Capture customer updates
-     * @param Varian_Event_Observer $observer
+     * @param Varien_Event_Observer $observer
      */
-    public function update(Varian_Event_Observer $observer)
+    public function update(Varien_Event_Observer $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
 
