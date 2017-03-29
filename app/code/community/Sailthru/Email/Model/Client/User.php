@@ -22,13 +22,28 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             $data = $this->_buildCustomerPayload($customer, "signup");
             $response = $this->apiPost('user', $data);
             $this->setCookie($response);
-        } catch (Sailthru_Email_Model_Client_Exception $e) {
-            $this->log($e);
+            $this->_setSid($customer, $response);
         } catch (Exception $e) {
-            Mage::logException($e);
+            $this->log($e);
         }
     }
 
+    /**
+     * Update customer in Sailthru upon change in Magento
+     *
+     * @param Mage_Customer_Model_Customer $customer
+     * @return void
+     */
+    public function updateCustomer(Mage_Customer_Model_Customer $customer)
+    {
+        $this->_eventType = 'Customer Update';
+        try {
+            $data = $this->_buildCustomerPayload($customer, "update");
+            $response = $this->apiPost('user', $data);
+        } catch (Exception $e) {
+            $this->log($e);
+        }
+    }
     /**
      * Update user data, and drop cookie.
      *
@@ -38,15 +53,15 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     public function loginCustomer(Mage_Customer_Model_Customer $customer)
     {
         $this->_eventType = 'Customer Login';
-
         try {
             $data = $this->_buildCustomerPayload($customer, "login");
             $response = $this->apiPost('user', $data);
             $this->setCookie($response);
-        } catch(Sailthru_Email_Model_Client_Exception $e) {
-             $this->log($e);
+            if (!$customer->getData('sailthru_id')) {
+                $this->_setSid($customer, $response);
+            }
         } catch(Exception $e) {
-            Mage::logException($e);
+            Mage::log($e);
         }
     }
 
@@ -55,7 +70,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      *
      * @param Mage_Newsletter_Model_Subscriber $subscriber
      * @return void
-     *
      */
     public function sendSubscriberData(Mage_Newsletter_Model_Subscriber $subscriber)
     {
@@ -65,10 +79,8 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             try {
                 $response = $this->apiPost('user', $data);
                 $this->setCookie($response);
-            } catch (Sailthru_Email_Model_Client_Exception $e) {
-                $this->log($e);
             } catch (Exception $e) {
-                Mage::logException($e);
+                $this->log($e);
             }
         }
     }
@@ -89,6 +101,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         ];
         if ($data['key'] == "sid") {
             $data['keysconfict'] = 'merge';
+            $data["keys"] = [ "email" => $customer->getEmail()];
         }
 
         if ($action == "signup" or $action == "update") {
@@ -215,6 +228,20 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             return $varsCopy;
         }
         return $vars;
+    }
+
+    /**
+     * Set Sailthru ID on customer
+     * @param Mage_Customer_Model_Customer $customer
+     * @param array                        $sailApiResponse
+     */
+    public function _setSid(Mage_Customer_Model_Customer $customer, $sailApiResponse)
+    {
+        if (in_array("keys", $sailApiResponse)) {
+           $sid = $sailApiResponse["keys"]["sid"];
+           $customer->setData("sailthru_id", $sid);
+           $customer->save();
+        }
     }
 
 }
