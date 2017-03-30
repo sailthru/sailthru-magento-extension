@@ -106,6 +106,10 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
      */
     public function getVars($options)
     {
+        if (!$options) {
+            return null;
+        }
+
         $vars = array();
 
         if (array_key_exists('attributes_info', $options)) {

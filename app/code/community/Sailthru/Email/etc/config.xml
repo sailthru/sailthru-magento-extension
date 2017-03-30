@@ -79,15 +79,6 @@
                     </sailthru_customer_save>
                 </observers>
             </customer_save_before>
-            <customer_logout>
-                <observers>
-                    <sailthru_customer_logout>
-                        <type>singleton</type>
-                        <model>sailthruemail/observer_user</model>
-                        <method>logout</method>
-                    </sailthru_customer_logout>
-                </observers>
-            </customer_logout>
             <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>

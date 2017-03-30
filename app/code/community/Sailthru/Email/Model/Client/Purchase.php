@@ -47,7 +47,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 
             $data = array(
                     'email' => $email,
-                    'items' => Mage::helper('sailthruemail/purchase')->getItems($items),
+                    'items' => $this->getItems($items),
                     'incomplete' => 1,
                     'reminder_time' => '+' . $cartTime,
                     'reminder_template' => $cartTemplate,
@@ -71,8 +71,11 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */ 
     public function sendOrder(Mage_Sales_Model_Order $order)
     {
-        $this->log("\n\nOrder Fired!\n\n");
-        $this->_eventType = 'Place Order';
+        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+        $method = $quote->getCheckoutMethod(true);
+        if ($method == 'register'){
+            Mage::getModel('sailthruemail/client_user')->postNewCustomer($order->getCustomer());
+        }
         $data = [
             'email' => $order->getCustomerEmail(),
             'items' => $this->getItems($order->getAllVisibleItems()),
