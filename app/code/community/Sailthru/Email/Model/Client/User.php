@@ -40,6 +40,9 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         try {
             $data = $this->_buildCustomerPayload($customer, "update");
             $response = $this->apiPost('user', $data);
+            if (!$customer->getData('sailthru_id')) {
+                $this->_setSid($customer, $response);
+            }
         } catch (Exception $e) {
             $this->log($e);
         }
@@ -161,19 +164,19 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
                 'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
                 'firstName' => $customer->getFirstname(),
                 'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
-                'fullName' => $customer->getFullName(),
                 'lastName' => $customer->getLastname(),
                 'website' => Mage::app()->getStore()->getWebsite()->getName(),
                 'store' => Mage::app()->getStore()->getName(),
                 'customerGroup' => Mage::getModel('customer/group')->load($customer->getGroupId())->getCustomerGroupCode(),
-                'createdAt' => date("Y-m-d H:i:s", $customer->getCreatedAtTimestamp()),
+                'created_date' => date("Y-m-d", $customer->getCreatedAtTimestamp()),
+                'created_time' => $customer->getCreatedAtTimestamp(),
             );
 
             if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
-                $vars = $vars + $this->_getAddressVars($primaryBillingAddress, "billing_");
+                $vars["billingAddress"] = $this->_getAddressVars($primaryBillingAddress);
             }
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
-                $vars = $vars + $this->_getAddressVars($primaryShippingAddress, "shipping_");
+                $vars["shippingAddress"] = $this->_getAddressVars($primaryShippingAddress);
             }
 
             return $vars;
