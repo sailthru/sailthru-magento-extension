@@ -175,7 +175,6 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
                 "title" => $item->getName(),
                 "options" => $item->getProductOptions()["attributes_info"],
             ];
-            Mage::log($itemData, null, "sailthru.log");
             $itemsData[] = $itemData;
         }
         return $itemsData;
