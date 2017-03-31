@@ -1,6 +1,6 @@
 # Sailthru Magento Extension
 
-The Magento extension provides Sailthru's base functionality and can serve as a framework for building custom Magento functionality. 
+The Magento extension provides an integration to Sailthru's platform  and can serve as a framework for building custom Magento functionality. 
 
 ##### Features
 - Optionally load Sailthru JavaScript (either Horizon or PersonalizeJS) to all pages
@@ -19,9 +19,6 @@ For questions or troubleshooting, please visit [Sailthru Support](https://sailth
 
 ## Installation 
 *Note: After installation, you will need to login, clear cache, and then re-login.*
-
-### Magento Connect
-You can [download the plugin from Magento Connect.](https://www.magentocommerce.com/magento-connect/sailthru-cross-channel-data-personalization-and-predictions.html)
 
 ### Manual Installation
 
