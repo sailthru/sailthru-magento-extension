@@ -98,7 +98,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     public function getItems($items)
     {
-        $this->log("GET ITEMS");
         try {
             $data = array();
             $configurableSkus = array();
@@ -156,7 +155,6 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     private function useHid()
     {
-        $this->log("checking for HID use");
         if (Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
             try {
                 $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
