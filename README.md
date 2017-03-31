@@ -1,6 +1,7 @@
 # Sailthru Magento Extension
-
 The Magento extension provides Sailthru's base functionality and can serve as a framework for building custom Magento functionality. 
+
+##### Version 2.0.0-RC1
 
 ##### Features
 - Optionally load Sailthru JavaScript (either Horizon or PersonalizeJS) to all pages
@@ -16,6 +17,9 @@ You can find documentation for this extension as well as in-depth documentation 
 ##### Support
 For questions or troubleshooting, please visit [Sailthru Support](https://sailthru.zendesk.com/hc/en-us) or submit an issue.
 
+##### Known Bugs
+* PersonalizeJS causes an issue with the default theme configurable swatch-picker. Our JS team is currently investigating.
+* Error-handling during Sailthru service outages (rare) causes checkouts not to appear completed.
 
 ## Installation 
 *Note: After installation, you will need to login, clear cache, and then re-login.*
@@ -61,4 +65,6 @@ If you don't want to use modman:
     export MAGENTO_BASE=<YOUR MAGENTO ROOT DIRECTORY>
     rsync -a app/ $MAGENTO_BASE/app/ --ignore-existing --whole-file
     ```
+    
+
 
