@@ -1,7 +1,7 @@
 # Sailthru Magento Extension
-The Magento extension provides Sailthru's base functionality and can serve as a framework for building custom Magento functionality. 
+### Version 2.0.0-RC1
 
-##### Version 2.0.0-RC1
+The Magento extension provides Sailthru's base functionality and can serve as a framework for building custom Magento functionality. 
 
 ##### Features
 - Optionally load Sailthru JavaScript (either Horizon or PersonalizeJS) to all pages
