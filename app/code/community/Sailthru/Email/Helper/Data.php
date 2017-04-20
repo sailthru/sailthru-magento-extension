@@ -335,10 +335,4 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $vars;
     }
 
-    public function debug($object)
-    {
-        echo '<pre>';
-        print_r($object);
-        echo '</pre>';
-    }
 }
