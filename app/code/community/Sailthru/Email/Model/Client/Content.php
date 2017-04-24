@@ -83,8 +83,9 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'price' => $product->getPrice(),
                 'description' => urlencode($product->getDescription()),
                 'tags' => Mage::helper('sailthruemail')->getTags($product),
-                'vars' => array('sku' => $product->getSku(),
-                    'storeId' => '',
+                'vars' => array(
+                    'sku' => $product->getSku(),
+                    'storeId' => $product->getStoreId(),
                     'typeId' => $productTypeId,
                     'status' => $product->getStatus(),
                     'categoryId' => $product->getCategoryId(),
