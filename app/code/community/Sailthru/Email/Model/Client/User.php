@@ -158,7 +158,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         try {
 
             $vars = array(
-                'id' => $customer->getId(),
+                'magento_id' => $customer->getId(),
                 'name' => $customer->getName(),
                 'suffix' => $customer->getSuffix() ? $customer->getSuffix() : '',
                 'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
@@ -174,9 +174,11 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
 
             if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
                 $vars["billingAddress"] = $this->_getAddressVars($primaryBillingAddress);
+                $vars = $vars + $this->_getAddressVars($primaryBillingAddress, "billing_");
             }
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
                 $vars["shippingAddress"] = $this->_getAddressVars($primaryShippingAddress);
+                $vars = $vars + $this->_getAddressVars($primaryShippingAddress, "shipping_");
             }
 
             return $vars;
@@ -217,18 +219,22 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      */
     public function _getAddressVars(Mage_Customer_Model_Address $address, $prefix=null){
         $vars = [
+            "name"          => $address->getName(),
+            "company"       => $address->getCompany(),
             "city"          => $address->getCity(),
             "state"         => $address->getRegion(),
-            "state_code"     => $address->getRegionCode(),
-            "country_code"   => $address->getCountry(),
-            "postal_code"        => $address->getPostcode(),
+            "state_code"    => $address->getRegionCode(),
+            "country_code"  => $address->getCountry(),
+            "postal_code"   => $address->getPostcode(),
+            "telephone"     => $address->getTelephone(),
+            "fax"           => $address->getFax(),
         ];
         if (!is_null($prefix)){
-            $varsCopy = [];
+            $varsPrefixed = [];
             foreach ($vars as $key => $value) {
-                $varsCopy["{$prefix}{$key}"] = $value;
+                $varsPrefixed["{$prefix}{$key}"] = $value;
             }
-            return $varsCopy;
+            return $varsPrefixed;
         }
         return $vars;
     }
