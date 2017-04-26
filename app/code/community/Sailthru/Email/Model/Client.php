@@ -18,13 +18,10 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
     protected $_eventType = null;
 
     /**
-     * Current Store Id
+     * Current Store Id. Used for logging.
      * @var string
      */
     protected $_storeId;
-
-    /** @var bool  */
-    protected $_isEnabled = false;
 
     /** @var Mage_Customer_Model_Session  */
     protected $_session = null;
@@ -36,15 +33,12 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
     protected $_email = null;
 
     public function __construct() {
-        $this->_storeId = Mage::app()->getStore()->getStoreId();
 
-        if(Mage::helper('sailthruemail')->isEnabled($this->_storeId)) {
-            $this->_isEnabled = true;
-            $this->_session = Mage::getSingleton('customer/session');
-            if ($this->_session->isLoggedIn()) {
-                $this->_customer = Mage::getModel('customer/customer')->load($this->_session->getId());
-                $this->_email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
-            }
+        $this->_storeId = Mage::app()->getStore()->getStoreId();
+        $this->_session = Mage::getSingleton('customer/session');
+        if ($this->_session->isLoggedIn()) {
+            $this->_customer = Mage::getModel('customer/customer')->load($this->_session->getId());
+            $this->_email = Mage::getSingleton('customer/session')->getCustomer()->getEmail();
         }
 
         $apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
