@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Modified version of the Sailthru PHP5 Client v1.0.9
+ */
+
 $dir = Mage::getConfig()->getModuleDir('', 'Sailthru_Email');
 require_once $dir."/lib/Sailthru_Client.php";
 require_once $dir."/lib/Sailthru_Client_Exception.php";
@@ -32,8 +36,6 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
     protected $_email = null;
 
     public function __construct() {
-        Mage::log("hello world!", null, "sailthru.log");
-
         $this->_storeId = Mage::app()->getStore()->getStoreId();
 
         if(Mage::helper('sailthruemail')->isEnabled($this->_storeId)) {
