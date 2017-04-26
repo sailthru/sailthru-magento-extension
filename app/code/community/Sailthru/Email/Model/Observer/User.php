@@ -6,7 +6,7 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Abstract {
+class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
     /**
      * Capture customer subscription data
      *
@@ -45,7 +45,7 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Abstract {
     public function update(Varien_Event_Observer $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-
+        $this->log("UPDATE!");
         if ($this->_isEnabled and $customer) {
             Mage::getModel('sailthruemail/client_user')->updateCustomer($customer);
         }

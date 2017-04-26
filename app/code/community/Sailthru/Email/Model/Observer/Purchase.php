@@ -6,7 +6,7 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Abstract
+class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
 {
 
     public function isCartEnabled()

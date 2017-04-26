@@ -15,6 +15,8 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
     private $_transactionalType;
 
+    const FAILURE_MESSAGE = "There was an error delivering your email. Please contact customer service";
+
     /**
      * Send mail to recipient
      *
@@ -71,9 +73,20 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                     Mage::throwException($this->__($response["errormsg"]));
                 }
             }
-        } catch (Exception $e) {
-            $this->_mail = null;
+        } catch (Sailthru_Client_Exception $e) {
+            // retry logic if 14 (a dynamic template that hasn't been created yet)
+            if ($e->getCode() == 14) {
+                try {
+                    $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
+                    $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
+                    $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
+                    return true;
+                } catch (Sailthru_Client_Exception $err_two) {
+                    Mage::logException($e);
+                }
+            }
             Mage::logException($e);
+            Mage::getSingleton('core/session')->addError(self::FAILURE_MESSAGE);
             return false;
         }
 
