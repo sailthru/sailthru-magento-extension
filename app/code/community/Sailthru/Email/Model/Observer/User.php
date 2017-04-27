@@ -6,7 +6,20 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
+class Sailthru_Email_Model_Observer_User {
+
+    /** @var bool isEnabled */
+    private $isEnabled = false;
+
+    /** @var int storeId  */
+    private $storeId = null;
+
+    public function __construct()
+    {
+        $this->storeId = Mage::app()->getStore()->getId();
+        $this->isEnabled = Mage::helper('sailthruemail')->isEnabled($storeId);
+    }
+
     /**
      * Capture customer subscription data
      *
@@ -17,8 +30,14 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
     public function subscription(Varien_Event_Observer $observer)
     {
         $subscriber = $observer->getEvent()->getSubscriber();
-        if ($this->_isEnabled and $subscriber) {
-            $response = Mage::getModel('sailthruemail/client_user')->sendSubscriberData($subscriber);
+        $subscribeEnabled = Mage::helper('sailthruemail')->isNewsletterListEnabled($this->storeId);
+        $subscribeList = Mage::helper('sailthruemail')->getNewsletterList($this->storeId);
+        if ($this->isEnabled and $subscriber and $subscribeEnabled and $subscribeList) {
+            try {
+                Mage::getModel('sailthruemail/client_user')->sendSubscriberData($subscriber);
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
+            }
         }
     }
 
@@ -33,8 +52,12 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
     {
         $customer = $observer->getEvent()->getCustomer();
 
-        if ($this->_isEnabled and $customer) {
-            Mage::getModel('sailthruemail/client_user')->postNewCustomer($customer);
+        if ($this->isEnabled and $customer) {
+            try {
+                Mage::getModel('sailthruemail/client_user')->postNewCustomer($customer);
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
+            }
         }
     }
 
@@ -45,9 +68,12 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
     public function update(Varien_Event_Observer $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-        $this->log("UPDATE!");
-        if ($this->_isEnabled and $customer) {
-            Mage::getModel('sailthruemail/client_user')->updateCustomer($customer);
+        if ($this->isEnabled and $customer) {
+            try {
+                Mage::getModel('sailthruemail/client_user')->updateCustomer($customer);
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
+            }
         }
     }
 
@@ -59,31 +85,13 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Client {
      */
     public function login(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled) {
-            try{
-                if ($customer = $observer->getCustomer()) {
-                    Mage::getModel('sailthruemail/client_user')->loginCustomer($customer);
-                }
-             } catch(Exception $e){
-                 Mage::logException($e);
+        if($this->isEnabled and $customer = $observer->getCustomer()) {
+            try {
+                Mage::getModel('sailthruemail/client_user')->loginCustomer($customer);
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
             }
         }
     }
 
-    /**
-     * Capture customer logout data
-     *
-     * @param Varien_Event_Observer $observer
-     * @return void
-     */
-    public function logout()
-    {
-        if($this->_isEnabled) {
-            try{
-                Mage::getModel('sailthruemail/client_user')->logout();
-             }catch(Exception $e){
-                 Mage::logException($e);
-            }
-        }
-    }
 }
