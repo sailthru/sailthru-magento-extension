@@ -203,7 +203,7 @@ index.php
 index.php.sample
 install.php
 js/
-lib/
+./lib/
 mage
 media/
 php.ini.sample

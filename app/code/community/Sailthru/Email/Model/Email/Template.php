@@ -15,6 +15,10 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
     private $_transactionalType;
 
+    const FAILURE_MESSAGE = "There was an error delivering your email. Please contact customer service";
+
+    const FAILURE_MESSAGE_INTERNAL = "Sailthru error with delivery:";
+
     /**
      * Send mail to recipient
      *
@@ -25,7 +29,9 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
      **/
     public function send($email, $name = null, array $variables = array())
     {
-        if(!Mage::helper('sailthruemail')->isEnabled() || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled()){
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        if(!Mage::helper('sailthruemail')->isEnabled($storeId) || !Mage::helper('sailthruemail')->isTransactionalEmailEnabled($storeId)){
             return parent::send($email, $name, $variables);
         }
 
@@ -57,27 +63,40 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
         }
 
+        $client =  Mage::getModel('sailthruemail/client');
         try {
-
-            $client =  Mage::getModel('sailthruemail/client');
-            $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
-
-            // Create template if it does not already exist
-            if(isset($response["error"]) && $response['error'] == 14) {
-                $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
-                $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
-                $response = $client->multisend($template_name, $emails, $vars, $evars, $options);
-                if($response["error"]) {
-                    Mage::throwException($this->__($response["errormsg"]));
+            $client->multisend($template_name, $emails, $vars, $evars, $options);
+            return true;
+        } catch (Sailthru_Client_Exception $e) {
+            // retry logic if 14 (a dynamic template that hasn't been created yet)
+            if ($e->getCode() == 14) {
+                try {
+                    $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
+                    $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
+                    $client->multisend($template_name, $emails, $vars, $evars, $options);
+                    return true;
+                } catch (Sailthru_Client_Exception $err_two) {
+                    Mage::logException($e);
+                    $e = $err_two;
                 }
             }
-        } catch (Exception $e) {
-            $this->_mail = null;
             Mage::logException($e);
+            if ($storeId != 0) {
+                $message = self::FAILURE_MESSAGE;
+                if ($this->_transactionalType = Sailthru_Email_Helper_Template::ORDER_EMAIL) {
+                    $message = "Your order was completed, but the confirmation email couldn't be delivered. Please contact customer service.";
+                }
+                Mage::getSingleton('core/session')->addNotice(__($message));
+            } else {
+                Mage::getSingleton('core/session')->addNotice(
+                    self::FAILURE_MESSAGE_INTERNAL .
+                    " <pre style='display: inline; margin-left: 5px;'>({$e->getCode()}) {$e->getMessage()}</pre>"
+                );
+                throw new Exception($e);
+            }
+            $this->_mail = null;
             return false;
         }
-
-        return true;
     }
 
 }

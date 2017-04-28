@@ -4,7 +4,7 @@
  * Used in creating options for List Selection from Sailthru, or inactive if API keys are invalid.
  *
  */
-class Sailthru_Email_Model_Config_Source_Sailthrujs extends Sailthru_Email_Model_Client
+class Sailthru_Email_Model_Config_Source_Sailthrujs
 {
     /**
      * Options getter

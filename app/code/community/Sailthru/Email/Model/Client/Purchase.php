@@ -15,51 +15,45 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * @param Mage_Sales_Model_Quote $quote
      * @param string $email
      * @param string $eventType
-     * @return boolean
+     * @return void
+     * @throws Sailthru_Client_Exception
      */
     public function sendCart(Mage_Sales_Model_Quote $quote, $email = null, $eventType = null)
     {
-        try{
-
-            if ($eventType){
-                $this->_eventType = $eventType;
-            }
-
-            $email = $quote->getCustomerEmail();
-            if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
-                $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
-                $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
-            } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled and $email = $this->useHid()){
-                $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
-                $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
-            } else {
-                return false;
-            }
-
-            /** @var $items Mage_Sales_Model_Quote_Item[] */
-            // prevent bundle parts from surfacing
-            $items = $quote->getAllVisibleItems();
-            foreach ($items as $index => $item) {
-                if ($item->getParentItem()){
-                    unset($items[$index]);
-                }
-            }
-
-            $data = array(
-                    'email' => $email,
-                    'items' => $this->getItems($items),
-                    'incomplete' => 1,
-                    'reminder_time' => '+' . $cartTime,
-                    'reminder_template' => $cartTemplate,
-                    'message_id' => $this->getMessageId()
-            );
-
-            $response = $this->apiPost('purchase', $data);
-
-            return true;
-        } catch (Exception $e) {
-            Mage::logException($e);
+        if ($eventType){
+            $this->_eventType = $eventType;
         }
+
+        $email = $quote->getCustomerEmail();
+        if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
+            $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
+            $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
+        } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled and $email = $this->useHid()){
+            $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
+            $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
+        } else {
+            return;
+        }
+
+        // prevent bundle parts from surfacing
+        /** @var $items Mage_Sales_Model_Quote_Item[] */
+        $items = $quote->getAllVisibleItems();
+        foreach ($items as $index => $item) {
+            if ($item->getParentItem()){
+                unset($items[$index]);
+            }
+        }
+
+        $data = array(
+                'email' => $email,
+                'items' => $this->getItems($items),
+                'incomplete' => 1,
+                'reminder_time' => '+' . $cartTime,
+                'reminder_template' => $cartTemplate,
+                'message_id' => $this->getMessageId()
+        );
+
+        $this->apiPost('purchase', $data);
     }
 
     /**
@@ -68,13 +62,18 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @param $order Mage_Sales_Model_Order
      * @return void
+     * @throws Sailthru_Client_Exception
      */ 
     public function sendOrder(Mage_Sales_Model_Order $order)
     {
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
         $method = $quote->getCheckoutMethod(true);
-        if ($method == 'register'){
-            Mage::getModel('sailthruemail/client_user')->postNewCustomer($order->getCustomer());
+        if ($method == 'register') {
+            try { // main goal is purchase, so continue is user api fails
+                Mage::getModel('sailthruemail/client_user')->postNewCustomer($order->getCustomer());
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
+            }
         }
         $data = [
             'email' => $order->getCustomerEmail(),
@@ -84,11 +83,8 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
             'purchase_keys' => ["extid" => $order->getIncrementId()]
         ];
-        try{
-            $this->apiPost('purchase', $data);
-        }catch (Exception $e) {
-            Mage::logException($e);
-        }
+
+        $this->apiPost('purchase', $data);
     }
 
     /**
@@ -111,7 +107,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $options = $product->getTypeInstance(true)->getOrderOptions($product);
                     $_item['id'] = $options['simple_sku'];
                     $_item['title'] = $options['simple_name'];
-                    $_item['vars'] = $this->getVars($options);
+                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
                 } elseif (!in_array($item->getSku(),$configurableSkus)) {
                     $_item['id'] = $item->getSku();
