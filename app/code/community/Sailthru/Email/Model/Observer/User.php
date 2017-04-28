@@ -6,19 +6,7 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_User {
-
-    /** @var bool isEnabled */
-    private $isEnabled = false;
-
-    /** @var int storeId  */
-    private $storeId = null;
-
-    public function __construct()
-    {
-        $this->storeId = Mage::app()->getStore()->getId();
-        $this->isEnabled = Mage::helper('sailthruemail')->isEnabled($storeId);
-    }
+class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Observer {
 
     /**
      * Capture customer subscription data
@@ -42,7 +30,7 @@ class Sailthru_Email_Model_Observer_User {
     }
 
     /**
-     * Capture customer registration data
+     * Capture customer registration data. Whether to add to Master List happens in Client_User
      *
      * @param Varien_Event_Observer $observer
      *
