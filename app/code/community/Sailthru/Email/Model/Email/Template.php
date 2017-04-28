@@ -82,7 +82,11 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             }
             Mage::logException($e);
             if ($storeId != 0) {
-                Mage::getSingleton('core/session')->addError(self::FAILURE_MESSAGE);
+                $message = self::FAILURE_MESSAGE;
+                if ($this->_transactionalType = Sailthru_Email_Helper_Template::ORDER_EMAIL) {
+                    $message = "Your order was completed, but the confirmation email couldn't be delivered. Please contact customer service.";
+                }
+                Mage::getSingleton('core/session')->addNotice(__($message));
             } else {
                 Mage::getSingleton('core/session')->addNotice(
                     self::FAILURE_MESSAGE_INTERNAL .
