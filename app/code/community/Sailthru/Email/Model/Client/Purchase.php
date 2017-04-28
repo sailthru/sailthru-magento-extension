@@ -16,7 +16,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * @param string $email
      * @param string $eventType
      * @return void
-     * @throws Sailthru_Email_Model_Client_Exception
+     * @throws Sailthru_Client_Exception
      */
     public function sendCart(Mage_Sales_Model_Quote $quote, $email = null, $eventType = null)
     {
@@ -53,7 +53,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 'message_id' => $this->getMessageId()
         );
 
-        $response = $this->apiPost('purchase', $data);
+        $this->apiPost('purchase', $data);
     }
 
     /**
@@ -62,14 +62,18 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @param $order Mage_Sales_Model_Order
      * @return void
-     * @throws Sailthru_Email_Model_Client_Exception
+     * @throws Sailthru_Client_Exception
      */ 
     public function sendOrder(Mage_Sales_Model_Order $order)
     {
         $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
         $method = $quote->getCheckoutMethod(true);
-        if ($method == 'register'){
-            Mage::getModel('sailthruemail/client_user')->postNewCustomer($order->getCustomer());
+        if ($method == 'register') {
+            try { // main goal is purchase, so continue is user api fails
+                Mage::getModel('sailthruemail/client_user')->postNewCustomer($order->getCustomer());
+            } catch (Sailthru_Client_Exception $e) {
+                Mage::logException($e);
+            }
         }
         $data = [
             'email' => $order->getCustomerEmail(),
@@ -80,7 +84,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             'purchase_keys' => ["extid" => $order->getIncrementId()]
         ];
 
-        $response = $this->apiPost('purchase', $data);
+        $this->apiPost('purchase', $data);
     }
 
     /**
@@ -103,7 +107,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     $options = $product->getTypeInstance(true)->getOrderOptions($product);
                     $_item['id'] = $options['simple_sku'];
                     $_item['title'] = $options['simple_name'];
-                    $_item['vars'] = $this->getVars($options);
+                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
                     $configurableSkus[] = $options['simple_sku'];
                 } elseif (!in_array($item->getSku(),$configurableSkus)) {
                     $_item['id'] = $item->getSku();

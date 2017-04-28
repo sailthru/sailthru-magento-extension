@@ -6,12 +6,11 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
-{
+class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observer {
 
     public function isCartEnabled()
     {
-        return ($this->_isEnabled and (Mage::helper('sailthruemail')->isAbandonedCartEnabled() or Mage::helper('sailthruemail')->isAnonymousCartEnabled()));
+        return ($this->isEnabled and (Mage::helper('sailthruemail')->isAbandonedCartEnabled() or Mage::helper('sailthruemail')->isAnonymousCartEnabled()));
     }
 
     public function emptyCart(Varien_Event_Observer $observer)
@@ -26,7 +25,6 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
                 Mage::logException($e);
             }
         }
-        return $this;
     }
 
     public function addItemToCart(Varien_Event_Observer $observer)
@@ -37,7 +35,6 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
             } catch (Exception $e) {
                 Mage::logException($e);
             }
-            return $this;
         }
     }
 
@@ -51,7 +48,6 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
             } catch (Exception $e) {
                 Mage::logException($e);
             }
-            return $this;
         }
     }
 
@@ -59,11 +55,10 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
     {
         if($this->isCartEnabled()) {
             try{
-                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
+                 Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
             } catch (Exception $e) {
                 Mage::logException($e);
             }
-            return $this;
         }
     }
 
@@ -76,14 +71,20 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Client
      */
     public function placeOrder(Varien_Event_Observer $observer)
     {
-        if($this->_isEnabled && $observer->getOrder()->getCustomerEmail()) {
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $observer->getOrder();
+        if($this->isEnabled && $email = $order->getCustomerEmail()) {
             try{
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendOrder($observer->getOrder());
+                Mage::getModel('sailthruemail/client_purchase')->sendOrder($order);
+                if (!$order->getCustomerIsGuest()) {
+                    $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+                    Mage::getModel('sailthruemail/client_user')->updateCustomer($customer);
+
+                }
             } catch (Exception $e) {
                 Mage::logException($e);
             }
         }
-        return $this;
     }
 
 
