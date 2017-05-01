@@ -31,7 +31,13 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment><![CDATA[<a href="https://www.sailthru.com/getstarted" target="_blank">Signup for a Sailthru Account</a>]]>.  If you have any problems, you can check out our documentation <![CDATA[<a href="http://getstarted.sailthru.com/developers/client-libraries/magento-plugin" target="_blank">online</a>]]>. </comment>
+                    <comment>
+                        <![CDATA[
+                            For help, please take a look at our<a
+                                href="https://getstarted.sailthru.com/integrations/magento/magento-extension/"
+                                target="blank">Magento integration docs</a>.
+                        ]]>
+                    </comment>
                     <fields>
                         <enabled translate="label">
                             <label>Enabled</label>
