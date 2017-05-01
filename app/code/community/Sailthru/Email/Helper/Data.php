@@ -7,8 +7,8 @@
 class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     // API
-    const XML_PATH_ENABLED                                  = 'sailthru/api/enabled';
-    const XML_PATH_ENABLE_LOGGING                           = 'sailthru/api/enable_logging';
+    const XML_PATH_ENABLED                                  = 'sailthru/setup/enabled';
+    const XML_PATH_ENABLE_LOGGING                           = 'sailthru/setup/enable_logging';
 
     // Javascript
     const XML_PATH_JS                                       = 'sailthru/js/js_select';
