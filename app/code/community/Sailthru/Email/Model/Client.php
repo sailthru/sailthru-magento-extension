@@ -43,7 +43,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
 
         $apiKey = Mage::getStoreConfig('sailthru/api/key', $this->_storeId);
         $apiSecret = Mage::getStoreConfig('sailthru/api/secret', $this->_storeId);
-        $apiUri =  Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
+        $apiUri = Mage::getStoreConfig('sailthru/api/uri', $this->_storeId);
         parent::__construct($apiKey, $apiSecret, $apiUri);
     }
 
@@ -138,5 +138,11 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         // Magento-friendly cookie-setter
         return Mage::getModel('core/cookie')->set('sailthru_hid', $data['keys']['cookie'], $expire, '/', $domain, $secure);
 
+    }
+
+    public function testKeys($apiKey, $apiSecret, $apiUri)
+    {
+        parent::__construct($apiKey, $apiSecret, $apiUri);
+        $this->apiGet('settings', []);
     }
 }

@@ -77,23 +77,26 @@
                         <key translate="label">
                             <label>API Key</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>20</sort_order>
+                            <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
                         </key>
                         <secret translate="label">
                             <label>API Secret</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
+                            <backend_model>Sailthru_Email_Model_Config_Validkeys</backend_model>
+                            <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <validate>required-entry</validate>
                         </secret>
                         <uri translate="label">
                             <label>API URI</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
+                            <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -126,6 +129,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends><js_select>2</js_select></depends>
+                            <validate>required-entry</validate>
                         </horizon_domain>
                         <customer_id translate="label">
                             <label>Customer ID</label>
@@ -136,6 +140,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <sort_order>2</sort_order>
+                            <validate>required-entry</validate>
                         </customer_id>
                     </fields>
                 </js>
@@ -198,6 +203,8 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>2</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                            <validate>required-entry</validate>
+                            <validate>validate-select</validate>
                         </sender>
                         <customer_register translate="label">
                             <label>Customer Signup</label>
@@ -267,8 +274,10 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment>Enter a name for your abandoned cart template.</comment>
+                            <comment>Choose the template to use for your abandoned cart template.</comment>
                             <depends><enabled>1</enabled></depends>
+                            <validate>required-entry</validate>
+                            <validate>validate-select</validate>
                         </template>
                         <delay> translate="label comment">
                             <label>Abandoned Cart Delay Time</label>
@@ -279,6 +288,7 @@
                             <show_in_store>1</show_in_store>
                             <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart.</comment>
                             <depends><enabled>1</enabled></depends>
+                            <validate>required-entry</validate>
                         </delay>
                     </fields>
                 </abandoned_cart>
@@ -310,6 +320,8 @@
                             <show_in_store>1</show_in_store>
                             <depends><enabled>1</enabled></depends>
                             <sort_order>2</sort_order>
+                            <validate>required-entry</validate>
+                            <validate>validate-select</validate>
                         </template>
                         <reminder_time translate="label comment">
                             <label>Delay Time</label>
@@ -320,6 +332,8 @@
                             <show_in_store>1</show_in_store>
                             <depends><enabled>1</enabled></depends>
                             <comment>The delay before a reminder email is sent to a customer who abandoned their shopping cart. Cam select unit (min, days).</comment>
+                            <validate>required-entry</validate>
+
                         </reminder_time>
                     </fields>
                 </anonymous_cart>
@@ -363,6 +377,8 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">default master list</a>]]> that all subscribers and customers are added to.</comment>
+                            <validate>required-entry</validate>
+                            <validate>validate-select</validate>
                         </master_list>
                         <enable_newsletter_hook translate="label comment">
                             <label>Enable Newsletter Hook</label>
@@ -384,6 +400,8 @@
                             <show_in_store>1</show_in_store>
                             <depends><enable_newsletter_hook>1</enable_newsletter_hook></depends>
                             <comment>The <![CDATA[<a href="http://getstarted.sailthru.com/documentation/lists" target="_blank">email list</a>]]> users are added to when they subscribe to the newsletter.</comment>
+                            <validate>required-entry</validate>
+                            <validate>validate-select</validate>
                         </newsletter_list>
                     </fields>
                 </management>

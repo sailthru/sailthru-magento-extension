@@ -16,12 +16,9 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
         try {
             $this->_eventType = "MagentoSettings";
             $response = $this->apiGet("template");
-            if (isset($response["error"])) {
-                return [ [ 'value' => 0, 'label' => __('Please Enter Valid API Credentials') ] ];
-            }
             $templates = $response["templates"];
             $tpl_options = [
-                [ 'value' => 0, 'label' => '' ]
+                [ 'value' => null, 'label' => 'Please select a template' ]
             ];
             foreach ($templates as $tpl) {
                 $tpl_options[] = [
