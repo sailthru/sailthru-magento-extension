@@ -18,7 +18,7 @@ class Sailthru_Email_Model_Config_Source_Verifiedemails extends Sailthru_Email_M
             $response = $this->apiGet("settings");
             $emails = $response["from_emails"];
             $sender_options = [
-                ['value'=> 0, 'label'=>' ']
+                ['value'=> null, 'label'=>'Please select an email address']
             ];
             foreach ($emails as $key => $email) {
                 $sender_options[] = [

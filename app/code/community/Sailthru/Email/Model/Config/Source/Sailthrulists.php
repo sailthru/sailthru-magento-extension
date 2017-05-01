@@ -17,7 +17,7 @@ class Sailthru_Email_Model_Config_Source_Sailthrulists extends Sailthru_Email_Mo
             $this->_eventType = "MagentoSettings";
             $response = $this->apiGet("list");
             $lists = $response["lists"];
-            $lists_options = [['value'=> 0, 'label'=>' ']];
+            $lists_options = [['value'=> null, 'label'=>'Please select a list']];
             foreach ($lists as $list) {
                 if ($list['type'] == 'normal') {
                     $lists_options[] = [
