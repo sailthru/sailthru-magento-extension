@@ -206,6 +206,28 @@
                             <validate>required-entry</validate>
                             <validate>validate-select</validate>
                         </sender>
+                        <customer_error_enabled>
+                            <label>Display Sailthru email delivery errors to customers</label>
+                            <comment>In the event transactional emails (order confirmation, etc) are not sent due an error, display an error to customers.</comment>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <frontend_type>select</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>3</sort_order>
+                            <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                        </customer_error_enabled>
+                        <customer_error_message>
+                            <label>Delivery Error Message</label>
+                            <comment>Will be displayed as a Magento alert message to customers when a transactional email is not sent due a Sailthru send API error.</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>4</sort_order>
+                            <validate>required-entry</validate>
+                            <depends><customer_error_enabled>1</customer_error_enabled></depends>
+                        </customer_error_message>
                         <customer_register translate="label">
                             <label>Customer Signup</label>
                             <frontend_type>select</frontend_type>
@@ -213,7 +235,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <sort_order>3</sort_order>
+                            <sort_order>5</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                         </customer_register>
                         <newsletter_subscribed translate="label">
@@ -223,7 +245,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <sort_order>3</sort_order>
+                            <sort_order>6</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                         </newsletter_subscribed>
                         <purchase_template translate="label">
@@ -234,7 +256,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
-                            <sort_order>4</sort_order>
+                            <sort_order>7</sort_order>
                         </purchase_template>
                         <shipping translate="label">
                             <label>Shipping Template</label>
@@ -243,7 +265,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <sort_order>5</sort_order>
+                            <sort_order>8</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                         </shipping>
                     </fields>

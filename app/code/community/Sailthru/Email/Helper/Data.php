@@ -26,6 +26,8 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     // Transactional
     const XML_PATH_TRANSACTIONAL_EMAIL_ENABLED              = 'sailthru_transactional/email/enable_transactional_emails';
     const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
+    const XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_ENABLED     = 'sailthru_transactional/email/customer_error_enabled';
+    const XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_MESSAGE     = 'sailthru_transactional/email/customer_error_message';
     const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactional/abandoned_cart/enabled';
     const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru_transactional/abandoned_cart/template';
     const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactional/abandoned_cart/delay';
@@ -102,6 +104,16 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     public function getSenderEmail($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_EMAIL_SENDER, $store);
+    }
+
+    public function isCustomerErrorEnabled($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_ENABLED);
+    }
+
+    public function getCustomerErrorMessage($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_MESSAGE);
     }
 
     public function isAbandonedCartEnabled($store = null)
