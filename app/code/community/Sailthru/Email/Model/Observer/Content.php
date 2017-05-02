@@ -90,7 +90,7 @@ class Sailthru_Email_Model_Observer_Content
 
         Mage::getSingleton('core/session')->addError(
             self::FAILURE_MESSAGE . " for store {$storeName}." .
-            " <pre style='float: right; display: inline; margin-left: 5px;'>({$e->getCode()}) {$e->getMessage()}</pre>"
+            " <pre >({$e->getCode()}) {$e->getMessage()}</pre>"
         );
         Mage::logException($e);
     }
