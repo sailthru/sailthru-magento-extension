@@ -63,7 +63,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 
         $url = $isVariant
             ? Mage::helper('sailthruemail')->getVariantUrl($product, $parents[0])
-            : Mage::getUrl($product->getUrlPath());
+            : $product->getProductUrl(false);
 
         $productTypeId = $product->getTypeId();
         $data = array(

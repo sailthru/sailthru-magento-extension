@@ -242,7 +242,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         if ($product->getVisibility() == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE) {
             $parent = Mage::getModel('catalog/product')->load($parentId);
-            return str_replace(" ", "_", "{$parent->getProductUrl()}#{$product->getSku()}");
+            return str_replace(" ", "_", "{$parent->getProductUrl(false)}#{$product->getSku()}");
         }
         return $product->getUrl();
     }
