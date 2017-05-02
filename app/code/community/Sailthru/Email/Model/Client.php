@@ -140,9 +140,11 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
 
     }
 
-    public function testKeys($apiKey, $apiSecret, $apiUri)
+    public function testKeys($apiKey=null, $apiSecret=null, $apiUri=null)
     {
-        parent::__construct($apiKey, $apiSecret, $apiUri);
+        if ($apiKey and $apiSecret) {
+            parent::__construct($apiKey, $apiSecret, $apiUri);
+        }
         $this->apiGet('settings', []);
     }
 }

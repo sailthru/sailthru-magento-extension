@@ -9,7 +9,7 @@ class Sailthru_Email_Model_Config_Source_Overridetemplates extends Sailthru_Emai
      */
     public function toOptionArray()
     {
-        $this->_eventType = "MagentoSettings";
+        $this->_eventType = "System Config -> Transactionals -> Override Templates";
         try {
             $response = $this->apiGet("template");
             $templates = $response["templates"];

@@ -77,6 +77,7 @@
                         <key translate="label">
                             <label>API Key</label>
                             <frontend_type>text</frontend_type>
+                            <backend_model>Sailthru_Email_Model_Config_Validkey</backend_model>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -208,7 +209,7 @@
                         </sender>
                         <customer_error_enabled>
                             <label>Display Sailthru email delivery errors to customers</label>
-                            <comment>In the event transactional emails (order confirmation, etc) are not sent due an error, display an error to customers.</comment>
+                            <comment>In the event transactional emails (order confirmation, etc) are not sent due an error or opt-out, display an error to customers.</comment>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <frontend_type>select</frontend_type>
                             <show_in_default>1</show_in_default>
@@ -226,7 +227,10 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>4</sort_order>
                             <validate>required-entry</validate>
-                            <depends><customer_error_enabled>1</customer_error_enabled></depends>
+                            <depends>
+                                <customer_error_enabled>1</customer_error_enabled>
+                                <enable_transactional_emails>1</enable_transactional_emails>
+                            </depends>
                         </customer_error_message>
                         <customer_register translate="label">
                             <label>Customer Signup</label>
@@ -237,6 +241,7 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>5</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                            <validate>validate-select</validate>
                         </customer_register>
                         <newsletter_subscribed translate="label">
                             <label>Newsletter Subscribed</label>
@@ -247,6 +252,7 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>6</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                            <validate>validate-select</validate>
                         </newsletter_subscribed>
                         <purchase_template translate="label">
                             <label>Purchase Template</label>
@@ -257,6 +263,7 @@
                             <show_in_store>1</show_in_store>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
                             <sort_order>7</sort_order>
+                            <validate>validate-select</validate>
                         </purchase_template>
                         <shipping translate="label">
                             <label>Shipping Template</label>
@@ -267,6 +274,7 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>8</sort_order>
                             <depends><enable_transactional_emails>1</enable_transactional_emails></depends>
+                            <validate>validate-select</validate>
                         </shipping>
                     </fields>
                 </email> 
@@ -286,7 +294,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                         </enabled>
                         <template translate="label comment">
                             <label>Abandoned Cart Template</label>
@@ -326,7 +334,7 @@
                         <enabled>
                             <label>Enable</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -382,7 +390,7 @@
                         <master_list_enable translate="label comment">
                             <label>Add all customers to a Sailthru list on registration / login.</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                             <sort_order>1</sort_order>
                             <comment>All users, regardless of subscription status, will be added to this list on login or registration</comment>
                             <show_in_default>1</show_in_default>
@@ -406,7 +414,7 @@
                             <label>Enable Newsletter Hook</label>
                             <comment>The Sailthru plugin can capture subscriptions to the Magento newsletter module, and reflect those users into a Sailthru list.</comment>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -450,7 +458,7 @@
                         <enabled translate="label comment">
                             <label>Enable update hooks to send content to Sailthru</label>
                             <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                             <sort_order>1</sort_order>
                             <comment>When items are updated in the backend, an update will be sent to Sailthru.</comment>
                             <show_in_default>1</show_in_default>
@@ -525,25 +533,6 @@
                             <show_in_store>1</show_in_store>
                         </use_attributes>
                         <attributes>
-                            <comment>
-                                <![CDATA[
-                                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-                                    <script type="text/javascript">
-                                        jQuery.noConflict();
-                                    </script>
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
-                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css" />
-                                    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-                                    <script>
-                                        /*
-                                        jQuery('select#sailthru_content_product_tags_attributes').chosen({
-                                            placeholder_text_multiple: "Name, Color, etc."
-                                        });
-                                        */
-                                    </script>
-                                ]]>
-                            </comment>
                             <label>
                                 <![CDATA[
                                     Usable Product Attributes<br />

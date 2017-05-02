@@ -14,7 +14,7 @@ class Sailthru_Email_Model_Config_Source_Sailthrulists extends Sailthru_Email_Mo
     public function toOptionArray()
     {
         try {
-            $this->_eventType = "MagentoSettings";
+            $this->_eventType = "System Config -> Users -> Lists";
             $response = $this->apiGet("list");
             $lists = $response["lists"];
             $lists_options = [['value'=> null, 'label'=>'Please select a list']];
