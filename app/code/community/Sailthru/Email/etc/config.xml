@@ -200,5 +200,11 @@
                 <uri><![CDATA[https://api.sailthru.com]]></uri>
             </api>
        </sailthru>
+        <sailthru_transactional>
+            <email>
+                <customer_error_enabled>1</customer_error_enabled>
+                <customer_error_message><![CDATA[Sorry, we were unable to send your email notification. If you have any questions, please contact customer service.]]></customer_error_message>
+            </email>
+        </sailthru_transactional>
     </default>
 </config>
