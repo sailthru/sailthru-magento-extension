@@ -161,12 +161,12 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             );
 
             if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
-                $vars["billingAddress"] = $this->_getAddressVars($primaryBillingAddress);
-                $vars = $vars + $this->_getAddressVars($primaryBillingAddress, "billing_");
+                $vars["defaultBillingAddress"] = $this->_getAddressVars($primaryBillingAddress);
+                $vars = $vars + $this->_getAddressVars($primaryBillingAddress, "defaultBillingAddress_");
             }
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
-                $vars["shippingAddress"] = $this->_getAddressVars($primaryShippingAddress);
-                $vars = $vars + $this->_getAddressVars($primaryShippingAddress, "shipping_");
+                $vars["defaultShippingAddress"] = $this->_getAddressVars($primaryShippingAddress);
+                $vars = $vars + $this->_getAddressVars($primaryShippingAddress, "defaultShippingAddress_");
             }
 
             return $vars;
