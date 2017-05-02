@@ -14,8 +14,8 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
     public function toOptionArray()
     {
         try {
-            $this->_eventType = "MagentoSettings";
-            $response = $this->apiGet("template");
+            $this->_eventType = "System Config -> Transactionals -> Templates";
+            $response = $this->apiGet("template", []);
             $templates = $response["templates"];
             $tpl_options = [
                 [ 'value' => null, 'label' => 'Please select a template' ]
@@ -28,7 +28,7 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
             }
             return $tpl_options;
         } catch (Sailthru_Client_Exception $e) {
-            $this->processOptionArrayError($e);
+            return $this->processOptionArrayError($e);
         }
     }
 }

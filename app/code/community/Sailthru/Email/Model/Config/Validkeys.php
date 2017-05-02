@@ -1,6 +1,6 @@
 <?php
 
-class Sailthru_Email_Model_Config_Validkeys extends Mage_Core_Model_Config_Data
+class Sailthru_Email_Model_Config_Validkeys extends Sailthru_Email_Model_Config_Validkey
 {
     public function save()
     {
@@ -13,9 +13,12 @@ class Sailthru_Email_Model_Config_Validkeys extends Mage_Core_Model_Config_Data
             $client->testKeys($apiKey, $apiSecret, $apiUri);
             Mage::getModel('core/session')->addSuccess("Sailthru API Keys validated.");
         } catch (Sailthru_Client_Exception $e) {
-            Mage::getModel('core/session')->addError("Your Sailthru API Key and Secret don't seem to be working. Please verify and try again. <pre>({$e->getCode()}) {$e->getMessage()}</pre>");
+            $message = "Your Sailthru API credentials don't seem to be working. Please verify your API Key and Secret and try again.";
+            if (!in_array($e->getCode(), [2, 3, 5])) {
+                $message .= "<pre>({$e->getCode()}) {$e->getMessage()}</pre>";
+            }
+            Mage::getModel('core/session')->addError($message);
         }
-
         return parent::save();
     }
 }
