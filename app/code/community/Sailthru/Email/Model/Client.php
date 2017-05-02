@@ -97,7 +97,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         }
     }
 
-    // Magento-friendly cookie-setter
+    // Magento-friendly cookie-setter. Kept for backwards-compatibility with old plugin. TODO: refactor
     public function setCookie($response) {
         if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
             $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
