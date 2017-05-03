@@ -33,8 +33,7 @@
                     <show_in_store>1</show_in_store>
                     <comment>
                         <![CDATA[
-                            For help, please take a look at our<a
-                                href="https://getstarted.sailthru.com/integrations/magento/magento-extension/"
+                            For help, please take a look at our<a href="https://getstarted.sailthru.com/integrations/magento/magento-extension/"
                                 target="_blank">Magento integration docs</a>.
                         ]]>
                     </comment>
@@ -72,7 +71,10 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <comment>Your API Key and Secret can be found<![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]> by clicking the padlock next to "API Key and Secret."</comment>
+                    <comment>
+                        Find your API Key and Secret<![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]>
+                        by clicking the padlock next to "API Key and Secret."
+                    </comment>
                     <fields>
                         <key translate="label">
                             <label>API Key</label>
@@ -114,7 +116,7 @@
                     <fields>
                         <js_select translate="label comment">
                             <label>Use Sailthru Javascript</label>
-                            <comment>Deploy Sailthru Javascript on your Magento site. Use PersonalizeJS for latest features.</comment>
+                            <comment>Deploy Sailthru Javascript on your Magento site. Use Sailthru Script Tag for SPM and latest features.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>Sailthru_Email_Model_Config_Source_Sailthrujs</source_model>
                             <show_in_default>1</show_in_default>
@@ -131,10 +133,16 @@
                             <show_in_store>1</show_in_store>
                             <depends><js_select>2</js_select></depends>
                             <validate>required-entry</validate>
+                            <comment>
+                                In order to use Horizon, you must have a Horizon domain set up. Check your domains
+                                <![CDATA[<a href="https://my.sailthru.com/settings/domains">here</a>.]]>
+                            </comment>
                         </horizon_domain>
                         <customer_id translate="label">
                             <label>Customer ID</label>
-                            <comment>Used for PersonalizeJS. Can be found <![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]>.</comment>
+                            <comment>
+                                Used for Sailthru Script Tag. Can be found <![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]>.
+                            </comment>
                             <frontend_type>text</frontend_type>
                             <depends><js_select>1</js_select></depends>
                             <show_in_default>1</show_in_default>

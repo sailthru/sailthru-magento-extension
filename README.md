@@ -4,7 +4,7 @@
 The Magento extension provides an integration to Sailthru's platform  and can serve as a framework for building custom Magento functionality. 
 
 ##### Features
-- Optionally load Sailthru JavaScript (either Horizon or PersonalizeJS) to all pages
+- Optionally load Sailthru JavaScript (either Horizon or Sailthru Script Tag) to all pages
 - Deliver all Magento transactionals through Sailthru for enhanced deliverability and tracking
 - Record all orders submitted with campaign attribution and adjustment reporting
 - Deliver abandoned cart emails.

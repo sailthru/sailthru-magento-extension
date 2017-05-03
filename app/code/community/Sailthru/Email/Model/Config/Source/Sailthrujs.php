@@ -15,7 +15,7 @@ class Sailthru_Email_Model_Config_Source_Sailthrujs
     {
         return array(
             array('value' => 0, 'label'=>Mage::helper('adminhtml')->__('No')),
-            array('value' => 1, 'label'=>Mage::helper('adminhtml')->__('PersonalizeJS')),
+            array('value' => 1, 'label'=>Mage::helper('adminhtml')->__('Sailthru Script Tag')),
             array('value' => 2, 'label'=>Mage::helper('adminhtml')->__('Horizon'))
         );
     }
