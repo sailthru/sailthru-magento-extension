@@ -1,25 +1,25 @@
 # Sailthru Magento Extension
-### Version 2.0.0-RC1
+### Version 2.0.0-RC2
 
 The Magento extension provides an integration to Sailthru's platform  and can serve as a framework for building custom Magento functionality. 
 
 ##### Features
-- Optionally load Sailthru JavaScript (either Horizon or Sailthru Script Tag) to all pages
-- Deliver all Magento transactionals through Sailthru for enhanced deliverability and tracking
-- Record all orders submitted with campaign attribution and adjustment reporting
-- Deliver abandoned cart emails.
-- Add all users into the Sailthru system on login.
+- Automatically deploy Sailthru Javascript (Horizon or Sailthru Script Tag).
+- Add all users into the Sailthru system on login or registration.
 - Hook Magento's newsletter subscriptions into a Sailthru list.
+- Deliver Magento transactionals through Sailthru for enhanced deliverability, tracking, and user flows.
+- Create custom Sailthru templates for Customer Signup, Newsletter Signup, Order Confirmation, and Shipping.
+- Capture customers order data with adjustments and Sailthru campaign attribution.
+- Deliver abandoned cart emails for known users.
+
+##### PrototypeJS 1.7 Issue
+Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's bundled PrototypeJS 1.7.0.][1] We've specifically found that the default frontend configurable-swatch picker is unable to select. The Babel issue appears to be resolved by updating Prototype to 1.7.3.
 
 ##### Documentation
-You can find documentation for this extension as well as in-depth documentation of our API on [Sailthru GetStarted](https://getstarted.sailthru.com/integrations/magento/magento-extension/).
+You can find documentation for this extension as well as in-depth documentation of our API on [Sailthru GetStarted][2].
 
 ##### Support
-For questions or troubleshooting, please visit [Sailthru Support](https://sailthru.zendesk.com/hc/en-us) or submit an issue.
-
-##### Known Bugs
-* PersonalizeJS causes an issue with the default theme configurable swatch-picker. Our JS team is currently investigating.
-* Error-handling during Sailthru service outages (rare) causes checkouts not to appear completed.
+For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue.
 
 ## Installation 
 *Note: After installation, you will need to login, clear cache, and then re-login.*
@@ -27,8 +27,7 @@ For questions or troubleshooting, please visit [Sailthru Support](https://sailth
 ### Manual Installation
 
 #### With Modman
-This extension can be used with [modman](https://github.com/colinmollenhour/modman), which
- preserves separation of the plugin from the rest of your Magento codebase.
+This extension can be used with [modman][4], which preserves separation of the plugin from the rest of your Magento codebase.
 
 
 ```bash
@@ -60,8 +59,12 @@ If you don't want to use modman:
 2. Move into target directories
     ```
     export MAGENTO_BASE=<YOUR MAGENTO ROOT DIRECTORY>
-    rsync -a app/ $MAGENTO_BASE/app/ --ignore-existing --whole-file
+    rsync -a app/ $MAGENTO_BASE/app/
     ```
     
+[1]: https://github.com/babel/babel/issues/5518
+[2]: https://getstarted.sailthru.com/integrations/magento/magento-extension/
+[3]: https://sailthru.zendesk.com/hc/en-us
+[4]: https://github.com/colinmollenhour/modman
 
 
