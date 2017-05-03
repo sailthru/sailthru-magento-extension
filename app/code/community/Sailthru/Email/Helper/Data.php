@@ -14,7 +14,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_JS                                       = 'sailthru/js/js_select';
     const XML_PATH_HORIZON_DOMAIN                           = 'sailthru/js/horizon_domain';
     const XML_PATH_CUSTOMER_ID                              = 'sailthru/js/customer_id';
-    const JS_SPM                                            = 1;
+    const JS_SST                                            = 1;
     const JS_HORIZON                                        = 2;
 
     // User Management
@@ -157,13 +157,13 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     /**
-     * Check to see if PersonalizeJS is enabled
+     * Check to see if Sailthru Script Tag is enabled
      *
      * @return bool
      */
-    public function isPersonalizeJsEnabled($store = null)
+    public function isSailthruScriptTagEnabled($store = null)
     {
-        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_SPM);
+        return (Mage::getStoreConfig(self::XML_PATH_JS, $store) == self::JS_SST);
     }
 
     /**

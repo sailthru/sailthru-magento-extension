@@ -12,8 +12,8 @@ class Sailthru_Email_Block_Js extends Mage_Page_Block_Html
 {
     protected function _construct() {
         $sailthruHelper = Mage::helper('sailthruemail');
-        if ($sailthruHelper->isPersonalizeJsEnabled() and $sailthruHelper->getCustomerId()) {
-            $this->setTemplate("sailthru/spm.phtml");
+        if ($sailthruHelper->isSailthruScriptTagEnabled() and $sailthruHelper->getCustomerId()) {
+            $this->setTemplate("sailthru/sst.phtml");
         } elseif ($sailthruHelper->isHorizonEnabled() and $sailthruHelper->getHorizonDomain()) {
             $this->setTemplate("sailthru/horizon.phtml");
         }
