@@ -68,7 +68,6 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $productTypeId = $product->getTypeId();
         $data = array(
             'url' => $url,
-            'keys' => ['sku' => $product->getSku()],
             'title' => htmlspecialchars($product->getName()),
             'price' => $product->getPrice(),
             'description' => $product->getDescription(),
