@@ -39,10 +39,10 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     const XML_PATH_PRODUCT_SYNC                             = 'sailthru_content/product_sync/enabled';
     const XML_PATH_PRODUCT_UPDATE_MASTER                    = 'sailthru_content/product_sync/master_products';
     const XML_PATH_PRODUCT_UPDATE_VARIANT                   = 'sailthru_content/product_sync/variant_products';
-    const XML_PATH_TAGS_USE_SEO                             = 'sailthru_content/product_tags/use_seo';
-    const XML_PATH_TAGS_USE_CATEGORIES                      = 'sailthru_content/product_tags/use_categories';
-    const XML_PATH_TAGS_USE_ATTRIBUTES                      = 'sailthru_content/product_tags/use_attributes';
-    const XML_PATH_TAGS_ATTRIBUTE_CODES                     = 'sailthru_content/product_tags/attributes';
+    const XML_PATH_TAGS_USE_META                            = 'sailthru_content/product_sync/use_meta';
+    const XML_PATH_TAGS_USE_CATEGORIES                      = 'sailthru_content/product_sync/use_categories';
+    const XML_PATH_TAGS_USE_ATTRIBUTES                      = 'sailthru_content/product_sync/use_attributes';
+    const XML_PATH_TAGS_ATTRIBUTE_CODES                     = 'sailthru_content/product_sync/attributes';
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -225,7 +225,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     public function tagsUseKeywords($store = null)
     {
-        return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_SEO, $store));
+        return boolval(Mage::getStoreConfig(self::XML_PATH_TAGS_USE_META, $store));
     }
 
     public function tagsUseCategories($store = null)
