@@ -79,6 +79,15 @@
                     </sailthru_customer_save>
                 </observers>
             </customer_save_before>
+            <customer_address_save_after>
+                <observers>
+                    <sailthru_address_save>
+                        <type>singleton</type>
+                        <model>sailthruemail/observer_user</model>
+                        <method>update</method>
+                    </sailthru_address_save>
+                </observers>
+            </customer_address_save_after>
             <checkout_cart_update_items_after>
                 <observers>
                     <sailthru_checkout_cart_update_items_after>

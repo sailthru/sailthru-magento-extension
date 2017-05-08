@@ -55,7 +55,7 @@ class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Observer {
      */
     public function update(Varien_Event_Observer $observer)
     {
-        $customer = $observer->getEvent()->getCustomer();
+        $customer = $observer->getEvent()->getCustomer() ?: $observer->getEvent()->getCustomerAddress()->getCustomer();
         if ($this->isEnabled and $customer) {
             try {
                 Mage::getModel('sailthruemail/client_user')->updateCustomer($customer);
