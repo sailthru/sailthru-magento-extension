@@ -28,7 +28,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
             $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
             $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
-        } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled and $email = $this->useHid()){
+        } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled() and $email = $this->useHid()){
             $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
             $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
         } else {
