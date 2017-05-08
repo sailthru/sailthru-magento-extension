@@ -97,11 +97,20 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
          */
         $paymentHtmlBlock = $vars['payment_html'];
         $order = $vars['order'];
+
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $emulateData = null;
+        if (Mage::app()->getStore()->getStoreId() == 0) {
+            $storeId = $order->getStoreId();
+            $emulateData = $appEmulation->startEnvironmentEmulation($storeId);
+        }
+
         $vars = [
             "order"       => $this->_extractOrderVars($order),
             'paymentHtml' => $paymentHtmlBlock,
         ];
 
+        if ($emulateData) $appEmulation->stopEnvironmentEmulation($emulateData);
         return $vars;
     }
 
@@ -128,7 +137,7 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
             'shipmentItems'     => $this->getShippingItems($shipment->getAllItems()),
             'comment'           => $vars["comment"],
             'payment_html'      => $vars["payment_html"],
-            'address'           => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
+            'address'           => Mage::helper('sailthruemail')->getAddressVars($shipment->getShippingAddress()),
         ];
 
         $order = $this->_extractOrderVars($order);
