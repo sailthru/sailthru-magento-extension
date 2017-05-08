@@ -43,7 +43,8 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
             }
             return $data;
         } catch (Exception $e) {
-            Mage::log($e->getMessage(), null, "sailthru.log");
+            Mage::log("EXCEPTION: {$e->getMessage()}", null, "sailthru.log");
+            Mage::logException($e);
             return false;
         }
     }

@@ -148,6 +148,7 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
      */
     private function _extractOrderVars(Mage_Sales_Model_Order $order)
     {
+        Mage::log("creating order vars", null, "sailthru.log");
         $data = [
             'id'                  => $order->getIncrementId(),
             'isGuest'             => $order->getCustomerIsGuest(),
@@ -165,13 +166,11 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         ];
 
         if ($billingAddress = $order->getBillingAddress()) {
-            $data['billingAddress'] = Mage::helper('sailthruemail')->getAddressVars($billingAddress);
-            $data = $data + Mage::helper('sailthruemail')->getAddressVars($billingAddress, "billingAddress");
+            $data['billingAddress'] = Mage::helper('sailthruemail')->getAddressVars($billingAddress, null, true);
         }
 
         if ($shippingAddress = $order->getShippingAddress()) {
-            $data['shippingAddress'] = Mage::helper('sailthruemail')->getAddressVars($shippingAddress);
-            $data = $data + Mage::helper('sailthruemail')->getAddressVars($shippingAddress, "shippingAddress");
+            $data['shippingAddress'] = Mage::helper('sailthruemail')->getAddressVars($shippingAddress, null, true);
         }
 
         return $data;
