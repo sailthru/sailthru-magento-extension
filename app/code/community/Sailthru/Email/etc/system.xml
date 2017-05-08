@@ -31,6 +31,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <comment>
                         <![CDATA[
                             For help, please take a look at our<a href="https://getstarted.sailthru.com/integrations/magento/magento-extension/"
@@ -71,6 +72,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <comment>
                         Find your API Key and Secret<![CDATA[<a href="https://my.sailthru.com/settings/api_postbacks" target="_blank">here</a>]]>
                         by clicking the padlock next to "API Key and Secret."
@@ -113,6 +115,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <fields>
                         <js_select translate="label comment">
                             <label>Use Sailthru Javascript</label>
@@ -165,18 +168,14 @@
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
-                <templates translate="label">
-                    <label>Sailthru-Powered Transactionals</label>
-                    <comment>Override various Magento transactionals with a Sailthru template</comment>
+                <email translate="label">
+                    <label>Transactional</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>3</sort_order>
+                    <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <fields>
-                    </fields>
-                </templates>
-                <email translate="label">
+                    <expanded>1</expanded>
                     <comment>
                         <![CDATA[
                         <span style="font-weight: bold; max-width: 650px; display: block;">
@@ -186,12 +185,7 @@
                          </span>
                         ]]>
                     </comment>
-                    <label>Transactional</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>1</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
+
                     <fields>
                         <enable_transactional_emails translate="label comment">
                             <label>Deliver Magento emails through Sailthru</label>
@@ -303,6 +297,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <fields>
                         <enabled translate="label comment">
                             <label>Enable Abandoned Cart Emails</label>
@@ -347,6 +342,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <fields>
                         <enabled>
                             <label>Enable</label>
@@ -403,6 +399,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <fields>
                         <master_list_enable translate="label comment">
                             <label>Add all customers to a Sailthru list on registration / login.</label>
@@ -471,6 +468,7 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
                     <fields>
                         <enabled translate="label comment">
                             <label>Enable update hooks to send content to Sailthru</label>
