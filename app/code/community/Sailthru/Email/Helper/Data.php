@@ -329,13 +329,14 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
      *
      * @return array
      */
-    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null){
+    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null, $useStreet=false){
         $vars = [
-            "city"          => $address->getCity(),
-            "state"         => $address->getRegion(),
+            "city"           => $address->getCity(),
+            "state"          => $address->getRegion(),
             "state_code"     => $address->getRegionCode(),
+            "country"        => Mage::app()->getLocale()->getCountryTranslation($address->getCountry()),
             "country_code"   => $address->getCountry(),
-            "postal_code"        => $address->getPostcode(),
+            "postal_code"    => $address->getPostcode(),
         ];
         if (!is_null($prefix)){
             $varsCopy = [];
