@@ -16,7 +16,7 @@ The Magento extension provides an integration to Sailthru's platform  and can se
 Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's bundled PrototypeJS 1.7.0.][1] We've specifically found that the default frontend configurable-swatch picker is unable to select. The Babel issue appears to be resolved by updating Prototype to 1.7.3.
 
 ##### Documentation
-You can find documentation for this extension as well as in-depth documentation of our API on [Sailthru GetStarted][2].
+We are currently finishing 2.0.0 documentation. You can find documentation for the previous extension version as well our APIs at [Sailthru GetStarted][2].
 
 ##### Support
 For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue.
