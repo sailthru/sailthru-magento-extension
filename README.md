@@ -19,10 +19,10 @@ Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's 
 We are currently finishing 2.0.0 documentation. You can find documentation for the previous extension version as well our APIs at [Sailthru GetStarted][2].
 
 ##### Support
-For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue.
+For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue on GitHub.
 
 ## Installation 
-*Note: After installation, you will need to login, clear cache, and then re-login.*
+*Note: After installation, you may need to login, clear cache, and then re-login.*
 
 ### Manual Installation
 
