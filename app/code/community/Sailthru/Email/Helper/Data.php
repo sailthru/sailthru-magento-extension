@@ -326,17 +326,29 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
      * Get vars for address information, optionally adding a prefix.
      * @param Mage_Customer_Model_Address_Abstract $address
      * @param string                               $prefix
-     *
+     * @param bool                                 $useFullAddress
      * @return array
      */
-    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null){
+    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null, $useFullAddress=false){
         $vars = [
-            "city"          => $address->getCity(),
-            "state"         => $address->getRegion(),
+            "city"           => $address->getCity(),
+            "state"          => $address->getRegion(),
             "state_code"     => $address->getRegionCode(),
+            "country"        => Mage::app()->getLocale()->getCountryTranslation($address->getCountry()),
             "country_code"   => $address->getCountry(),
-            "postal_code"        => $address->getPostcode(),
+            "postal_code"    => $address->getPostcode(),
         ];
+
+        if ($useFullAddress) {
+            $vars += [
+                "name"      => $address->getName(),
+                "company"   => $address->getCompany(),
+                "telephone" => $address->getTelephone(),
+                "street1"   => $address->getStreet1(),
+                "street2"   => $address->getStreet2(),
+            ];
+        }
+
         if (!is_null($prefix)){
             $varsCopy = [];
             foreach ($vars as $key => $value) {

@@ -20,7 +20,7 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
                 if (!$options) {
                     $options = $item->getProductOptions()["attributes_info"];
                 }
-                $_item['options'] = $this->getVars($options);
+                $_item['options'] = $this->getVars($options, true);
                 $_item['sku'] = $product->getSku();
                 $_item['title'] = $product->getName();
                 $_item['url'] = $product->getProductUrl();
@@ -43,7 +43,8 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
             }
             return $data;
         } catch (Exception $e) {
-            Mage::log($e->getMessage(), null, "sailthru.log");
+            Mage::log("EXCEPTION: {$e->getMessage()}", null, "sailthru.log");
+            Mage::logException($e);
             return false;
         }
     }
@@ -102,9 +103,10 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
     /**
      *
      * @param array $options
+     * @param bool  $keepLabelValue - used for iteration in zephyr with option.key, option.value
      * @return array
      */
-    public function getVars($options)
+    public function getVars($options, $keepLabelValue=false)
     {
         if (!$options) {
             return null;
@@ -113,10 +115,16 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
         $vars = array();
 
         if (array_key_exists('attributes_info', $options)) {
+            if ($keepLabelValue) {
+                return $options['attributes_info'];
+            }
             foreach($options['attributes_info'] as $attribute) {
                 $vars[] = array($attribute['label'] => $attribute['value']);
             }
         } else {
+            if ($keepLabelValue) {
+                return $options;
+            }
             foreach($options as $attribute) {
                 $vars[] = array($attribute['label'] => $attribute['value']);
             }

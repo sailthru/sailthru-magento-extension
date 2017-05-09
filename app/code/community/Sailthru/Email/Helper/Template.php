@@ -16,20 +16,28 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
 
 
     /**
-     * Determine transactional type for Sailthru send.
+     * Determine transactional type for Sailthru send. Not using switch for clearer grouping.
      * @param string @templateId
      * @return string
      */
     public function getTransactionalType($templateId)
     {
 
-        if ($templateId == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_TEMPLATE) or
-            $templateId == Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_GUEST_TEMPLATE))
+        // order templates
+        if (in_array($templateId, [
+            Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_TEMPLATE),
+            Mage::getStoreConfig(Mage_Sales_Model_Order::XML_PATH_EMAIL_GUEST_TEMPLATE)
+            ])) {
             return self::ORDER_EMAIL;
+        }
 
-        if ($templateId == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_TEMPLATE) or
-            $templateId == Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_GUEST_TEMPLATE))
+        // shipping emails
+        if (in_array($templateId, [
+            Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_TEMPLATE),
+            Mage::getStoreConfig(Mage_Sales_Model_Order_Shipment::XML_PATH_EMAIL_GUEST_TEMPLATE)
+            ])) {
             return self::SHIPPING_EMAIL;
+        }
 
         if ($templateId == Mage::getStoreConfig(Mage_Customer_Model_Customer::XML_PATH_REGISTER_EMAIL_TEMPLATE))
             return self::REGISTER_SUCCESS_EMAIL;
@@ -85,29 +93,24 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
     public function getOrderTemplateVars($vars)
     {
         /** @var $order Mage_Sales_Model_Order
-         *  @var $billingAddress Mage_Sales_Model_Order_Address
+         * @var $paymentHtmlBlock string
          */
-        $order = $vars['order'];
-        $billingAddress = $vars['billing'];
         $paymentHtmlBlock = $vars['payment_html'];
+        $order = $vars['order'];
 
-        $vars = [
-            'items'       => Mage::helper('sailthruemail/purchase')->getTemplateOrderItems($order->getAllVisibleItems()),
-            'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order),
-            'tenders'     => Mage::helper('sailthruemail/purchase')->getTenders($order),
-            'paymentHTML' => $paymentHtmlBlock,
-            'total'       => $order->getGrandTotal(),
-            'subtotal'    => $order->getSubtotal(),
-            'orderStatus' => $order->getStatusLabel(),
-            'orderId'     => $order->getIncrementId(),
-            'date'        => $order->getCreatedAt(),
-            'billAddress' => Mage::helper('sailthruemail')->getAddressVars($billingAddress)
-        ];
-
-        if ($shippingAddress = $order->getShippingAddress()) {
-            $vars['shipAddress'] = Mage::helper('sailthruemail')->getAddressVars($shippingAddress);
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $emulateData = null;
+        if (Mage::app()->getStore()->getStoreId() == 0) {
+            $storeId = $order->getStoreId();
+            $emulateData = $appEmulation->startEnvironmentEmulation($storeId);
         }
 
+        $vars = [
+            "order"       => $this->_extractOrderVars($order),
+            'paymentHtml' => $paymentHtmlBlock,
+        ];
+
+        if ($emulateData) $appEmulation->stopEnvironmentEmulation($emulateData);
         return $vars;
     }
 
@@ -126,26 +129,60 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         $order = $vars["order"];
         $shipment = $vars["shipment"];
 
-        $sailVars = [
-            'shipmentDescription' => $order->getShippingDescription(),
-            'is_guest'          => $order->getCustomerIsGuest(),
-            'orderStatus'       => $order->getStatusLabel(),
-            'orderState'        => $order->getState(),
-            'coupon_code'       => $order->getCouponCode(),
+        $shipment = [
+            'id'                => $shipment->getIncrementId(),
             'items'             => $this->getShippingItems($shipment->getAllItems()),
-            'createdAt'         => $shipment->getCreatedAt(),
-            'comment'           => $vars["comment"],
-            'payment_html'      => $vars["payment_html"],
-            'billingAddress'    => Mage::getModel('sailthruemail/client_user')->getAddressInfo($order->getBillingAddress()),
-            'shippingAddress'   => Mage::getModel('sailthruemail/client_user')->getAddressInfo($shipment->getShippingAddress()),
-            'shipmentId'        => $shipment->getIncrementId(),
-            'shipmentComment'   => $vars["comment"],
-            'orderId'           => $order->getIncrementId(),
+            'created_date'      => $shipment->getCreatedAt(),
             'trackingDetails'   => $this->getTrackingDetails($shipment),
             'shipmentItems'     => $this->getShippingItems($shipment->getAllItems()),
+            'comment'           => $vars["comment"],
+            'payment_html'      => $vars["payment_html"],
+            'address'           => Mage::helper('sailthruemail')->getAddressVars($shipment->getShippingAddress()),
         ];
 
-        return $sailVars;
+        $order = $this->_extractOrderVars($order);
+
+        return [
+            "shipment" => $shipment,
+            "order"    => $order,
+        ];
+
+    }
+
+    /**
+     * Get all vars we can extract always from an order. Does not return shipping address in case of multiple results for a shipment email
+     * @param Mage_Sales_Model_Order $order
+     *
+     * @return array $data
+     */
+    private function _extractOrderVars(Mage_Sales_Model_Order $order)
+    {
+        $data = [
+            'id'                  => $order->getIncrementId(),
+            'isGuest'             => $order->getCustomerIsGuest(),
+            'name'                => $order->getCustomerName(),
+            'status'              => $order->getStatusLabel(),
+            'state'               => $order->getState(),
+            'created_date'        => $order->getCreatedAt(),
+            'total'               => $order->getGrandTotal(),
+            'subtotal'            => $order->getSubtotal(),
+            'couponCode'          => $order->getCouponCode(),
+            'discount'            => $order->getDiscountAmount(),
+            'shippingDescription' => $order->getShippingDescription(),
+            'items'               => Mage::helper('sailthruemail/purchase')->getTemplateOrderItems($order->getAllVisibleItems()),
+            'adjustments'         => Mage::helper('sailthruemail/purchase')->getAdjustments($order),
+            'tenders'             => Mage::helper('sailthruemail/purchase')->getTenders($order),
+        ];
+
+        if ($billingAddress = $order->getBillingAddress()) {
+            $data['billingAddress'] = Mage::helper('sailthruemail')->getAddressVars($billingAddress, null, true);
+        }
+
+        if ($shippingAddress = $order->getShippingAddress()) {
+            $data['shippingAddress'] = Mage::helper('sailthruemail')->getAddressVars($shippingAddress, null, true);
+        }
+
+        return $data;
     }
 
     private function getTrackingDetails(Mage_Sales_Model_Order_Shipment $shipment)
