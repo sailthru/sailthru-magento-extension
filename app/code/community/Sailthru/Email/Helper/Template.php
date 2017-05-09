@@ -157,10 +157,10 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
      */
     private function _extractOrderVars(Mage_Sales_Model_Order $order)
     {
-        Mage::log("creating order vars", null, "sailthru.log");
         $data = [
             'id'                  => $order->getIncrementId(),
             'isGuest'             => $order->getCustomerIsGuest(),
+            'name'                => $order->getCustomerName(),
             'status'              => $order->getStatusLabel(),
             'state'               => $order->getState(),
             'created_date'        => $order->getCreatedAt(),

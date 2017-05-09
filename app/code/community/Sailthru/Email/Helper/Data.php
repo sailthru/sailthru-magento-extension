@@ -344,7 +344,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
                 "name"      => $address->getName(),
                 "company"   => $address->getCompany(),
                 "telephone" => $address->getTelephone(),
-                "street"    => $address->getStreetFull(),
                 "street1"   => $address->getStreet1(),
                 "street2"   => $address->getStreet2(),
             ];
