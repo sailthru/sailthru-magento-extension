@@ -323,6 +323,45 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     /**
+     * Create array of customer values for API
+     *
+     * @param Mage_Customer_Model_Customer $customer
+     * @return array
+     */
+    public function getCustomerVars(Mage_Customer_Model_Customer $customer)
+    {
+        try {
+
+            $vars = array(
+                'magento_id' => $customer->getId(),
+                'name' => $customer->getName(),
+                'suffix' => $customer->getSuffix() ? $customer->getSuffix() : '',
+                'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
+                'firstName' => $customer->getFirstname(),
+                'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
+                'lastName' => $customer->getLastname(),
+                'website' => Mage::app()->getStore()->getWebsite()->getName(),
+                'store' => Mage::app()->getStore()->getName(),
+                'customerGroup' => Mage::getModel('customer/group')->load($customer->getGroupId())->getCustomerGroupCode(),
+                'created_date' => date("Y-m-d", $customer->getCreatedAtTimestamp()),
+                'created_time' => $customer->getCreatedAtTimestamp(),
+            );
+
+            if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
+                $vars["defaultBillingAddress"] = $this->getAddressVars($primaryBillingAddress);
+                $vars = $vars + $this->getAddressVars($primaryBillingAddress, "defaultBillingAddress_");
+            }
+            if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
+                $vars["defaultShippingAddress"] = $this->getAddressVars($primaryShippingAddress);
+                $vars = $vars + $this->getAddressVars($primaryShippingAddress, "defaultShippingAddress_");
+            }
+
+            return $vars;
+        } catch(Exception $e) {
+            Mage::logException($e);
+        }
+    }
+    /**
      * Get vars for address information, optionally adding a prefix.
      * @param Mage_Customer_Model_Address_Abstract $address
      * @param string                               $prefix

@@ -84,9 +84,11 @@ class Sailthru_Email_Helper_Template extends Mage_Core_Helper_Abstract {
         $backUrl = $vars["back_url"];
 
         return [
-            "name" => $customer->getName(),
-            "email" => $customer->getEmail(),
-            "back_url" => $backUrl
+            "registration" => [
+                "name" => $customer->getName(),
+                "backUrl" => $backUrl
+            ],
+            "customer" => Mage::helper('sailthruemail')->getCustomerVars($customer),
         ];
     }
 

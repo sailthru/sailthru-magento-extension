@@ -96,7 +96,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
         }
 
         if ($action == "signup" or $action == "update") {
-            $data['vars'] = $this->_getCustomerVars($customer);
+            $data['vars'] = Mage::helper('sailthruemail')->getCustomerVars($customer);
             if ($action == "signup" and $masterList = $this->_getMasterList()) {
                 $data["lists"] = [$masterList => 1];
             }
@@ -136,46 +136,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
     }
 
     /**
-     * Create array of customer values for API
-     *
-     * @param Mage_Customer_Model_Customer $customer
-     * @return array
-     */
-    private function _getCustomerVars(Mage_Customer_Model_Customer $customer)
-    {
-        try {
-
-            $vars = array(
-                'magento_id' => $customer->getId(),
-                'name' => $customer->getName(),
-                'suffix' => $customer->getSuffix() ? $customer->getSuffix() : '',
-                'prefix' => $customer->getPrefix() ? $customer->getPrefix() : '',
-                'firstName' => $customer->getFirstname(),
-                'middleName' => $customer->getMiddlename() ? $customer->getMiddlename() : '',
-                'lastName' => $customer->getLastname(),
-                'website' => Mage::app()->getStore()->getWebsite()->getName(),
-                'store' => Mage::app()->getStore()->getName(),
-                'customerGroup' => Mage::getModel('customer/group')->load($customer->getGroupId())->getCustomerGroupCode(),
-                'created_date' => date("Y-m-d", $customer->getCreatedAtTimestamp()),
-                'created_time' => $customer->getCreatedAtTimestamp(),
-            );
-
-            if ($primaryBillingAddress = $customer->getPrimaryBillingAddress()){
-                $vars["defaultBillingAddress"] = $this->_getAddressVars($primaryBillingAddress);
-                $vars = $vars + $this->_getAddressVars($primaryBillingAddress, "defaultBillingAddress_");
-            }
-            if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
-                $vars["defaultShippingAddress"] = $this->_getAddressVars($primaryShippingAddress);
-                $vars = $vars + $this->_getAddressVars($primaryShippingAddress, "defaultShippingAddress_");
-            }
-
-            return $vars;
-        } catch(Exception $e) {
-            Mage::logException($e);
-        }
-    }
-
-    /**
      * Get the name of the Master List, if enabled. Otherwise, return false.
      * @return bool|string
      */
@@ -197,34 +157,6 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             return $newsletterList;
         }
         return false;
-    }
-
-    /**
-     * @param Mage_Customer_Model_Address $address
-     * @param string $prefix
-     *
-     * @return string[]
-     */
-    public function _getAddressVars(Mage_Customer_Model_Address $address, $prefix=null){
-        $vars = [
-            "name"          => $address->getName(),
-            "company"       => $address->getCompany(),
-            "city"          => $address->getCity(),
-            "state"         => $address->getRegion(),
-            "state_code"    => $address->getRegionCode(),
-            "country_code"  => $address->getCountry(),
-            "postal_code"   => $address->getPostcode(),
-            "telephone"     => $address->getTelephone(),
-            "fax"           => $address->getFax(),
-        ];
-        if (!is_null($prefix)){
-            $varsPrefixed = [];
-            foreach ($vars as $key => $value) {
-                $varsPrefixed["{$prefix}{$key}"] = $value;
-            }
-            return $varsPrefixed;
-        }
-        return $vars;
     }
 
     /**
