@@ -3,6 +3,8 @@
 
 The Magento extension provides an integration to Sailthru's platform  and can serve as a framework for building custom Magento functionality. 
 
+This is Release Candidate 2 for the 2.0.0 Release. For official stable release, check out the master branch.
+
 ##### Features
 - Automatically deploy Sailthru Javascript (Horizon or Sailthru Script Tag).
 - Add all users into the Sailthru system on login or registration.
