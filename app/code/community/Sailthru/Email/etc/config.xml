@@ -41,6 +41,24 @@
                 </setup>
             </sailthru_email_setup>
         </resources>
+        <events>
+            <catalog_product_delete_after>
+                <observers>
+                    <sailthru_catalog_product_delete_after>
+                        <model>sailthruemail/observer_content</model>
+                        <method>deleteProduct</method>
+                    </sailthru_catalog_product_delete_after>
+                </observers>
+            </catalog_product_delete_after>
+            <catalog_product_save_after>
+                <observers>
+                    <sailthru_catalog_product_save_after>
+                        <model>sailthruemail/observer_content</model>
+                        <method>saveProduct</method>
+                    </sailthru_catalog_product_save_after>
+                </observers>
+            </catalog_product_save_after>
+        </events>
     </global>
     <frontend>
         <translate>
@@ -174,22 +192,6 @@
     </frontend>
     <adminhtml>
         <events>
-             <catalog_product_delete_after>
-                <observers>
-                    <sailthru_catalog_product_delete_after>
-                        <model>sailthruemail/observer_content</model>
-                        <method>deleteProduct</method>
-                    </sailthru_catalog_product_delete_after>
-                </observers>
-            </catalog_product_delete_after> 
-            <catalog_product_save_after>
-                <observers>
-                    <sailthru_catalog_product_save_after>
-                        <model>sailthruemail/observer_content</model>
-                        <method>saveProduct</method>
-                    </sailthru_catalog_product_save_after>
-                </observers>
-            </catalog_product_save_after>
         </events>
     </adminhtml>
    <admin>
