@@ -112,11 +112,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $data['price'] = Mage::helper('sailthruemail')->getPrice($product);
 
         // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be inaccurate.
-        $data['images'] = [
-            "full"  => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getImage())],
-            "small" => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getSmallImage())],
-            "thumb" => ["url" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString()],
-        ];
+        $data['images'] = Mage::helper('sailthruemail')->getProductImages($product);
 
         return $data;
     }

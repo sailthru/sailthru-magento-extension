@@ -28,12 +28,8 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
                 $_item['url'] = $item->getProduct()->getProductUrl();
                 $_item['price'] = $item->getProduct()->getFinalPrice();
 
-                // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innaccurate.
-                $_item['image'] = [
-                    "large"     => Mage::helper('catalog/product')->getImageUrl($product),
-                    "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
-                    "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
-                ];
+                // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be inaccurate.
+                $_item['image'] = Mage::helper('sailthruemail')->getProductImages($product);
 
                 if ($tags = Mage::helper('sailthruemail')->getTags($item->getProduct())) {
                     $_item['tags'] = $tags;

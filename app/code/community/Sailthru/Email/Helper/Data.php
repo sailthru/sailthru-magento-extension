@@ -322,6 +322,15 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
         return $final_price;
     }
 
+    public function getProductImages(Mage_Catalog_Model_Product $product)
+    {
+        // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be inaccurate.
+        return [
+            "full"  => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getImage())],
+            "small" => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getSmallImage())],
+            "thumb" => ["url" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString()],
+        ];
+    }
     /**
      * Create array of customer values for API
      *
