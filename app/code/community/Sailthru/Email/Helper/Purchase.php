@@ -106,26 +106,17 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
     {
         if (!$options) {
             return null;
+        } elseif (array_key_exists('attributes_info', $options)) {
+            $options = $options['attributes_info'];
+        }
+        if ($keepLabelValue) {
+            return $options;
         }
 
         $vars = array();
-
-        if (array_key_exists('attributes_info', $options)) {
-            if ($keepLabelValue) {
-                return $options['attributes_info'];
-            }
-            foreach($options['attributes_info'] as $attribute) {
-                $vars[] = array($attribute['label'] => $attribute['value']);
-            }
-        } else {
-            if ($keepLabelValue) {
-                return $options;
-            }
-            foreach($options as $attribute) {
-                $vars[] = array($attribute['label'] => $attribute['value']);
-            }
+        foreach($options as $attribute) {
+            $vars[$attribute['label']] = $attribute['value'];
         }
-
         return $vars;
     }
 

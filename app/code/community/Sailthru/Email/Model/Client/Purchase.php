@@ -96,41 +96,28 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     {
         try {
             $data = array();
-            $configurableSkus = array();
             foreach($items as $item) {
+
                 $_item = array();
                 $_item['vars'] = array();
                 $product = $item->getProduct();
-                $productType = $item->getProductType();
-                if ($productType == 'configurable') {
-                    $parentIds[] = $item->getParentItemId();
-                    $options = $product->getTypeInstance(true)->getOrderOptions($product);
-                    $_item['id'] = $options['simple_sku'];
-                    $_item['title'] = $options['simple_name'];
-                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
-                    $configurableSkus[] = $options['simple_sku'];
-                } elseif (!in_array($item->getSku(),$configurableSkus)) {
-                    $_item['id'] = $item->getSku();
-                    $_item['title'] = $item->getName();
-                } else {
-                    $_item['id'] = null;
-                }
+                $_item['id'] = $item->getSku();
+                $_item['title'] = $item->getName();
                 if ($_item['id']) {
                     if ($item instanceof Mage_Sales_Model_Order_Item ) {
                         $_item['qty'] = intval($item->getQtyOrdered());
                     } else {
                         $_item['qty'] = intval($item->getQty());
                     }
+                    $options = $product->getTypeInstance(true)->getOrderOptions($product)['attributes_info'];
+                    if (!$options) {
+                        $options = $item->getProductOptions()["attributes_info"];
+                    }
+                    Mage::log($options, null, "sailthru.log");
+                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
                     $_item['url'] = $item->getProduct()->getProductUrl();
                     $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getFinalPrice());
-                    // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be innacurate.
-                    if (!isset($_item['vars']['image'])) {
-                        $_item['vars']['image'] = [
-                            "large"     => Mage::helper('catalog/product')->getImageUrl($product),
-                            "small"     => Mage::helper('catalog/product')->getSmallImageUrl($product),
-                            "thumbnail" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString(),
-                        ];
-                    }
+                    $_item['vars']['image'] = Mage::helper('sailthruemail')->getProductImages($product);
                     if ($tags = Mage::helper('sailthruemail')->getTags($item->getProduct())) {
                         $_item['tags'] = $tags;
                     }
