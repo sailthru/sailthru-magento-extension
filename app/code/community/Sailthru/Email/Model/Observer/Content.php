@@ -29,9 +29,9 @@ class Sailthru_Email_Model_Observer_Content
     /**
      * Push product to Sailthru using Content API
      *
-     * @param Mage_Sales_Model_Observer $observer
+     * @param Varien_Event_Observer
      */
-    public function saveProduct(Mage_Sales_Model_Observer $observer)
+    public function saveProduct(Varien_Event_Observer $observer)
     {
         $inBackend = (Mage::app()->getStore()->getStoreId() == 0);
         $eventProduct = $observer->getEvent()->getProduct();
