@@ -75,14 +75,15 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 Mage::logException($e);
             }
         }
-        $data = [
+
+        $data = array(
             'email' => $order->getCustomerEmail(),
             'items' => $this->getItems($order->getAllVisibleItems()),
             'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order, "api"),
             'message_id' => $this->getMessageId(),
             'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
-            'purchase_keys' => ["extid" => $order->getIncrementId()]
-        ];
+            'purchase_keys' => array("extid" => $order->getIncrementId())
+        );
 
         $this->apiPost('purchase', $data);
     }
@@ -97,22 +98,23 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
         try {
             $data = array();
             foreach($items as $item) {
-
                 $_item = array();
                 $_item['vars'] = array();
                 $product = $item->getProduct();
                 $_item['id'] = $item->getSku();
                 $_item['title'] = $item->getName();
                 if ($_item['id']) {
-                    if ($item instanceof Mage_Sales_Model_Order_Item ) {
+                    if ($item instanceof Mage_Sales_Model_Order_Item) {
                         $_item['qty'] = intval($item->getQtyOrdered());
                     } else {
                         $_item['qty'] = intval($item->getQty());
                     }
+
                     $options = $product->getTypeInstance(true)->getOrderOptions($product)['attributes_info'];
                     if (!$options) {
                         $options = $item->getProductOptions()["attributes_info"];
                     }
+
                     Mage::log($options, null, "sailthru.log");
                     $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
                     $_item['url'] = $item->getProduct()->getProductUrl();
@@ -121,9 +123,11 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     if ($tags = Mage::helper('sailthruemail')->getTags($item->getProduct())) {
                         $_item['tags'] = $tags;
                     }
+
                     $data[] = $_item;
                 }
             }
+
             return $data;
         } catch (Exception $e) {
             Mage::logException($e);
@@ -142,7 +146,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
             try {
                 $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
                 if ($cookie){
-                    $response = $this->getUserByKey($cookie, 'cookie', ['keys' => 1]);
+                    $response = $this->getUserByKey($cookie, 'cookie', array('keys' => 1));
                     if (array_key_exists('keys', $response)){
                         return $response['keys']['email'];
                     }
@@ -151,6 +155,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 $this->log($e);
             }
         }
+
         return false;
     }
 

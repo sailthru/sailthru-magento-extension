@@ -39,7 +39,7 @@ class Sailthru_Email_Model_Observer_Content
         $appEmulation = Mage::getSingleton('core/app_emulation');
         $stores = $this->getScopedStores($eventProduct);
 
-        $savedStores = [];
+        $savedStores = array();
 
         foreach ($stores as $storeId) {
             if (Mage::helper('sailthruemail')->isEnabled($storeId) and Mage::helper('sailthruemail')->isProductSyncEnabled($storeId)) {
@@ -54,6 +54,7 @@ class Sailthru_Email_Model_Observer_Content
                     } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
                         $saved = $sailthruContent->deleteProduct($product);
                     }
+
                     if ($saved) {
                         $savedStores[] = Mage::app()->getStore()->getName();
                     }
@@ -62,6 +63,7 @@ class Sailthru_Email_Model_Observer_Content
                         $this->processContentError($e);
                     }
                 }
+
                 $appEmulation->stopEnvironmentEmulation($emulateData);
             }
         }
@@ -76,14 +78,16 @@ class Sailthru_Email_Model_Observer_Content
     {
         $storeId = Mage::app()->getRequest()->getParam('store');
         if ($storeId) {
-            return [$storeId];
+            return array($storeId);
         }
+
         $storeIds = $product->getStoreIds();
         $websiteId = Mage::app()->getRequest()->getParam('website');
         if ($websiteId) {
             $websiteStoreIds = Mage::getModel('core/website')->load($websiteId)->getStoreIds();
             return array_intersect($storeIds, $websiteStoreIds);
         }
+
         return $storeIds;
     }
 

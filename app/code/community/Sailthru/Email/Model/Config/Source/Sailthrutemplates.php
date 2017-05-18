@@ -15,17 +15,18 @@ class Sailthru_Email_Model_Config_Source_Sailthrutemplates extends Sailthru_Emai
     {
         try {
             $this->_eventType = "System Config -> Transactionals -> Templates";
-            $response = $this->apiGet("template", []);
+            $response = $this->apiGet("template", array());
             $templates = $response["templates"];
-            $tpl_options = [
-                [ 'value' => null, 'label' => 'Please select a template' ]
-            ];
+            $tpl_options = array(
+                array( 'value' => null, 'label' => 'Please select a template' )
+            );
             foreach ($templates as $tpl) {
-                $tpl_options[] = [
+                $tpl_options[] = array(
                     'value' => $tpl['name'],
                     'label' => __($tpl['name'])
-                ];
+                );
             }
+
             return $tpl_options;
         } catch (Sailthru_Client_Exception $e) {
             return $this->processOptionArrayError($e);

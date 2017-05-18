@@ -4,7 +4,8 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
+class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
+{
 
     // API
     const XML_PATH_ENABLED                                  = 'sailthru/setup/enabled';
@@ -244,6 +245,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
             $parent = Mage::getModel('catalog/product')->load($parentId);
             return str_replace(" ", "_", "{$parent->getProductUrl(false)}#{$product->getSku()}");
         }
+
         return $product->getUrl();
     }
 
@@ -264,10 +266,12 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
             $keywords = htmlspecialchars($product->getMetaKeyword());
             $tags .= "{$keywords},";
         }
+
         if ($this->tagsUseCategories()) {
             $categories = $this->getCategories($product);
             $tags .= implode(",", $categories);
         }
+
         if ($this->tagsUseAttributes()) {
             try {
                 $attribute_str = '';
@@ -277,6 +281,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
                         $attribute_str .= (($value == "Yes" or $value == "Enabled") ? $key : $value) . ",";
                     }
                 }
+
                 $tags .= $attribute_str;
             } catch (Exception $e) {
                 Mage::log("Error building product tags:", null, "sailthru.log");
@@ -289,7 +294,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
 
     public function getProductAttributeValues($product)
     {
-        $values = [];
+        $values = array();
 
         $usableAttributeCodes = $this->getUsableAttributeCodes();
         $productAttributes = $product->getAttributes();
@@ -302,16 +307,18 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
                 }
             }
         }
+
         return $values;
     }
     public function getCategories($product)
     {
         $collection = $product->getCategoryCollection();
         $items = $collection->addAttributeToSelect('name')->getItems();
-        $categories = [];
+        $categories = array();
         foreach ($items as $item) {
             $categories[] = $item->getName();
         }
+
         return $categories;
     }
 
@@ -325,11 +332,11 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     public function getProductImages(Mage_Catalog_Model_Product $product)
     {
         // NOTE: Thumbnail comes from cache, so if cache is flushed the THUMBNAIL may be inaccurate.
-        return [
-            "full"  => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getImage())],
-            "small" => ["url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getSmallImage())],
-            "thumb" => ["url" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString()],
-        ];
+        return array(
+            "full"  => array("url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getImage())),
+            "small" => array("url" => Mage::getModel('catalog/product_media_config')->getMediaUrl($product->getSmallImage())),
+            "thumb" => array("url" => Mage::helper('catalog/image')->init($product, 'thumbnail')->__toString()),
+        );
     }
     /**
      * Create array of customer values for API
@@ -340,7 +347,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
     public function getCustomerVars(Mage_Customer_Model_Customer $customer)
     {
         try {
-
             $vars = array(
                 'magento_id' => $customer->getId(),
                 'name' => $customer->getName(),
@@ -360,6 +366,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
                 $vars["defaultBillingAddress"] = $this->getAddressVars($primaryBillingAddress);
                 $vars = $vars + $this->getAddressVars($primaryBillingAddress, "defaultBillingAddress_");
             }
+
             if ($primaryShippingAddress = $customer->getPrimaryShippingAddress()){
                 $vars["defaultShippingAddress"] = $this->getAddressVars($primaryShippingAddress);
                 $vars = $vars + $this->getAddressVars($primaryShippingAddress, "defaultShippingAddress_");
@@ -377,33 +384,36 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract {
      * @param bool                                 $useFullAddress
      * @return array
      */
-    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null, $useFullAddress=false){
-        $vars = [
+    public function getAddressVars(Mage_Customer_Model_Address_Abstract $address, $prefix=null, $useFullAddress=false)
+    {
+        $vars = array(
             "city"           => $address->getCity(),
             "state"          => $address->getRegion(),
             "state_code"     => $address->getRegionCode(),
             "country"        => Mage::app()->getLocale()->getCountryTranslation($address->getCountry()),
             "country_code"   => $address->getCountry(),
             "postal_code"    => $address->getPostcode(),
-        ];
+        );
 
         if ($useFullAddress) {
-            $vars += [
+            $vars += array(
                 "name"      => $address->getName(),
                 "company"   => $address->getCompany(),
                 "telephone" => $address->getTelephone(),
                 "street1"   => $address->getStreet1(),
                 "street2"   => $address->getStreet2(),
-            ];
+            );
         }
 
         if (!is_null($prefix)){
-            $varsCopy = [];
+            $varsCopy = array();
             foreach ($vars as $key => $value) {
                 $varsCopy["{$prefix}{$key}"] = $value;
             }
+
             return $varsCopy;
         }
+
         return $vars;
     }
 

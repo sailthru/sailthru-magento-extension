@@ -24,6 +24,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
             $this->apiDelete('content', $data);
             return true;
         }
+
         return false;
     }
 
@@ -42,6 +43,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
             $this->apiPost('content', $data);
             return true;
         }
+
         return false;
     }
 
@@ -59,6 +61,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         if ($isMaster and !$updateMaster) {
             return false;
         }
+
         $isSimple = ($productType == 'simple');
         $parents = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
         $isVariant = ($isSimple and (sizeof($parents) == 1));
