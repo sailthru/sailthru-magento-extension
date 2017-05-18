@@ -66,7 +66,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
 
         $client =  Mage::getModel('sailthruemail/client');
         try {
-            $client->multisend($template_name, $emails, $vars, $evars, $options);
+            $client->multisend($template_name, $emails, $vars, null, $options);
             return true;
         } catch (Sailthru_Client_Exception $e) {
             // retry logic if 14 (a dynamic template that hasn't been created yet)
@@ -74,7 +74,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 try {
                     $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
                     $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
-                    $client->multisend($template_name, $emails, $vars, $evars, $options);
+                    $client->multisend($template_name, $emails, $vars, null, $options);
                     return true;
                 } catch (Sailthru_Client_Exception $err_two) {
                     Mage::logException($e);
