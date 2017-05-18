@@ -47,6 +47,13 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         parent::__construct($apiKey, $apiSecret, $apiUri);
     }
 
+    protected function prepareJsonPayload(array $data, array $binary_data = [])
+    {
+        $version = (string) Mage::getConfig()->getNode('modules/Sailthru_Email/version');
+        $data['integration'] = "Magento 1 - $version";
+        return parent::prepareJsonPayload($data, $binary_data);
+    }
+
     /**
      * HTTP request wrapper for debugging
      * @inheritdoc

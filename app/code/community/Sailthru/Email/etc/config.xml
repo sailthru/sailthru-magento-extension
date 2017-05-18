@@ -127,7 +127,7 @@
             <checkout_cart_save_after>
                 <observers>
                     <sailthru_checkout_cart_save_after>
-                        <class>Sailthru_Email_Model_Observer_Purchase</class>
+                        <class>sailthruemail/observer_purchase</class>
                         <method>emptyCart</method>
                     </sailthru_checkout_cart_save_after>
                 </observers>
