@@ -1,6 +1,7 @@
 <?php
 
-class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
+class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract
+{
 
     /**
      * Prepare data on items in cart or order.
@@ -13,13 +14,13 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
         try {
             $data = array();
             foreach($items as $item) {
-
                 $_item = array();
                 $product = $item->getProduct();
                 $options = $product->getTypeInstance(true)->getOrderOptions($product)['attributes_info'];
                 if (!$options) {
                     $options = $item->getProductOptions()["attributes_info"];
                 }
+
                 $_item['options'] = $this->getVars($options, true);
                 $_item['sku'] = $product->getSku();
                 $_item['title'] = $product->getName();
@@ -37,6 +38,7 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
 
                 $data[] = $_item;
             }
+
             return $data;
         } catch (Exception $e) {
             Mage::log("EXCEPTION: {$e->getMessage()}", null, "sailthru.log");
@@ -54,12 +56,12 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
     public function getAdjustments(Mage_Sales_Model_Order $order, $action=null)
     {
         $adjustments = array(
-                ['title' => 'Tax', 'price' => $order->getTaxAmount()],
-                ['title' => 'Shipping', 'price' => $order->getShippingAmount()]
+                array('title' => 'Tax', 'price' => $order->getTaxAmount()),
+                array('title' => 'Shipping', 'price' => $order->getShippingAmount())
         );
 
         if ($discount = $order->getDiscountAmount() != 0) {
-            $adjustments[] = ['title' => 'Sale', 'price' => $order->getDiscountAmount()];
+            $adjustments[] = array('title' => 'Sale', 'price' => $order->getDiscountAmount());
         }
 
         if (strtolower($action) == "api") {
@@ -89,6 +91,7 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
             if ($tenders[0]['title'] == null) {
                 return '';
             }
+
             return $tenders;
         } else {
             return '';
@@ -109,6 +112,7 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
         } elseif (array_key_exists('attributes_info', $options)) {
             $options = $options['attributes_info'];
         }
+
         if ($keepLabelValue) {
             return $options;
         }
@@ -117,6 +121,7 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract {
         foreach($options as $attribute) {
             $vars[$attribute['label']] = $attribute['value'];
         }
+
         return $vars;
     }
 

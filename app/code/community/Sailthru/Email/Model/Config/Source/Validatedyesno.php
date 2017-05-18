@@ -1,6 +1,7 @@
 <?php
 
-class Sailthru_Email_Model_Config_Source_Validatedyesno extends Sailthru_Email_Model_Config_Source {
+class Sailthru_Email_Model_Config_Source_Validatedyesno extends Sailthru_Email_Model_Config_Source
+{
 
     /**
      * Options getter
@@ -11,10 +12,10 @@ class Sailthru_Email_Model_Config_Source_Validatedyesno extends Sailthru_Email_M
     {
         try {
             $this->testKeys();
-            return [
-                [ 'value' => 1, 'label' => Mage::helper('adminhtml')->__('Yes') ],
-                [ 'value' => 0, 'label' => Mage::helper('adminhtml')->__('No') ],
-            ];
+            return array(
+                array( 'value' => 1, 'label' => Mage::helper('adminhtml')->__('Yes') ),
+                array( 'value' => 0, 'label' => Mage::helper('adminhtml')->__('No') ),
+            );
         } catch (Sailthru_Client_Exception $e) {
             return $this->processOptionArrayError($e);
         }

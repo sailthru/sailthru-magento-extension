@@ -1,6 +1,7 @@
 <?php
 
-class Sailthru_Email_Model_Config_Source_Overridetemplates extends Sailthru_Email_Model_Config_Source {
+class Sailthru_Email_Model_Config_Source_Overridetemplates extends Sailthru_Email_Model_Config_Source
+{
 
     /**
      * Options getter
@@ -13,15 +14,16 @@ class Sailthru_Email_Model_Config_Source_Overridetemplates extends Sailthru_Emai
         try {
             $response = $this->apiGet("template");
             $templates = $response["templates"];
-            $tpl_options = [
-                ['value'=> 0, 'label'=>'Use Magento template']
-            ];
+            $tpl_options = array(
+                array('value'=> 0, 'label'=>'Use Magento template')
+            );
             foreach ($templates as $tpl) {
-                $tpl_options[] = [
+                $tpl_options[] = array(
                     'value' => $tpl['name'],
                     'label' => __($tpl['name'])
-                ];
+                );
             }
+
             return $tpl_options;
         } catch (Sailthru_Client_Exception $e) {
             return $this->processOptionArrayError($e);

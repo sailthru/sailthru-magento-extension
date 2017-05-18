@@ -13,14 +13,15 @@ class Sailthru_Email_Model_Config_Source_Productattributes
      */
     public function toOptionArray()
     {
-        $results = [];
+        $results = array();
         $attributeSet = $this->getNonDefaultAttributes();
         foreach($attributeSet as $code => $label) {
-            $results[] = [
+            $results[] = array(
                 'value' => $code,
                 'label' => Mage::helper('adminhtml')->__($label)
-            ];
+            );
         }
+
         return $results;
     }
 
@@ -33,11 +34,12 @@ class Sailthru_Email_Model_Config_Source_Productattributes
         $defaultSet = Mage::getSingleton('eav/config')
             ->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection($defaultId);
 
-        $allAttributes =  [];
+        $allAttributes =  array();
         foreach ($allAttributesSet as $attribute) {
             $allAttributes[$attribute->getAttributeCode()] = $attribute->getStoreLabel() ?: $attribute->getFrontendLabel();
         }
-        $defaultAttributes = [];
+
+        $defaultAttributes = array();
         foreach ($defaultSet as $dAttribute) {
             $defaultAttributes[$dAttribute->getAttributeCode()] = $dAttribute->getStoreLabel() ?: $dAttribute->getFrontendLabel();
         }

@@ -11,7 +11,8 @@
  * online at http://getstarted.sailthru.com/api/send.
  *
  */
-class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template {
+class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
+{
 
     private $_transactionalType;
 
@@ -39,7 +40,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
        if (!$this->isValidForSend()) {
             Mage::logException(new Exception('This letter cannot be sent.')); // translation is intentionally omitted
             return false;
-        }
+       }
 
         $emails = array_values((array)$email);
 
@@ -53,15 +54,16 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             } else {
                 $template_name = $this->getId();
             }
-            $vars = [
+
+            $vars = array(
                 "content" => $this->getProcessedTemplate($variables),
                 "subject" => $this->getProcessedTemplateSubject($variables)
-            ];
+            );
         }
 
-        $options = [];
+        $options = array();
         if (count($this->_bccEmails) > 0){
-            $options['headers'] = [ 'Bcc' => $this->_bccEmails[0]];
+            $options['headers'] = array( 'Bcc' => $this->_bccEmails[0]);
         }
 
         $client =  Mage::getModel('sailthruemail/client');
@@ -73,7 +75,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             if ($e->getCode() == 14) {
                 try {
                     $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
-                    $client->apiPost('template', ["template"=>$template_name, "vars" => $templateVars]);
+                    $client->apiPost('template', array("template"=>$template_name, "vars" => $templateVars));
                     $client->multisend($template_name, $emails, $vars, null, $options);
                     return true;
                 } catch (Sailthru_Client_Exception $err_two) {
@@ -81,6 +83,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                     $e = $err_two;
                 }
             }
+
             Mage::logException($e);
             if ($storeId != 0) {
                 if (Mage::helper('sailthruemail')->isCustomerErrorEnabled($storeId)) {
@@ -94,6 +97,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                 );
                 throw new Exception($e);
             }
+
             $this->_mail = null;
             return false;
         }

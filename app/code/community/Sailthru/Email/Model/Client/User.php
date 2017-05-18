@@ -84,21 +84,22 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      *
      * @return array
      */
-    private function _buildCustomerPayload(Mage_Customer_Model_Customer $customer, $action = null) {
-        $data = [
+    private function _buildCustomerPayload(Mage_Customer_Model_Customer $customer, $action = null) 
+    {
+        $data = array(
             'id' => $customer->getData('sailthru_id') ?: $customer->getEmail(),
             'key' => $customer->getData('sailthru_id') ? "sid" : 'email',
             'fields' => array('keys' => 1)
-        ];
+        );
         if ($data['key'] == "sid") {
             $data['keysconfict'] = 'merge';
-            $data["keys"] = [ "email" => $customer->getEmail()];
+            $data["keys"] = array( "email" => $customer->getEmail());
         }
 
         if ($action == "signup" or $action == "update") {
             $data['vars'] = Mage::helper('sailthruemail')->getCustomerVars($customer);
             if ($action == "signup" and $masterList = $this->_getMasterList()) {
-                $data["lists"] = [$masterList => 1];
+                $data["lists"] = array($masterList => 1);
             }
         }
 
@@ -112,20 +113,21 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      *
      * @return array|null
      */
-    private function _buildSubscriberPayload(Mage_Newsletter_Model_Subscriber $subscriber) {
-        $data = [
+    private function _buildSubscriberPayload(Mage_Newsletter_Model_Subscriber $subscriber) 
+    {
+        $data = array(
             'id'     => $subscriber->getEmail(),
             'key'    => "email",
-            'fields' => ["keys" => 1],
-            'vars'   => [
+            'fields' => array("keys" => 1),
+            'vars'   => array(
                 'website' => Mage::app()->getStore()->getWebsite()->getName(),
                 'store' => Mage::app()->getStore()->getName(),
-            ]
-        ];
+            )
+        );
         if ($newsletterList = $this->_getNewsletterList() and
-            in_array($subscriber->getStatus(), [
+            in_array($subscriber->getStatus(), array(
                 Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED,
-                Mage_Newsletter_Model_Subscriber::STATUS_UNSUBSCRIBED]
+                Mage_Newsletter_Model_Subscriber::STATUS_UNSUBSCRIBED)
             )) {
             $data["lists"][$newsletterList] = ($subscriber->getStatus() ==  Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED ? 1 : 0);
         } else {
@@ -139,11 +141,13 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * Get the name of the Master List, if enabled. Otherwise, return false.
      * @return bool|string
      */
-    private function _getMasterList() {
+    private function _getMasterList() 
+    {
         if (Mage::helper('sailthruemail')->isMasterListEnabled()
                 and $masterList = Mage::helper('sailthruemail')->getMasterList()) {
                 return $masterList;
         }
+
         return false;
     }
 
@@ -151,11 +155,13 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
      * Get the name of the Newsletter List, if enabled. Otherwise return false.
      * @return bool|string
      */
-    private function _getNewsletterList() {
+    private function _getNewsletterList() 
+    {
         if (Mage::helper('sailthruemail')->isNewsletterListEnabled()
             and $newsletterList = Mage::helper('sailthruemail')->getNewsletterList()) {
             return $newsletterList;
         }
+
         return false;
     }
 

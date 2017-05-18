@@ -6,7 +6,8 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Observer {
+class Sailthru_Email_Model_Observer_User extends Sailthru_Email_Model_Observer
+{
 
     /**
      * Capture customer subscription data

@@ -6,7 +6,8 @@
  * @package   Sailthru_Email
  * @author    Kwadwo Juantuah <support@sailthru.com>
  */
-class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observer {
+class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observer
+{
 
     public function isCartEnabled()
     {
@@ -20,7 +21,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
         $num_qty = $quote->getItemsQty();
         if($quote->getItemsCount() == 0 && $this->isCartEnabled()) {
             try{
-                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote,$this->_email,'EmptiedCart');
+                 $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote, $this->_email, 'EmptiedCart');
             } catch (Exception $e) {
                 Mage::logException($e);
             }
@@ -31,7 +32,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
     {
         if($this->isCartEnabled()) {
             try{
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'addItemToCart');
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), $this->_email, 'addItemToCart');
             } catch (Exception $e) {
                 Mage::logException($e);
             }
@@ -43,7 +44,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
         if($this->isCartEnabled()) {
             try{
                 if ($hasChanges = $observer->getCart()->hasDataChanges()) {
-                    $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(),$this->_email,'updateItemInCart');
+                    $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(), $this->_email, 'updateItemInCart');
                 }
             } catch (Exception $e) {
                 Mage::logException($e);
@@ -55,7 +56,7 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
     {
         if($this->isCartEnabled()) {
             try{
-                 Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(),$this->_email,'removeItemFromCart');
+                 Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), $this->_email, 'removeItemFromCart');
             } catch (Exception $e) {
                 Mage::logException($e);
             }
@@ -80,11 +81,13 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
             } catch (Exception $e) {
                 Mage::logException($e);
             }
+
             try {
                 $purchaseClient->setHorizonCookie($email);
             } catch (Sailthru_Client_Exception $e) {
                 Mage::logException($e);
             }
+
             if (!$order->getCustomerIsGuest()) {
                 try {
                     $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());

@@ -9,7 +9,8 @@ require_once $dir."/lib/Sailthru_Client.php";
 require_once $dir."/lib/Sailthru_Client_Exception.php";
 require_once $dir."/lib/Sailthru_Util.php";
 
-class Sailthru_Email_Model_Client extends Sailthru_Client {
+class Sailthru_Email_Model_Client extends Sailthru_Client
+{
 
     /**
      * Event type (add,delete,update) for logging
@@ -32,7 +33,8 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
     /** @var string */
     protected $_email = null;
 
-    public function __construct() {
+    public function __construct() 
+    {
 
         $this->_storeId = Mage::app()->getStore()->getStoreId();
         $this->_session = Mage::getSingleton('customer/session');
@@ -47,7 +49,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         parent::__construct($apiKey, $apiSecret, $apiUri);
     }
 
-    protected function prepareJsonPayload(array $data, array $binary_data = [])
+    protected function prepareJsonPayload(array $data, array $binary_data = array())
     {
         $version = (string) Mage::getConfig()->getNode('modules/Sailthru_Email/version');
         $data['integration'] = "Magento 1 - $version";
@@ -58,33 +60,40 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
      * HTTP request wrapper for debugging
      * @inheritdoc
      */
-    protected function httpRequest($action, $data, $method = 'POST', $options = [ ])
+    protected function httpRequest($action, $data, $method = 'POST', $options = array( ))
     {
         $logAction = "{$method} /{$action}";
 
-        $this->log([
+        $this->log(
+            array(
             'action'            => $logAction,
             'event_type'        => $this->_eventType,
             'store_id'           => $this->_storeId,
             'http_request_type' => $this->http_request_type,
             'request'           => $data['json'],
-        ]);
+            )
+        );
         try {
             $response = parent::httpRequest($action, $data, $method, $options);
         } catch (Sailthru_Client_Exception $e) {
-            $this->log([
+            $this->log(
+                array(
                 'action'        => $logAction,
                 'error'         => $e->getCode(),
                 'error message' => $e->getMessage(),
-            ]);
+                )
+            );
             throw $e;
         }
-        $this->log([
+
+        $this->log(
+            array(
             'response_from' => "{$method} /{$action}",
             'event_type'    => $this->_eventType,
             'store_id'      => $this->_storeId,
             'response'      => $response,
-        ]);
+            )
+        );
         return $response;
     }
 
@@ -93,23 +102,26 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
      *
      * @return string
      */
-    public function getMessageId() {
+    public function getMessageId() 
+    {
         $cookie_vals = Mage::getModel('core/cookie')->get();
         return isset($cookie_vals['sailthru_bid']) ? $cookie_vals['sailthru_bid'] : null;
     }
 
-    public function log($data) {
+    public function log($data) 
+    {
         if (Mage::helper('sailthruemail')->isLoggingEnabled($this->_storeId)) {
-            Mage::log($data,null,'sailthru.log');
+            Mage::log($data, null, 'sailthru.log');
         }
     }
 
     // Magento-friendly cookie-setter. Kept for backwards-compatibility with old plugin. TODO: refactor
-    public function setCookie($response) {
-        if (array_key_exists('ok',$response) && array_key_exists('keys',$response)) {
+    public function setCookie($response) 
+    {
+        if (array_key_exists('ok', $response) && array_key_exists('keys', $response)) {
             $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
             $domain = $domain_parts[sizeof($domain_parts)-2] . '.' . $domain_parts[sizeof($domain_parts)-1];
-            Mage::getModel('core/cookie')->set('sailthru_hid',$response['keys']['cookie'],31622400,null,$domain,null,false);
+            Mage::getModel('core/cookie')->set('sailthru_hid', $response['keys']['cookie'], 31622400, null, $domain, null, false);
             return true;
         } else {
             return false;
@@ -126,15 +138,18 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
      * @param boolean $secure
      * @return boolean
      */
-    public function setHorizonCookie($email, $domain = null, $duration = null, $secure = false) {
-        $data = $this->getUserByKey($email, 'email', [ 'keys' => 1 ]);
+    public function setHorizonCookie($email, $domain = null, $duration = null, $secure = false) 
+    {
+        $data = $this->getUserByKey($email, 'email', array( 'keys' => 1 ));
         if (!isset($data['keys']['cookie'])) {
             return false;
         }
+
         if (!$domain) {
             $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
             $domain = $domain_parts[sizeof($domain_parts) - 2] . '.' . $domain_parts[sizeof($domain_parts) - 1];
         }
+
         if ($duration === null) {
             $expire = time() + 31556926;
         } else if ($duration) {
@@ -142,6 +157,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         } else {
             $expire = 0;
         }
+
         // Magento-friendly cookie-setter
         return Mage::getModel('core/cookie')->set('sailthru_hid', $data['keys']['cookie'], $expire, '/', $domain, $secure);
 
@@ -152,6 +168,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client {
         if ($apiKey and $apiSecret) {
             parent::__construct($apiKey, $apiSecret, $apiUri);
         }
-        $this->apiGet('settings', []);
+
+        $this->apiGet('settings', array());
     }
 }

@@ -17,15 +17,16 @@ class Sailthru_Email_Model_Config_Source_Verifiedemails extends Sailthru_Email_M
             $this->_eventType = "MagentoSettings";
             $response = $this->apiGet("settings");
             $emails = $response["from_emails"];
-            $sender_options = [
-                ['value'=> null, 'label'=>'Please select an email address']
-            ];
+            $sender_options = array(
+                array('value'=> null, 'label'=>'Please select an email address')
+            );
             foreach ($emails as $key => $email) {
-                $sender_options[] = [
+                $sender_options[] = array(
                     'value' => $email,
                     'label' => $email
-                ];
+                );
             }
+
             return $sender_options;
         } catch (Sailthru_Client_Exception $e) {
                 return $this->processOptionArrayError($e);
