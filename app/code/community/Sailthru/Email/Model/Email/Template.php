@@ -74,7 +74,7 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             // retry logic if 14 (a dynamic template that hasn't been created yet)
             if ($e->getCode() == 14) {
                 try {
-                    $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subj}");
+                    $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subject}");
                     $client->apiPost('template', array("template"=>$template_name, "vars" => $templateVars));
                     $client->multisend($template_name, $emails, $vars, null, $options);
                     return true;
