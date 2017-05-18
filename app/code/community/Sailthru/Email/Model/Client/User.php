@@ -125,8 +125,7 @@ class Sailthru_Email_Model_Client_User extends Sailthru_Email_Model_Client
             )
         );
         if ($newsletterList = $this->_getNewsletterList() and
-            in_array(
-                $subscriber->getStatus(), array(
+            in_array($subscriber->getStatus(), array(
                 Mage_Newsletter_Model_Subscriber::STATUS_SUBSCRIBED,
                 Mage_Newsletter_Model_Subscriber::STATUS_UNSUBSCRIBED)
             )) {
