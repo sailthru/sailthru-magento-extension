@@ -13,21 +13,25 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      * Push product delete to Sailthru using Content API
      *
      * @param Mage_Catalog_Model_Product $product
-     * @return void
+     * @return bool
      * @throws Sailthru_Client_Exception
      */
     public function deleteProduct(Mage_Catalog_Model_Product $product)
     {
         $this->_eventType = 'adminDeleteProduct';
         $data = $this->getProductData($product);
-        $this->apiDelete('content', $data);
+        if ($data) {
+            $this->apiDelete('content', $data);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Push product save to Sailthru using Content API
      *
      * @param Mage_Catalog_Model_Product $product
-     * @return void
+     * @return bool
      * @throws Sailthru_Client_Exception
      */
     public function saveProduct(Mage_Catalog_Model_Product $product)
@@ -36,7 +40,9 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $data = $this->getProductData($product);
         if ($data) {
             $this->apiPost('content', $data);
+            return true;
         }
+        return false;
     }
 
     /**
