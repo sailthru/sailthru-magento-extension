@@ -48,12 +48,15 @@ class Sailthru_Email_Model_Observer_Content
                 $status = $product->getStatus();
                 $sailthruContent = Mage::getModel('sailthruemail/client_content');
                 try {
+                    $saved = false;
                     if ($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
-                        $response = $sailthruContent->saveProduct($product);
+                        $saved = $sailthruContent->saveProduct($product);
                     } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
-                        $response = $sailthruContent->deleteProduct($product);
+                        $saved = $sailthruContent->deleteProduct($product);
                     }
-                    $savedStores[] = Mage::app()->getStore()->getName();
+                    if ($saved) {
+                        $savedStores[] = Mage::app()->getStore()->getName();
+                    }
                 } catch (Sailthru_Client_Exception $e) {
                     if ($inBackend) {
                         $this->processContentError($e);
