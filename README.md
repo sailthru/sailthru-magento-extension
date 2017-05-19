@@ -1,9 +1,7 @@
 # Sailthru Magento Extension
-### Version 2.0.0-RC2.1
+### Version 2.0.0
 
 The Magento extension provides an integration to Sailthru's platform  and can serve as a framework for building custom Magento functionality. 
-
-This is Release Candidate 2 for the 2.0.0 Release. For official stable release, check out the master branch.
 
 ##### Features
 - Automatically deploy Sailthru Javascript (Horizon or Sailthru Script Tag).
@@ -18,13 +16,17 @@ This is Release Candidate 2 for the 2.0.0 Release. For official stable release, 
 Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's bundled PrototypeJS 1.7.0.][1] We've specifically found that the default frontend configurable-swatch picker is unable to select. The Babel issue appears to be resolved by updating Prototype to 1.7.3.
 
 ##### Documentation
-We are currently finishing 2.0.0 documentation. You can find documentation for the previous extension version as well our APIs at [Sailthru GetStarted][2].
+You can find documentation for the extension as well our APIs at [Sailthru GetStarted][2].
 
 ##### Support
 For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue on GitHub.
 
+##### Migrating from previous versions
+The 2.0.0 uses updated schemas for User and Template Vars. Visit the documentation above to see the full schemas and what's changed.
+
 ## Installation 
-*Note: After installation, you may need to login, clear cache, and then re-login.*
+* *We've moved codepools. Before installing, make sure to remove the current plugin.*
+* *After installation, you may need to login, clear cache, and then re-login.*
 
 ### Manual Installation
 
