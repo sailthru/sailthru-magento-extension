@@ -69,7 +69,7 @@ If you don't want to use modman:
     ```
     
 [1]: https://github.com/babel/babel/issues/5518
-[2]: https://getstarted.sailthru.com/integrations/magento/magento-extension/
+[2]: https://getstarted.sailthru.com/
 [3]: https://getstarted.sailthru.com/integrations/magento/magento-1-extension-v2/
 [4]: https://getstarted.sailthru.com/developers/api-basics/introduction/
 [5]: https://sailthru.zendesk.com/hc/en-us
