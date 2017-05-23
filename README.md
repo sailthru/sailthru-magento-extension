@@ -16,10 +16,12 @@ The Magento extension provides an integration to the Sailthru platform and can s
 Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's bundled PrototypeJS 1.7.0.][1] We've specifically found that the default frontend configurable-swatch picker is unable to select. The Babel issue appears to be resolved by updating Prototype to 1.7.3.
 
 ##### Documentation
-You can find documentation for the extension as well our APIs at [Sailthru GetStarted][2].
+Documentation for the extension our APIs is available on the [Sailthru GetStarted][2] docs site.
+* [Magento 1 Extension v2][3]
+* [Sailthru APIs][4]
 
 ##### Support
-For questions or troubleshooting, please visit [Sailthru Support][3] or submit an issue on GitHub.
+For questions or troubleshooting, please visit [Sailthru Support][5] or submit an issue on GitHub.
 
 ##### Migrating from previous versions
 The 2.0.0 uses updated schemas for User and Template Vars. Visit the documentation above to see the full schemas and what's changed.
@@ -31,7 +33,7 @@ The 2.0.0 uses updated schemas for User and Template Vars. Visit the documentati
 ### Manual Installation
 
 #### With Modman
-This extension can be used with [modman][4], which preserves separation of the plugin from the rest of your Magento codebase.
+This extension can be used with [modman][6], which preserves separation of the plugin from the rest of your Magento codebase.
 
 
 ```bash
@@ -68,7 +70,9 @@ If you don't want to use modman:
     
 [1]: https://github.com/babel/babel/issues/5518
 [2]: https://getstarted.sailthru.com/integrations/magento/magento-extension/
-[3]: https://sailthru.zendesk.com/hc/en-us
-[4]: https://github.com/colinmollenhour/modman
+[3]: https://getstarted.sailthru.com/integrations/magento/magento-1-extension-v2/
+[4]: https://getstarted.sailthru.com/developers/api-basics/introduction/
+[5]: https://sailthru.zendesk.com/hc/en-us
+[6]: https://github.com/colinmollenhour/modman
 
 
