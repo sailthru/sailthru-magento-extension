@@ -1,41 +1,27 @@
 <?xml version="1.0"?>
 <package>
     <name>Sailthru_Email</name>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
     <stability>stable</stability>
-    <license uri="http://www.opensource.org/licenses/osl-3.0.php">OSL v3.0</license>
+    <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
     <channel>community</channel>
     <extends/>
-    <summary>The Sailthru extension enables you route all transactional emails through Sailthru as well as utilize the powerful suite of products from Sailthru that enable each Merchant to truly personalize email communication. </summary>
+    <summary>Improve CLV and reduce churn with Sailthru&#x2019;s high-performance email, mobile marketing, site personalization and predictive intelligence.</summary>
     <description>This extension enables you to fully integrate with Sailthru's powerful suite of products:&#xD;
 &#xD;
-Transactional Emails&#xD;
-&#xD;
-The extension overwrites Magento's default send functionality to route all transactional emails through Sailthru.  The templates that already exist in Magento are created in Sailthru the first time such a template is sent and you are able to track delivery rate on each transactional email.  All transactional emails can also utilize Sailthru's triggers that can for example, specify an email to be sent if a user opens or clicks on an email or makes a purchase.&#xD;
-&#xD;
-Abandoned Cart Emails&#xD;
-&#xD;
-The extension makes it really easy to send abandoned cart emails.  All you have to do is to specify the time after an item is added to cart (and a purchase is not made) that the abandoned cart email should be sent. An API call is made when a customer adds an item to their cart and this schedules the email to be sent. &#xD;
-&#xD;
-Purchase API&#xD;
-&#xD;
-Sailthru's purchase API creates a profile that has all the purchases that a user has made as well as current items that are in their cart.  This makes it really easy to be able to personalize either transactional emails or newsletters to customers based on their unique profiles and interests. &#xD;
-&#xD;
-Horizon&#xD;
-&#xD;
-Horizon is Sailthru's unique behavioral-tracking product. Horizon gathers data on your users' individual interests based on activity on your website or mobile app.&#xD;
-&#xD;
-Armed with that intelligence, you can dynamically target users based on their purchase, browsing, and explored interests. Horizon-personalized content boosts clicks, pageviews and user engagement.&#xD;
-&#xD;
-Concierge&#xD;
-&#xD;
-Concierge is a Horizon-powered on-site recommendation tool, allowing a small 'slider' to appear in a user's browser window at the end of an article. The slider will suggest another story based on a user's interest.&#xD;
+- Automatically deploy Sailthru Javascript (Horizon or Sailthru Script Tag).&#xD;
+- Add all users into the Sailthru system on login or registration.&#xD;
+- Hook Magento's newsletter subscriptions into a Sailthru list.&#xD;
+- Deliver Magento transactionals through Sailthru for enhanced deliverability, tracking, and user flows.&#xD;
+- Create custom Sailthru templates for Customer Signup, Newsletter Signup, Order Confirmation, and Shipping.&#xD;
+- Capture customers order data with adjustments and Sailthru campaign attribution.&#xD;
+- Deliver abandoned cart emails for known users.&#xD;
 </description>
-    <notes>Updated design for Magento Connect Official Packaging, and added better catching of empty carts.</notes>
-    <authors><author><name>Kwadwo Juantuah</name><user>sailthru</user><email>kjuantuah@sailthru.com</email></author><author><name>Alex Silverman</name><user>silverman63</user><email>asilverman@sailthru.com</email></author></authors>
-    <date>2016-05-12</date>
-    <time>00:38:16</time>
-    <contents><target name="magecommunity"><dir name="Sailthru"><dir name="Email"><dir name="Block"><file name="Form.php" hash="24981cbf2525f0da69baf3161a03da05"/><file name="Horizon.php" hash="64a848ef8bd3d5a29b8da5921387c5b7"/></dir><dir name="Helper"><file name="Data.php" hash="58e0fc5dfec55091e23d167f95998cbf"/></dir><dir name="Model"><file name="Abstract.php" hash="40c50b2e4e677dcff77b1977b0ab126a"/><dir name="Client"><file name="Content.php" hash="17611a9b2a3f358cfde91676451b491d"/><file name="Exception.php" hash="8ca3b3c6e195344bafdfdef7c092cbdc"/><file name="List.php" hash="739b15cb853cc4232102a9bf2044bb90"/><file name="Purchase.php" hash="3903a845bbd2a16c504f8db123c2a217"/><file name="User.php" hash="276963f0864ef1c9647c82e9334e01c6"/></dir><file name="Client.php" hash="bacc9179b7571c46c403f2bfc303a29e"/><dir name="Email"><file name="Template.php" hash="4d8e0b099bb7e93c55f6194ef3d210ea"/></dir><dir name="Newsletter"><file name="Template.php" hash="490bbace9960e211c5a5f94d0ec0b1de"/></dir><dir name="Observer"><file name="Content.php" hash="f3da72e473209c47f1577543513bf065"/><dir name="Purchase"><file name="Abandoned.php" hash="c7fd1f4c638c9d0e0781b0b7155b4c02"/></dir><file name="Purchase.php" hash="7d7dddb6d9016443461bffb8bec84e74"/><file name="User.php" hash="2405e06e1250bc793ff908653b70198f"/></dir><file name="Observer.php" hash="a72c2551ab8dfd5735421e73e1188aa0"/></dir><dir name="controllers"><file name="AdminController.php" hash="16a664ba90e7e1a470892929788640d6"/><file name="IndexController.php" hash="f21fe7e884d254ead56f08e702948ebd"/><file name="OnepageController.php" hash="c8fe9157b3184e3c62f9b563588a215f"/></dir><dir name="etc"><file name="adminhtml.xml" hash="b6d30b6ba18a21cd100af9ea055d401a"/><file name="config.xml" hash="c5fcc27a19f0a7c6c7164ecb3b2337ca"/><file name="system.xml" hash="63995ce60a5c68a0d1c358f4396d6d52"/></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Sailthru_Email.xml" hash="243c2046f5076c1f2c25bcea38ea6e06"/></dir></target><target name="magelocal"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="sailthru.xml" hash=""/></dir><dir name="template"><dir name="sailthru"><file name="horizon.phtml" hash=""/></dir></dir></dir></dir></dir></target><target name="magedesign"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="template"><dir name="sailthruemail"><file name="form.phtml" hash="2b37b602baf77858018dcac8227c4166"/></dir></dir></dir></dir></dir></target></contents>
+    <notes>Large update adding many new features, more granular configuration, auto-tagging, and resolving issues with API connectivity, For more information, visit our documentation at https://getstarted.sailthru.com/integrations/magento/magento-1-extension-v2/.</notes>
+    <authors><author><name>Kwadwo Juantuah</name><user>sailthru</user><email>kjuantuah@sailthru.com</email></author><author><name>Alex Silverman</name><user>sailthru</user><email>asilverman@sailthru.com</email></author></authors>
+    <date>2017-05-24</date>
+    <time>22:07:09</time>
+    <contents><target name="magecommunity"><dir name="Sailthru"><dir name="Email"><dir name="Block"><file name="Js.php" hash="11ba973e1dc73182408146b1c9d1d6d9"/></dir><dir name="Helper"><file name="Data.php" hash="425f6d01d6488c9dfd2026d6562bbaad"/><file name="Purchase.php" hash="be300f18f033a0959616a213c11b04fa"/><file name="Template.php" hash="695e3c2dd33a788be4161325ac4a82e7"/></dir><dir name="Model"><dir name="Client"><file name="Content.php" hash="757c1210bdc3b775c3211e2288c1bd95"/><file name="Purchase.php" hash="8b50988a9dc84adce0e11a2c42679f9e"/><file name="User.php" hash="9a7a8b05b91ae8a6807c948b7c0d37c4"/></dir><file name="Client.php" hash="1d5e0afa4d77d1b53bd84f18ec1ac502"/><dir name="Config"><dir name="Source"><file name="Overridetemplates.php" hash="849caf858f82063e569506fd6b628fed"/><file name="Productattributes.php" hash="557c3b00f1dd99cd3d792584c1103080"/><file name="Sailthrujs.php" hash="784d966b9de54c66ff8051cc634ee991"/><file name="Sailthrulists.php" hash="92186022d5aa6817484c42e780e07495"/><file name="Sailthrutemplates.php" hash="f3bcc3d8de9d90e9f00c905a01606bec"/><file name="Validatedyesno.php" hash="2f92dab1e7b6c0394cf85dc6bab0d4e4"/><file name="Verifiedemails.php" hash="7abffd6167b2453e0e6458da62defe94"/></dir><file name="Source.php" hash="d4e5f9a6c14b7743b24e88be76b03ee8"/><file name="Validkey.php" hash="0ad5f6c0755dc2fbd78cbfa4d191f580"/><file name="Validkeys.php" hash="8fd14aa8e9734eb802bf4a89b60fc941"/></dir><dir name="Email"><file name="Template.php" hash="9eb34d67b941ce853246c1d0b39645c7"/></dir><dir name="Observer"><file name="Content.php" hash="5f48b4535993fe5ba8ce8c2f739a4c30"/><file name="Purchase.php" hash="5392388eb09225d481e9e5ec64174cb8"/><file name="User.php" hash="b4151b6fa4234eda57b34e6b747b6ecd"/></dir><file name="Observer.php" hash="a7f2e608333a7b44e0a8a89e215bdea9"/></dir><dir name="etc"><file name="adminhtml.xml" hash="9d58ae88d6fd3784099f6a08b46920bf"/><file name="config.xml" hash="dab72b53a4f9fb8e0d847d922063d903"/><file name="system.xml" hash="3de75e60ef4d95a971f80aec95e8f3fe"/></dir><dir name="lib"><file name="Sailthru_Client.php" hash="7304b694e3472f61512b7a34a9f8604c"/><file name="Sailthru_Client_Exception.php" hash="465d0a188a17061147003e5e8aa22331"/><file name="Sailthru_Util.php" hash="0bdae6568a14bc981905cb1d428bce26"/></dir><dir name="sql"><dir name="sailthru_email_setup"><file name="install-2.0.0.php" hash="65466689029b9b9dc0347999ed080a8b"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Sailthru_Email.xml" hash="243c2046f5076c1f2c25bcea38ea6e06"/></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="sailthru.xml" hash="fa0a38b14361712ed4e790bbc06fcacd"/></dir><dir name="template"><dir name="sailthru"><file name="Horizon.phtml" hash="626724055cd5a9a9799c9959fe28b06d"/><file name="Horizon.phtml" hash="626724055cd5a9a9799c9959fe28b06d"/></dir></dir></dir></dir></dir></target></contents>
     <compatible/>
-    <dependencies><required><php><min>5.3.3</min><max>5.5.29</max></php><extension><name>curl</name><min/><max/></extension></required></dependencies>
+    <dependencies><required><php><min>5.3.3</min><max>5.5.38</max></php><extension><name>curl</name><min/><max/></extension></required></dependencies>
 </package>

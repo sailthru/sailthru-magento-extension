@@ -1,40 +1,26 @@
 <_>
-   <form_key>EluCe6UAGT4O7duh</form_key>
+   <form_key>YIw33POVdgq3rYLB</form_key>
    <name>Sailthru_Email</name>
    <channel>community</channel>
    <version_ids>
       <version_ids>2</version_ids>
    </version_ids>
-   <summary>The Sailthru extension enables you route all transactional emails through Sailthru as well as utilize the powerful suite of products from Sailthru that enable each Merchant to truly personalize email communication. </summary>
+   <summary>Improve CLV and reduce churn with Sailthru’s high-performance email, mobile marketing, site personalization and predictive intelligence.</summary>
    <description>This extension enables you to fully integrate with Sailthru&apos;s powerful suite of products:
 
-Transactional Emails
-
-The extension overwrites Magento&apos;s default send functionality to route all transactional emails through Sailthru.  The templates that already exist in Magento are created in Sailthru the first time such a template is sent and you are able to track delivery rate on each transactional email.  All transactional emails can also utilize Sailthru&apos;s triggers that can for example, specify an email to be sent if a user opens or clicks on an email or makes a purchase.
-
-Abandoned Cart Emails
-
-The extension makes it really easy to send abandoned cart emails.  All you have to do is to specify the time after an item is added to cart (and a purchase is not made) that the abandoned cart email should be sent. An API call is made when a customer adds an item to their cart and this schedules the email to be sent. 
-
-Purchase API
-
-Sailthru&apos;s purchase API creates a profile that has all the purchases that a user has made as well as current items that are in their cart.  This makes it really easy to be able to personalize either transactional emails or newsletters to customers based on their unique profiles and interests. 
-
-Horizon
-
-Horizon is Sailthru&apos;s unique behavioral-tracking product. Horizon gathers data on your users&apos; individual interests based on activity on your website or mobile app.
-
-Armed with that intelligence, you can dynamically target users based on their purchase, browsing, and explored interests. Horizon-personalized content boosts clicks, pageviews and user engagement.
-
-Concierge
-
-Concierge is a Horizon-powered on-site recommendation tool, allowing a small &apos;slider&apos; to appear in a user&apos;s browser window at the end of an article. The slider will suggest another story based on a user&apos;s interest.
+- Automatically deploy Sailthru Javascript (Horizon or Sailthru Script Tag).
+- Add all users into the Sailthru system on login or registration.
+- Hook Magento&apos;s newsletter subscriptions into a Sailthru list.
+- Deliver Magento transactionals through Sailthru for enhanced deliverability, tracking, and user flows.
+- Create custom Sailthru templates for Customer Signup, Newsletter Signup, Order Confirmation, and Shipping.
+- Capture customers order data with adjustments and Sailthru campaign attribution.
+- Deliver abandoned cart emails for known users.
 </description>
-   <license>OSL v3.0</license>
-   <license_uri>http://www.opensource.org/licenses/osl-3.0.php</license_uri>
-   <version>1.3.0</version>
+   <license>Apache License 2.0</license>
+   <license_uri>http://www.apache.org/licenses/LICENSE-2.0</license_uri>
+   <version>2.0.0</version>
    <stability>stable</stability>
-   <notes>Updated design for Magento Connect Official Packaging, and added better catching of empty carts.</notes>
+   <notes>Large update adding many new features, more granular configuration, auto-tagging, and resolving issues with API connectivity, For more information, visit our documentation at https://getstarted.sailthru.com/integrations/magento/magento-1-extension-v2/.</notes>
    <authors>
       <name>
          <name>Kwadwo Juantuah</name>
@@ -42,7 +28,7 @@ Concierge is a Horizon-powered on-site recommendation tool, allowing a small &ap
       </name>
       <user>
          <user>sailthru</user>
-         <user>silverman63</user>
+         <user>sailthru</user>
       </user>
       <email>
          <email>kjuantuah@sailthru.com</email>
@@ -50,7 +36,7 @@ Concierge is a Horizon-powered on-site recommendation tool, allowing a small &ap
       </email>
    </authors>
    <depends_php_min>5.3.3</depends_php_min>
-   <depends_php_max>5.5.29</depends_php_max>
+   <depends_php_max>5.5.38</depends_php_max>
    <depends>
       <package>
          <name>
@@ -66,7 +52,7 @@ Concierge is a Horizon-powered on-site recommendation tool, allowing a small &ap
             <max/>
          </max>
          <files>
-            <files>    </files>
+            <files>         </files>
          </files>
       </package>
       <extension>
@@ -89,8 +75,8 @@ Concierge is a Horizon-powered on-site recommendation tool, allowing a small &ap
          <target>magelocal</target>
          <target>magecommunity</target>
          <target>mageetc</target>
-         <target>magelocal</target>
-         <target>magelocal</target>
+         <target>magedesign</target>
+         <target>magedesign</target>
          <target>magedesign</target>
       </target>
       <path>
@@ -98,8 +84,8 @@ Concierge is a Horizon-powered on-site recommendation tool, allowing a small &ap
          <path>Sailthru/Email</path>
          <path>modules/Sailthru_Email.xml</path>
          <path>frontend/base/default/layout/sailthru.xml</path>
-         <path>frontend/base/default/template/sailthru/horizon.phtml</path>
-         <path>adminhtml/default/default/template/sailthruemail/form.phtml</path>
+         <path>frontend/base/default/template/sailthru/Horizon.phtml</path>
+         <path>frontend/base/default/template/sailthru/Horizon.phtml</path>
       </path>
       <type>
          <type>file</type>
