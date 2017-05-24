@@ -1,5 +1,5 @@
 <_>
-   <form_key>YIw33POVdgq3rYLB</form_key>
+   <form_key>iASDhQoNQxQCu3ea</form_key>
    <name>Sailthru_Email</name>
    <channel>community</channel>
    <version_ids>
@@ -52,7 +52,7 @@
             <max/>
          </max>
          <files>
-            <files>         </files>
+            <files>           </files>
          </files>
       </package>
       <extension>
@@ -85,7 +85,7 @@
          <path>modules/Sailthru_Email.xml</path>
          <path>frontend/base/default/layout/sailthru.xml</path>
          <path>frontend/base/default/template/sailthru/Horizon.phtml</path>
-         <path>frontend/base/default/template/sailthru/Horizon.phtml</path>
+         <path>frontend/base/default/template/sailthru/Sst.phtml</path>
       </path>
       <type>
          <type>file</type>
@@ -112,8 +112,4 @@
          <ignore/>
       </ignore>
    </contents>
-   <page>1</page>
-   <limit>200</limit>
-   <folder/>
-   <package/>
 </_>
