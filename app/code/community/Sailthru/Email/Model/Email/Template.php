@@ -49,15 +49,16 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             $vars = Mage::helper('sailthruemail/template')->getTransactionalVars($this->_transactionalType, $variables);
         } else {
             $this->setUseAbsoluteLinks(true);
+            $template_name = "magento_";
             if ($this->getData('template_code')) {
-                $template_name = $this->getData('template_code');
+                $template_name .= $this->getData('template_code');
             } else {
-                $template_name = $this->getId();
+                $template_name .= $this->getId();
             }
 
             $vars = array(
                 "content" => $this->getProcessedTemplate($variables),
-                "subject" => $this->getProcessedTemplateSubject($variables)
+                "subj" => $this->getProcessedTemplateSubject($variables)
             );
         }
 
@@ -74,8 +75,13 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
             // retry logic if 14 (a dynamic template that hasn't been created yet)
             if ($e->getCode() == 14) {
                 try {
-                    $templateVars = array("content_html" => "{content} {beacon}", "subject" => "{subject}");
-                    $client->apiPost('template', array("template"=>$template_name, "vars" => $templateVars));
+                    $client->apiPost('template', array(
+                        "template"=>$template_name,
+                        "content_html" => "{content} {beacon}",
+                        "subject" => "{subj}",
+                        "from_email" => Mage::helper('sailthruemail')->getSenderEmail(),
+                        "is_basic" => 1,
+                    ));
                     $client->multisend($template_name, $emails, $vars, null, $options);
                     return true;
                 } catch (Sailthru_Client_Exception $err_two) {
