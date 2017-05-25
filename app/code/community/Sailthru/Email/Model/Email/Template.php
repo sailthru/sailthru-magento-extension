@@ -80,7 +80,6 @@ class Sailthru_Email_Model_Email_Template extends Mage_Core_Model_Email_Template
                         "content_html" => "{content} {beacon}",
                         "subject" => "{subj}",
                         "from_email" => Mage::helper('sailthruemail')->getSenderEmail(),
-                        "is_basic" => 1,
                     ));
                     $client->multisend($template_name, $emails, $vars, null, $options);
                     return true;
