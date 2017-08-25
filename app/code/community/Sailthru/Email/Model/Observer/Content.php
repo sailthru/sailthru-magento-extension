@@ -9,8 +9,6 @@
 class Sailthru_Email_Model_Observer_Content
 {
 
-    const FAILURE_MESSAGE = "The product was not properly sync'd with Sailthru";
-
     /**
      * Push product to Sailthru using Content API
      *
@@ -33,14 +31,26 @@ class Sailthru_Email_Model_Observer_Content
      */
     public function saveProduct(Varien_Event_Observer $observer)
     {
-        $inBackend = (Mage::app()->getStore()->getStoreId() == 0);
+        /** @var Mage_Catalog_Model_Product $eventProduct */
         $eventProduct = $observer->getEvent()->getProduct();
-        $productId = $eventProduct->getId();
+        $savedStores = $this->syncProduct($eventProduct);
+        if (count($savedStores)) {
+            $storesString = implode(", ", $savedStores);
+            Mage::getSingleton('core/session')->addNotice("Sync'd {$eventProduct->getName()} with Sailthru for stores $storesString");
+        }
+    }
+
+    public function syncProduct(Mage_Catalog_Model_Product $savedProduct, $returnBool=false) {
+        // prep product info
+        $productId = $savedProduct->getId();
+        $stores = $this->getScopedStores($savedProduct);
+
+        // prep context info
+        $inBackend = (Mage::app()->getStore()->getStoreId() == 0);
         $appEmulation = Mage::getSingleton('core/app_emulation');
-        $stores = $this->getScopedStores($eventProduct);
 
+        // load and save product per store config, if enabled.
         $savedStores = array();
-
         foreach ($stores as $storeId) {
             if (Mage::helper('sailthruemail')->isEnabled($storeId) and Mage::helper('sailthruemail')->isProductSyncEnabled($storeId)) {
                 $emulateData = $appEmulation->startEnvironmentEmulation($storeId);
@@ -60,18 +70,14 @@ class Sailthru_Email_Model_Observer_Content
                     }
                 } catch (Sailthru_Client_Exception $e) {
                     if ($inBackend) {
-                        $this->processContentError($e);
+                        $this->processContentError($savedProduct, $e);
                     }
                 }
 
                 $appEmulation->stopEnvironmentEmulation($emulateData);
             }
         }
-
-        if (count($savedStores)) {
-            $storesString = implode(", ", $savedStores);
-            Mage::getSingleton('core/session')->addNotice("Sync'd product with Sailthru for stores $storesString");
-        }
+        return $returnBool ? (count($savedStores) == count($stores)) : $savedStores;
     }
 
     /**
@@ -84,10 +90,6 @@ class Sailthru_Email_Model_Observer_Content
         if(get_class($block) =='Mage_Adminhtml_Block_Widget_Grid_Massaction'
             && $block->getRequest()->getControllerName() == 'catalog_product')
         {
-            Mage::log([
-                "class" => get_class($block),
-                "controller" => $block->getRequest()->getControllerName()
-            ], null, "sailthru.log");
             $block->addItem('sailthruemail', array(
                 'label' => 'Send to Sailthru Content Library',
                 'url' => Mage::app()->getStore()->getUrl('sailthruemail/content/bulk'),
@@ -111,14 +113,13 @@ class Sailthru_Email_Model_Observer_Content
         return $storeIds;
     }
 
-    private function processContentError(Sailthru_Client_Exception $e)
+    private function processContentError(Mage_Catalog_Model_Product $product, Sailthru_Client_Exception $e, $useStore=true)
     {
         $storeName = Mage::app()->getStore()->getName();
 
-        Mage::getSingleton('core/session')->addError(
-            self::FAILURE_MESSAGE . " for store {$storeName}." .
-            " <pre >({$e->getCode()}) {$e->getMessage()}</pre>"
-        );
+        Mage::getSingleton('core/session')->addError(sprintf(
+            "%s was not properly sync'd with Sailthru%s. <pre >(%s) %s</pre>",
+            $product->getName(), $useStore ? " for store {$storeName}" : "", $e->getCode(), $e->getMessage()));
         Mage::logException($e);
     }
 
