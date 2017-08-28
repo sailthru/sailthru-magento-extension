@@ -192,6 +192,14 @@
     </frontend>
     <adminhtml>
         <events>
+            <adminhtml_block_html_before>
+                <observers>
+                    <sailthru_add_action>
+                        <model>sailthruemail/observer_adminhtml</model>
+                        <method>addBlockMassAction</method>
+                    </sailthru_add_action>
+                </observers>
+            </adminhtml_block_html_before>
         </events>
     </adminhtml>
    <admin>
