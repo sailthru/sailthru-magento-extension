@@ -80,22 +80,6 @@ class Sailthru_Email_Model_Observer_Content
         return $returnBool ? (count($savedStores) == count($stores)) : $savedStores;
     }
 
-    /**
-     * Catch loading of Catalog Product Admin and insert a new mass action to send to Sailthru.
-     * @param Varien_Event_Observer $observer
-     */
-    public function addBlockMassAction(Varien_Event_Observer $observer) {
-        /** @var Mage_Core_Block_Template $block */
-        $block = $observer->getEvent()->getBlock();
-        if(get_class($block) =='Mage_Adminhtml_Block_Widget_Grid_Massaction'
-            && $block->getRequest()->getControllerName() == 'catalog_product')
-        {
-            $block->addItem('sailthruemail', array(
-                'label' => 'Send to Sailthru Content Library',
-                'url' => Mage::app()->getStore()->getUrl('sailthruemail/content/bulk'),
-            ));
-        }
-    }
     private function getScopedStores(Mage_Catalog_Model_Product $product)
     {
         $storeId = Mage::app()->getRequest()->getParam('store');
