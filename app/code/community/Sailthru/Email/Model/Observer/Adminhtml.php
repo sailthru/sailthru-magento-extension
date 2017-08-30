@@ -15,9 +15,11 @@ class Sailthru_Email_Model_Observer_Adminhtml
             $store = 1;
         }
 
+        $featureEnabled = (Mage::helper('sailthruemail')->isEnabled() and Mage::helper('sailthruemail')->isProductMassActionEnabled());
+
         // we only want to add this to the Product Catalog mass action block
         if($store != null and get_class($block) =='Mage_Adminhtml_Block_Widget_Grid_Massaction'
-            && $block->getRequest()->getControllerName() == 'catalog_product') {
+            && $block->getRequest()->getControllerName() == 'catalog_product' and $featureEnabled) {
 
             /** @var Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block */
             $block->addItem('sailthruemail_content_bulk', array(

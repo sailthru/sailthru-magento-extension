@@ -44,6 +44,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_TAGS_USE_CATEGORIES                      = 'sailthru_content/product_sync/use_categories';
     const XML_PATH_TAGS_USE_ATTRIBUTES                      = 'sailthru_content/product_sync/use_attributes';
     const XML_PATH_TAGS_ATTRIBUTE_CODES                     = 'sailthru_content/product_sync/attributes';
+    const XML_PATH_BETA_MASS_ACTION                         = 'sailthru_content/beta/mass_action';
 
     /**
      * Check to see if Sailthru plugin is enabled
@@ -204,6 +205,16 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
     public function isProductSyncEnabled($store = null)
     {
         return boolval(Mage::getStoreConfig(self::XML_PATH_PRODUCT_SYNC, $store));
+    }
+
+    /**
+     * Check if beta product save mass action is enabled
+     * @param null $store
+     * @return bool
+     */
+    public function isProductMassActionEnabled($store = null)
+    {
+        return boolval(Mage::getStoreConfig(self::XML_PATH_BETA_MASS_ACTION));
     }
 
     /**
