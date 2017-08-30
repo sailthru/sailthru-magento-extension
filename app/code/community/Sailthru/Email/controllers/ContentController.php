@@ -24,7 +24,7 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action 
      * @param int $store
      */
     private function _processItems($productIds, $store) {
-        if (count($productIds) > self::MAX_ITEM_POST) {
+        if (($count = count($productIds)) > self::MAX_ITEM_POST) {
             Mage::getSingleton('adminhtml/session')->addError("Unable to send to Sailthru - please select " . self::MAX_ITEM_POST . " items max. ($count selected)");
             return;
         }
