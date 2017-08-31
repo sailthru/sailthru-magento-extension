@@ -23,7 +23,7 @@ class Sailthru_Email_Model_Observer_Adminhtml
 
             /** @var Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block */
             $block->addItem('sailthruemail_content_bulk', array(
-                'label' => 'Send to Sailthru Content Library',
+                'label' => '[BETA] Send to Sailthru',
                 'url' => $block->getUrl('sailthruemail/content/bulk'),
                 'additional' => array(
                     'store' => array(
