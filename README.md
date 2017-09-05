@@ -72,14 +72,12 @@ If you don't want to use modman:
     cd /tmp
     mkdir sailthru-magento
     cd sailthru-magento
-    wget -O sailthru-magento.tar.gz https://github.com/sailthru/sailthru-magento-extension/tarball/master
-    tar -zxvf sailthru-magento.tar.gz --strip-components=1 --show-transformed-names
+    curl -L https://github.com/sailthru/sailthru-magento-extension/tarball/<selected_branch> | tar zx --strip-components 1
     ```
 
 2. Move into target directories
     ```
-    export MAGENTO_BASE=<YOUR MAGENTO ROOT DIRECTORY>
-    rsync -a app/ $MAGENTO_BASE/app/
+    cp -r app/* <magento_root>/app/
     ```
     
 [1]: https://github.com/babel/babel/issues/5518
