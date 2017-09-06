@@ -6,7 +6,8 @@ class Sailthru_Email_Model_Observer_Adminhtml
      * Catch loading of Catalog Product Admin and insert a new mass action to send to Sailthru.
      * @param Varien_Event_Observer $observer
      */
-    public function addBlockMassAction(Varien_Event_Observer $observer) {
+    public function addBlockMassAction(Varien_Event_Observer $observer) 
+    {
         $block = $observer->getEvent()->getBlock();
 
         // verify this is for a specific store, or a single-store Magento instance
@@ -22,7 +23,8 @@ class Sailthru_Email_Model_Observer_Adminhtml
             && $block->getRequest()->getControllerName() == 'catalog_product' and $featureEnabled) {
 
             /** @var Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block */
-            $block->addItem('sailthruemail_content_bulk', array(
+            $block->addItem(
+                'sailthruemail_content_bulk', array(
                 'label' => '[BETA] Send to Sailthru',
                 'url' => $block->getUrl('sailthruemail/content/bulk'),
                 'additional' => array(
@@ -30,7 +32,8 @@ class Sailthru_Email_Model_Observer_Adminhtml
                         'name' => 'store',
                         'type' => 'hidden',
                         'value' => $store
-                ))));
+                )))
+            );
         }
     }
 }
