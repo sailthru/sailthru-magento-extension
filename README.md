@@ -37,7 +37,7 @@ For questions or troubleshooting, please visit [Sailthru Support][5] or submit a
 
 ### Manual Installation
 
-#### (Migration-only) Removing the old extension
+#### (Migration from 1.x only) Removing the old extension
 Before installing the 2.x plugin, please remove the following files.
 ```
 app/code/local/Sailthru/Email
