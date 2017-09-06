@@ -1,5 +1,5 @@
 <_>
-   <form_key>yeDNdi04oL1NeFKX</form_key>
+   <form_key>Fz8LYmSB4d64TdZa</form_key>
    <name>Sailthru_Email</name>
    <channel>community</channel>
    <version_ids>
@@ -18,9 +18,11 @@
 </description>
    <license>Apache License 2.0</license>
    <license_uri>http://www.apache.org/licenses/LICENSE-2.0</license_uri>
-   <version>2.0.0</version>
-   <stability>stable</stability>
-   <notes>Large update adding many new features, more granular configuration, auto-tagging, and resolving issues with API connectivity, For more information, visit our documentation at https://getstarted.sailthru.com/integrations/magento/magento-1-extension-v2/.</notes>
+   <version>2.1.0-beta</version>
+   <stability>beta</stability>
+   <notes>This update enables a Beta feature for adding a new Sailthru mass action for the product catalog. Send bulk updates to the Sailthru content library for a given store. 
+
+* Note: This is beta functionality and may take longer than two minutes to complete, you may also see memory issues on the request. Please report any issues. *</notes>
    <authors>
       <name>
          <name>Kwadwo Juantuah</name>
@@ -52,7 +54,7 @@
             <max/>
          </max>
          <files>
-            <files>            </files>
+            <files>              </files>
          </files>
       </package>
       <extension>
