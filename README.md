@@ -14,7 +14,8 @@ The Magento extension provides an integration to the Sailthru platform and can s
 
 ##### Beta Features
 - **Send to Sailthru Mass Action**
-Allows for bulk (up to 350 items) being sent to the Sailthru Content Library from the admin product catalog screen.
+Allows for bulk product update being sent to the Sailthru Content Library from the admin product catalog.
+*May run into memory issues.*
 
 ##### PrototypeJS 1.7 Issue
 Sailthru Script Tag is compiled with Babel, which [causes issues with Magento's bundled PrototypeJS 1.7.0.][1] We've specifically found that the default frontend configurable-swatch picker is unable to select. The Babel issue appears to be resolved by updating Prototype to 1.7.3.
