@@ -115,7 +115,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
             )
         );
 
-        if ($isSimple) $data['inventory'] = $product->getStockItem()->getQty();
+        if ($isSimple) $data['inventory'] = $product->getStockItem()->getStockQty();
 
         // PRICE-FIXING CODE
         $data['price'] = Mage::helper('sailthruemail')->getPrice($product);
