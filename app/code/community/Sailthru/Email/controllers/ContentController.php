@@ -1,8 +1,10 @@
 <?php
 class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
 {
-
-    const MAX_ITEM_POST = 350;
+    public function _isAllowed()
+    {
+        return Mage::getSingleton('admin/session')->isAllowed('sailthruemail/sailthru_content');
+    }
 
     /**
      * <magento_uri>/content/bulk endpoint action
@@ -12,10 +14,11 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
         $data = $this->getRequest()->getPost();
         if ($data and array_key_exists('product', $data) and
             array_key_exists('massaction_prepare_key', $data) and $data['massaction_prepare_key'] == 'product' and
-            array_key_exists('store', $data) and intval($data['store']) > 0) {
+            array_key_exists('store', $data) and (int) $data['store'] > 0) {
             $this->_processItems($data['product'], $data['store']);
         } else {
-            Mage::getSingleton('adminhtml/session')->addError("Request to bulk update Sailthru was malformed. Please try again.");
+            Mage::getSingleton('adminhtml/session')
+                ->addError("Request to bulk update Sailthru was malformed. Please try again.");
         }
 
         $this->_redirectReferer();
@@ -26,38 +29,45 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
      * @param int[] $productIds
      * @param int $store
      */
-    private function _processItems($productIds, $store) 
+    protected function _processItems($productIds, $store)
     {
-        if (($count = count($productIds)) > self::MAX_ITEM_POST) {
-            Mage::getSingleton('adminhtml/session')->addError("Unable to send to Sailthru - please select " . self::MAX_ITEM_POST . " items max. ($count selected)");
-            return;
-        }
-
         /** @var Mage_Core_Model_App_Emulation $appEmulation */
         $appEmulation = Mage::getSingleton('core/app_emulation');
         $emulateData = $appEmulation->startEnvironmentEmulation($store);
         $count = count($productIds);
+        $savedProducts = 0;
         $startTime = microtime(true);
 
-        $savedProducts = 0;
-        $erroredProducts = array();
-        /** @var int[] $productIds */
-        foreach ($productIds as $productId) {
-            /** @var Mage_Catalog_Model_Product $product */
-            $product = Mage::getModel('catalog/product')->load($productId);
-            try {
-                $success = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
-                if ($success) $savedProducts++;
-            } catch (Sailthru_Client_Exception $e) {
-                Mage::getSingleton('adminhtml/session')
-                    ->addError(
-                        "Error saving {$product->getName()} ({$product->getSku()})" .
-                        "<pre >({$e->getCode()}) {$e->getMessage()}</pre>"
-                    );
+        /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection();
+
+        $collection
+            ->addAttributeToSelect("*")
+            ->addIdFilter($productIds)
+            ->setPageSize(75);
+
+        $page = 1;
+        do {
+            $collection->setCurPage($page++)->load();
+            foreach ($collection as $product) {
+                /** @var Mage_Catalog_Model_Product $product */
+                try {
+                    $success = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
+                    if ($success) {
+                        $savedProducts++;
+                    }
+                } catch (Sailthru_Client_Exception $e) {
+                    Mage::getSingleton('adminhtml/session')
+                        ->addError(
+                            "Error saving {$product->getName()} ({$product->getSku()})" .
+                            "<pre >({$e->getCode()}) {$e->getMessage()}</pre>"
+                        );
+                }
             }
 
-            usleep(0.25 * 1000000);
-        }
+            $collection->clear();
+        } while ($page <= $collection->getLastPageNumber());
 
         $endTime = microtime(true);
         $time = $endTime - $startTime;
