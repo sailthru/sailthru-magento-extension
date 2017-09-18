@@ -35,8 +35,9 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
         $appEmulation = Mage::getSingleton('core/app_emulation');
         $emulateData = $appEmulation->startEnvironmentEmulation($store);
         $count = count($productIds);
-        $savedProducts = 0;
         $startTime = microtime(true);
+
+        $syncedProducts = 0;
 
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
         $collection = Mage::getModel('catalog/product')
@@ -45,17 +46,41 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
         $collection
             ->addAttributeToSelect("*")
             ->addIdFilter($productIds)
+            ->joinField('qty',
+                'cataloginventory/stock_item',
+                'qty',
+                'product_id=entity_id',
+                '{{table}}.stock_id=1',
+                'left')
             ->setPageSize(75);
 
         $page = 1;
         do {
             $collection->setCurPage($page++)->load();
-            foreach ($collection as $product) {
-                /** @var Mage_Catalog_Model_Product $product */
+
+            /** @var Mage_Catalog_Model_Product $product */
+            foreach ($collection->getItems() as $product) {
                 try {
-                    $success = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
-                    if ($success) {
-                        $savedProducts++;
+                    if ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
+                        $success = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
+                        if ($success) {
+                            $syncedProducts++;
+                        }
+
+                    } elseif ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
+                        try {
+                            $success = Mage::getModel('sailthruemail/client_content')->deleteProduct($product);
+                            if ($success) {
+                                $syncedProducts++;
+                            }
+                        } catch (Sailthru_Client_Exception $e) {
+                            if (Mage::helper('sailthruemail')->isContentNotExistError($e)) {
+                                // content isn't in Sailthru yet anyways, so equivalent to sync.
+                                $syncedProducts++;
+                            } else {
+                                throw($e); // bubble up
+                            }
+                        }
                     }
                 } catch (Sailthru_Client_Exception $e) {
                     Mage::getSingleton('adminhtml/session')
@@ -72,9 +97,8 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
         $endTime = microtime(true);
         $time = $endTime - $startTime;
         $appEmulation->stopEnvironmentEmulation($emulateData);
-        $message = "Succesfully sync'd $savedProducts / $count products to Sailthru";
+        $message = "Succesfully sync'd $syncedProducts / $count products to Sailthru";
         Mage::getSingleton('adminhtml/session')->addNotice($message.".");
         Mage::log($message . "in $time seconds", null, "sailthru.log");
     }
-
 }
