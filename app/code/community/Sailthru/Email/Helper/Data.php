@@ -428,4 +428,8 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
         return $vars;
     }
 
+    public final function isContentNotExistError(Sailthru_Client_Exception $e) {
+        return ($e->getCode() == 99 and strpos($e->getMessage(), "Content not found") !== false);
+    }
+
 }

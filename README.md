@@ -34,6 +34,7 @@ For questions or troubleshooting, please visit [Sailthru Support][5] or submit a
 
 ## Installation 
 * *After installation, you may need to login, clear cache, and then re-login.*
+* *This repo defaults to the **develop** branch. If looking for latest LTS release, please use **master**.*
 
 ### Manual Installation
 
