@@ -61,13 +61,14 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
             /** @var Mage_Catalog_Model_Product $product */
             foreach ($collection->getItems() as $product) {
                 try {
-                    if ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
+                    $status = $product->getStatus();
+                    if ($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
                         $success = Mage::getModel('sailthruemail/client_content')->saveProduct($product);
                         if ($success) {
                             $syncedProducts++;
                         }
 
-                    } elseif ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
+                    } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
                         try {
                             $success = Mage::getModel('sailthruemail/client_content')->deleteProduct($product);
                             if ($success) {
