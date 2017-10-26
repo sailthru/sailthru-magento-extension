@@ -44,6 +44,7 @@ class Sailthru_Email_Model_Observer_Content
         foreach ($stores as $storeId) {
             if (Mage::helper('sailthruemail')->isEnabled($storeId) and Mage::helper('sailthruemail')->isProductSyncEnabled($storeId)) {
                 $emulateData = $appEmulation->startEnvironmentEmulation($storeId);
+                /** @var Mage_Catalog_Model_Product $product */
                 $product = Mage::getModel('catalog/product')->load($productId); // get the full product.
                 $status = $product->getStatus();
                 $sailthruContent = Mage::getModel('sailthruemail/client_content');
@@ -52,7 +53,13 @@ class Sailthru_Email_Model_Observer_Content
                     if ($status == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) {
                         $saved = $sailthruContent->saveProduct($product);
                     } elseif ($status == Mage_Catalog_Model_Product_Status::STATUS_DISABLED) {
-                        $saved = $sailthruContent->deleteProduct($product);
+                        try {
+                            $saved = $sailthruContent->deleteProduct($product);
+                        } catch (Sailthru_Client_Exception $e) {
+                            if (!Mage::helper('sailthruemail')->isContentNotExistError($e)) {
+                                throw ($e);
+                            }
+                        }
                     }
 
                     if ($saved) {
