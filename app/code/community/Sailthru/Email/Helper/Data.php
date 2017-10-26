@@ -34,7 +34,7 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactional/abandoned_cart/delay';
     const XML_PATH_ANONYMOUS_CART_ENABLED                   = 'sailthru_transactional/anonymous_cart/enabled';
     const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactional/anonymous_cart/template';
-    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/delay';
+    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/reminder_time';
 
     // Content
     const XML_PATH_PRODUCT_SYNC                             = 'sailthru_content/product_sync/enabled';
