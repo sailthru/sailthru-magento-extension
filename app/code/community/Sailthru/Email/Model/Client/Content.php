@@ -99,6 +99,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'specialPrice' => $product->getSpecialPrice(),
                 'specialFromDate' => $product->getSpecialFromDate(),
                 'specialToDate'  => $product->getSpecialToDate(),
+                'isSpecial' => intval($this->isSpecial($product)),
                 'relatedProductIds' => $product->getRelatedProductIds(),
                 'upSellProductIds' => $product->getUpSellProductIds(),
                 'getCrossSellProductIds' => $product->getCrossSellProductIds(),
@@ -132,5 +133,12 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $data['images'] = Mage::helper('sailthruemail')->getProductImages($product);
 
         return $data;
+    }
+
+    private function isSpecial(Mage_Catalog_Model_Product $product)
+    {
+        $specialPrice = $product->getSpecialPrice();
+        $specialFrom = $product->getSpecialFromDate();
+        return $specialPrice && (($specialFrom && strtotime($specialFrom) <= time()) || !$specialFrom);
     }
 }
