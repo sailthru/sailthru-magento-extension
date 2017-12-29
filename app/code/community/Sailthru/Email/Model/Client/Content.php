@@ -139,6 +139,6 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
     {
         $specialPrice = $product->getSpecialPrice();
         $specialFrom = $product->getSpecialFromDate();
-        return $specialPrice && (($specialFrom && strtotime($specialFrom) <= time()) || !$specialFrom);
+        return $specialPrice && (($specialFrom && strtotime($specialFrom) <= time()));
     }
 }
