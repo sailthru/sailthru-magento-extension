@@ -76,13 +76,11 @@ class Sailthru_Email_Model_Client extends Sailthru_Client
         try {
             $response = parent::httpRequest($action, $data, $method, $options);
         } catch (Sailthru_Client_Exception $e) {
-            $this->log(
-                array(
+            $this->log(array(
                 'action'        => $logAction,
                 'error'         => $e->getCode(),
                 'error message' => $e->getMessage(),
-                )
-            );
+                ), Zend_Log::ERR);
             throw $e;
         }
 
@@ -108,11 +106,17 @@ class Sailthru_Email_Model_Client extends Sailthru_Client
         return isset($cookie_vals['sailthru_bid']) ? $cookie_vals['sailthru_bid'] : null;
     }
 
-    public function log($data) 
+    public function log($data, $level=null)
     {
         if (Mage::helper('sailthruemail')->isLoggingEnabled($this->_storeId)) {
-            Mage::log($data, null, 'sailthru.log');
+            Mage::log($data, $level, 'sailthru.log');
         }
+    }
+
+    public function logException(Exception $e)
+    {
+        Mage::log($e);
+        $this->log("Error: " . get_class($e) . ": {$e->getMessage()}. See exception.log for more details", Zend_Log::ERR);
     }
 
     // Magento-friendly cookie-setter. Kept for backwards-compatibility with old plugin. TODO: refactor
