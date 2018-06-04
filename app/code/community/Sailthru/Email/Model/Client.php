@@ -115,7 +115,7 @@ class Sailthru_Email_Model_Client extends Sailthru_Client
 
     public function logException(Exception $e)
     {
-        Mage::log($e);
+        Mage::logException($e);
         $this->log("Error: " . get_class($e) . ": {$e->getMessage()}. See exception.log for more details", Zend_Log::ERR);
     }
 
