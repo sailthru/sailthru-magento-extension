@@ -125,5 +125,32 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract
         return $vars;
     }
 
+    /**
+     * @param Mage_Sales_Model_Order_Item|Mage_Sales_Model_Quote_Item $item
+     * @return array
+     */
+    public function getItemVars($item) {
+        return $this->getVars($this->getAttributes($item));
+    }
+
+    /**
+     * Resolve attributes
+     * @param Mage_Sales_Model_Order_Item|Mage_Sales_Model_Quote_Item $item
+     *
+     * @return null
+     */
+    private function getAttributes($item) {
+        $ATTRIBUTES_KEY = 'attributes_info';
+        $product = $item->getProduct();
+        $options = $product->getTypeInstance(true)->getOrderOptions($product);
+        if (array_key_exists($ATTRIBUTES_KEY, $options)) {
+            return $options[$ATTRIBUTES_KEY];
+        }
+        if (array_key_exists($ATTRIBUTES_KEY, $item->getProductOptions() ?: [])) {
+            return $item->getProductOptions()[$ATTRIBUTES_KEY];
+        }
+        return null;
+    }
+
 }
 
