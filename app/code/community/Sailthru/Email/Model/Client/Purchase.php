@@ -18,7 +18,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      * @return void
      * @throws Sailthru_Client_Exception
      */
-    public function sendCart(Mage_Sales_Model_Quote $quote, $email = null, $eventType = null)
+    public function sendCart(Mage_Sales_Model_Quote $quote, $eventType = null)
     {
         if ($eventType){
             $this->_eventType = $eventType;
@@ -109,14 +109,7 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                     } else {
                         $_item['qty'] = intval($item->getQty());
                     }
-
-                    $options = $product->getTypeInstance(true)->getOrderOptions($product)['attributes_info'];
-                    if (!$options) {
-                        $options = $item->getProductOptions()["attributes_info"];
-                    }
-
-                    Mage::log($options, null, "sailthru.log");
-                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getVars($options);
+                    $_item['vars'] = Mage::helper('sailthruemail/purchase')->getItemVars($item);
                     $_item['url'] = $item->getProduct()->getProductUrl();
                     $_item['price'] = Mage::helper('sailthruemail')->formatAmount($item->getProduct()->getFinalPrice());
                     $_item['vars']['image'] = Mage::helper('sailthruemail')->getProductImages($product);
@@ -142,20 +135,21 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     private function useHid()
     {
-        if (Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
-            try {
-                $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
-                if ($cookie){
-                    $response = $this->getUserByKey($cookie, 'cookie', array('keys' => 1));
-                    if (array_key_exists('keys', $response)){
-                        return $response['keys']['email'];
-                    }
-                }
-            } catch (Exception $e){
-                $this->log($e);
-            }
+        if (!Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
+            return false;
         }
 
+        $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
+        if ($cookie) {
+            try {
+                $response = $this->getUserByKey($cookie, 'cookie', array('keys' => 1));
+                if (array_key_exists('keys', $response)){
+                    return $response['keys']['email'];
+                }
+            } catch (Exception $e) {
+                $this->logException($e);
+            }
+        }
         return false;
     }
 
