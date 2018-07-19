@@ -8,6 +8,7 @@ class Sailthru_Email_ContentController extends Mage_Adminhtml_Controller_Action
 
     /**
      * <magento_uri>/content/bulk endpoint action
+     * @throws Exception
      */
     public function bulkAction() 
     {
