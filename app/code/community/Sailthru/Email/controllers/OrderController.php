@@ -11,12 +11,10 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
      * <magento_uri>/content/bulk endpoint action
      * @throws Exception
      */
-    public function bulkAction($store=null)
+    public function bulkAction()
     {
-        $fileName = 'orders.csv';
-        /** @var Mage_Adminhtml_Block_Sales_Order_Grid $grid */
         $store = $this->getRequest()->getParam('store');
-        $json = implode("\n", $this->_processOrders($store));
+        $json  = implode("\n", $this->_processOrders($store));
         $this->_prepareDownloadResponse('orders.json', $json);
     }
 
@@ -31,18 +29,26 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
         /** @var Mage_Core_Model_App_Emulation $appEmulation */
         $appEmulation = Mage::getSingleton('core/app_emulation');
         $emulateData = $appEmulation->startEnvironmentEmulation($store);
+
         $startTime = microtime(true);
 
         $syncedOrders = 0;
         $orderData = [];
-
+        
+        /** @var Sailthru_Email_Block_OrderGrid $grid */
+        $grid = $this->getLayout()->createBlock('sailthruemail/ordergrid');
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
-        $collection = Mage::getModel('sales/order')
-            ->getCollection();
+        $collection  = $grid->getQueriedCollection();
+        $collection->addFieldToFilter('store_id', $store);
 
-        $collection
-            ->addAttributeToSelect("*")
-            ->setPageSize(75);
+        if (!$collection->count()) {
+            $name = Mage::app()->getStore($store)->getName();
+            Mage::getSingleton('adminhtml/session')
+                ->addError("Sailthru export error: There are no orders to export for your store $name");
+            $this->_redirectReferer();
+        }
+
+        $queryTime = microtime(true);
 
         $page = 1;
 
@@ -72,8 +78,17 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
         $endTime = microtime(true);
         $time = $endTime - $startTime;
         $appEmulation->stopEnvironmentEmulation($emulateData);
-        Mage::getSingleton('adminhtml/session')->addNotice("Successfully generated Sailthru JSON");
-//        Mage::log($message . "in $time seconds", null, "sailthru.log");
+        $queryTotal = $queryTime - $startTime;
+        Mage::log("Queried Order JSON in $queryTotal seconds", null, "url.log");
+        Mage::log("Successfully generated Order JSON in $time seconds", null, "url.log");
         return $orderData;
+    }
+
+    protected function getUiQueriedOrderIds()
+    {
+        /** @var Sailthru_Email_Block_OrderGrid $grid */
+        $grid = $this->getLayout()->createBlock('sailthruemail/ordergrid');
+        $ids = $grid->getAllOrderIds();
+        return $ids;
     }
 }
