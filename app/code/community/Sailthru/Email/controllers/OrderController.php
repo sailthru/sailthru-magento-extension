@@ -34,7 +34,7 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
 
         $syncedOrders = 0;
         $orderData = [];
-        
+
         /** @var Sailthru_Email_Block_OrderGrid $grid */
         $grid = $this->getLayout()->createBlock('sailthruemail/ordergrid');
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
@@ -68,8 +68,7 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
 
                 $orderData[] = json_encode($data);
                 $syncedOrders++;
-                if ($syncedOrders % 5 == 0) Mage::log("Processed $syncedOrders orders", null, "url.log");
-
+                if ($syncedOrders % 20 == 0) Mage::log("Processed $syncedOrders orders", null, "sailthru.log");
             }
 
             $collection->clear();
@@ -79,8 +78,8 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
         $time = $endTime - $startTime;
         $appEmulation->stopEnvironmentEmulation($emulateData);
         $queryTotal = $queryTime - $startTime;
-        Mage::log("Queried Order JSON in $queryTotal seconds", null, "url.log");
-        Mage::log("Successfully generated Order JSON in $time seconds", null, "url.log");
+        Mage::log("Queried orders in $queryTotal seconds", null, "sailthru.log");
+        Mage::log("Successfully generated Order JSON in $time seconds", null, "sailthru.log");
         return $orderData;
     }
 
