@@ -36,10 +36,12 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
         $orderData = [];
 
         /** @var Sailthru_Email_Block_OrderGrid $grid */
-        $grid = $this->getLayout()->createBlock('sailthruemail/ordergrid');
+        $grid = $this->getLayout()->createBlock('sailthruemail/OrderGrid');
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
         $collection  = $grid->getQueriedCollection();
-        $collection->addFieldToFilter('store_id', $store);
+        $collection
+            ->addFieldToFilter('store_id', $store)
+            ->addFieldToFilter('status', [ "neq" => 'canceled']);
 
         if (!$collection->count()) {
             $name = Mage::app()->getStore($store)->getName();
