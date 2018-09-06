@@ -32,16 +32,13 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
 
         $startTime = microtime(true);
 
-        $syncedOrders = 0;
-        $orderData = [];
-
         /** @var Sailthru_Email_Block_OrderGrid $grid */
         $grid = $this->getLayout()->createBlock('sailthruemail/OrderGrid');
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
-        $collection  = $grid->getQueriedCollection();
+        $collection = $grid->getQueriedCollection();
         $collection
             ->addFieldToFilter('store_id', $store)
-            ->addFieldToFilter('status', [ "neq" => 'canceled']);
+            ->addFieldToFilter('status', ["neq" => 'canceled']);
 
         if (!$collection->count()) {
             $name = Mage::app()->getStore($store)->getName();
@@ -50,40 +47,15 @@ class Sailthru_Email_OrderController extends Mage_Adminhtml_Controller_Action
             $this->_redirectReferer();
         }
 
-        $queryTime = microtime(true);
+        $queryTime = microtime(true) - $startTime;
+        Mage::log("Queried Order Collection in $queryTime seconds", null, "sailthru.log");
 
-        $page = 1;
-
-        $purchaseClient = Mage::getModel('sailthruemail/client_purchase');
-        do {
-            $collection->setCurPage($page++)->load();
-            /** @var Mage_Sales_Model_Order $order */
-            foreach ($collection->getItems() as $order) {
-                $data = [
-                    'date' => $order->getCreatedAtStoreDate()->getIso(),
-                    'email' => $order->getCustomerEmail(),
-                    'items' => $purchaseClient->getItems($order->getAllVisibleItems()),
-                    'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order, "api"),
-                    'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
-                    'purchase_keys' => array("extid" => $order->getIncrementId())
-                ];
-
-                $orderData[] = json_encode($data);
-                $syncedOrders++;
-                if ($syncedOrders % 20 == 0) Mage::log("Processed $syncedOrders orders", null, "sailthru.log");
-            }
-
-            $collection->clear();
-        } while ($page <= $collection->getLastPageNumber());
-
-        $endTime = microtime(true);
-        $time = $endTime - $startTime;
+        $exportData = Mage::helper('sailthruemail/purchase')->generateExportData($collection);
         $appEmulation->stopEnvironmentEmulation($emulateData);
-        $queryTotal = $queryTime - $startTime;
-        Mage::log("Queried orders in $queryTotal seconds", null, "sailthru.log");
-        Mage::log("Successfully generated Order JSON in $time seconds", null, "sailthru.log");
-        return $orderData;
+        return $exportData;
     }
+
+
 
     protected function getUiQueriedOrderIds()
     {
