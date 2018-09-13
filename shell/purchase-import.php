@@ -17,7 +17,8 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
 
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
         $collection = Mage::getModel('sales/order')->getCollection()
-            ->addFieldToFilter('status', 'complete');
+//            ->addFieldToFilter('status', 'complete')
+            ->setPageSize("200");
 
         echo "Processing {$collection->getSize()} orders...\n";
 
@@ -25,14 +26,13 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
         if ($storeId) {
             $collection->addFieldToFilter('store_id', $storeId);
         }
-
+        
         $exportData = Mage::helper('sailthruemail/purchase')->generateExportData($collection);
-        $json = json_encode($exportData);
         echo "Finished processing.\n";
 
         $path = $this->_getRootPath() . self::$FILE_PATH;
         $fp = fopen($path,"w");
-        fwrite($fp, $json);
+        fwrite($fp, implode(PHP_EOL, $exportData).PHP_EOL);
         fclose($fp);
         echo "Sailthru Order Import JSON saved to ".self::$FILE_PATH.PHP_EOL;
     }
