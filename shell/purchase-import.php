@@ -6,7 +6,7 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
 
     private static $FILE_PATH = "var/sailthru_purchases.json";
 
-    private static $PAGE_SIZE = 150;
+    private static $PAGE_SIZE = 250;
 
     /**
      * Run script
@@ -19,25 +19,28 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
 
         /** @var Mage_Sales_Model_Resource_Order_Collection $collection */
         $collection = Mage::getModel('sales/order')->getCollection();
+        $storeId = $this->getArg("store") || $this->getArg("s");
+        $toDate = strtotime($this->getArg("to"));
+
         $collection
-//            ->addFieldToFilter('status', 'complete');
-            ->setPageSize(self::$PAGE_SIZE)
-            ->load();
+            ->addFieldToFilter('status', 'complete')
+            ->setPageSize(self::$PAGE_SIZE);
 
-        echo "Processing {$collection->getSize()} orders.";
-
-        $storeId = $this->getArg("store");
         if ($storeId) {
-            echo "Using store filter $storeId";
-            $collection->addFieldToFilter('store_id', $storeId)->load();
+            $collection->addFieldToFilter('store_id', $storeId);
         }
 
-        $page = 1;
-        $lastPage = $collection->getLastPageNumber();
+        if ($toDate) {
+            $timestamp = $collection->formatDate($toDate);
+            $collection->addFieldToFilter('created_at', [ "to" => $timestamp ]);
+        }
+
+        $this->startEcho($collection, $storeId, $toDate);
 
         $startTime = microtime(true);
-        $path = $this->_getRootPath() . self::$FILE_PATH;
-        $writefile = fopen($path,"w");
+        $page = 1;
+        $lastPage = $collection->getLastPageNumber();
+        $writefile = $this->getFile();
         $helper = Mage::helper('sailthruemail/purchase');
         do {
             $collection->setCurPage($page++)->load();
@@ -46,16 +49,18 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
             fwrite($writefile, $dataString);
             $collection->clear();
             echo ".";
+
         } while ($page <= $lastPage);
         fclose($writefile);
-        $time = microtime(true) - $startTime;
 
+
+        $time = microtime(true) - $startTime;
         echo "Finished.\n";
-        echo print_r([
+        print_r([
             "time" => "$time seconds",
             "page size" => $collection->getPageSize(),
             "mem max" => $this->convert(memory_get_peak_usage())
-        ], true);
+        ]);
         echo "Sailthru Order Import JSON saved to ".self::$FILE_PATH.PHP_EOL;
     }
 
@@ -65,9 +70,18 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract {
         return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
     }
 
-    public function benchmark($pageSize)
-    {
+    private function startEcho(Mage_Core_Model_Resource_Db_Collection_Abstract $collection, $storeId, $toDate) {
+        $output = "Exporting orders";
+        if ($storeId) $output .= " from store $storeId";
+        if ($toDate) $output .= " through date " . $collection->formatDate($toDate);
+        echo $output."...".PHP_EOL;
+        echo "Counted {$collection->load()->getSize()} orders...".PHP_EOL;
+        echo "Processing...";
+    }
 
+    private function getFile() {
+        $path = $this->_getRootPath() . self::$FILE_PATH;
+        return fopen($path,"w");
     }
 
 }
