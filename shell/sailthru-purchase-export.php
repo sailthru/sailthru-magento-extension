@@ -131,7 +131,7 @@ RESULTS;
     {
         return <<<USAGE
 \e[33mUsage:\e[0m
-    php purchase-export.php [OPTIONS]
+    php sailthru-purchase-export.php [OPTIONS]
 
 \e[33mArguments 
     \e[32m-s <int>     \e[0mSet Store ID Filter
