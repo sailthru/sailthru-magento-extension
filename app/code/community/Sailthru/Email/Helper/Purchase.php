@@ -153,39 +153,40 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract
     }
     
     public function generateExportData(Mage_Sales_Model_Resource_Order_Collection $collection) {
-        Mage::log("Processing {$collection->getSize()} orders", null, "sailthru.log");
-        $purchaseClient = Mage::getModel('sailthruemail/client_purchase');
-
+//        Mage::log("Processing {$collection->getSize()} orders", null, "sailthru.log");
         $orderData = [];
-        $startTime = microtime(true);
-        $page = 1;
+//        $startTime = microtime(true);
+//        $page = 1;
         $syncedOrders = 0;
 
-        do {
-            $collection->setCurPage($page++)->load();
+//        do {
+//            $collection->setCurPage($page++)->load();
             /** @var Mage_Sales_Model_Order $order */
             foreach ($collection->getItems() as $order) {
-                $data = [
-                    'date' => $order->getCreatedAtStoreDate()->getIso(),
-                    'email' => $order->getCustomerEmail(),
-                    'items' => $purchaseClient->getItems($order->getAllVisibleItems()),
-                    'adjustments' => Mage::helper('sailthruemail/purchase')->getAdjustments($order, "api"),
-                    'tenders' => Mage::helper('sailthruemail/purchase')->getTenders($order),
-                    'purchase_keys' => array("extid" => $order->getIncrementId())
-                ];
-
-                $orderData[] = json_encode($data);
+                $orderData[] = $this->exportData($order);
                 $syncedOrders++;
-                if ($syncedOrders % 20 == 0) Mage::log("Processed $syncedOrders orders", null, "sailthru.log");
+                if ($syncedOrders % 100 == 0) Mage::log("Processed $syncedOrders orders", null, "sailthru.log");
             }
 
-            $collection->clear();
-        } while ($page <= $collection->getLastPageNumber());
+//            $collection->clear();
+//        } while ($page <= $collection->getLastPageNumber());
 
         $endTime = microtime(true);
-        $time = $endTime - $startTime;
-        Mage::log("Successfully generated Order JSON in $time seconds", null, "sailthru.log");
+//        $time = $endTime - $startTime;
+//        Mage::log("Successfully generated Order JSON in $time seconds", null, "sailthru.log");
         return $orderData;
+    }
+
+    public function exportData(Mage_Sales_Model_Order $order)
+    {
+        return json_encode([
+            'date' => $order->getCreatedAtStoreDate()->getIso(),
+            'email' => $order->getCustomerEmail(),
+            'items' => Mage::getModel('sailthruemail/client_purchase')->getItems($order->getAllVisibleItems()),
+            'adjustments' => $this->getAdjustments($order, "api"),
+            'tenders' => $this->getTenders($order),
+            'purchase_keys' => ["extid" => $order->getIncrementId()]
+        ]);
     }
 
 }
