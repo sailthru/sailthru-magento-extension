@@ -70,15 +70,25 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract
             echo ".";
         } while ($page <= $lastPage);
         fclose($this->writefile);
-        $time = microtime(true) - $startTime;
-        $this->finishPrint($time);
+
+
+        $time = round(microtime(true) - $startTime, 2);
+        $mem = convertBytes(memory_get_peak_usage());
+        echo "Finished.".PHP_EOL;
+        $res = <<<RESULTS
+------------------------
+time    : $time seconds
+mem max : $mem
+------------------------
+RESULTS;
+        echo green($res).PHP_EOL.PHP_EOL."Sailthru Order Import JSON saved to".bold($this::FILE_PATH).PHP_EOL.PHP_EOL;
     }
 
     private function setFilters()
     {
-        $output = "Exporting orders";
+        $output = "Querying orders";
         $this->collection
-//            ->addFieldToFilter('status', 'complete')
+            ->addFieldToFilter('status', 'complete')
             ->setPageSize(self::PAGE_SIZE);
 
         if ($this->storeId) {
@@ -109,22 +119,6 @@ class Sailthru_Email_Purchase_Export_CLI extends Mage_Shell_Abstract
     {
         $path = $this->_getRootPath() . self::FILE_PATH;
         return fopen($path, "w");
-    }
-
-    private function finishPrint($time)
-    {
-        $mem = convertBytes(memory_get_peak_usage());
-        $time = round($time, 2);
-        echo "Finished.".PHP_EOL;
-        $res = <<<RESULTS
-------------------------
-time    : $time seconds
-mem max : $mem
-------------------------
-
-
-RESULTS;
-        echo green($res) . "Sailthru Order Import JSON saved to".bold($this::FILE_PATH).PHP_EOL.PHP_EOL;
     }
 
     public function usageHelp()
