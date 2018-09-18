@@ -88,8 +88,9 @@ We've built a tool export orders from Magento and generate a Sailthru
 Order import JSON file. You can access it via CLI or *beta* via Admin Sales UI (may time out).
 
 ```bash
-/var/www/htdocs $ cd shell/
-/var/www/htdocs/shell $ php sailthru-purchase-export.php -h
+<from magento root>
+$ cd shell
+$ php sailthru-purchase-export.php -h
 Usage:
     php sailthru-purchase-export.php [OPTIONS]
 
