@@ -153,27 +153,13 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract
     }
     
     public function generateExportData(Mage_Sales_Model_Resource_Order_Collection $collection) {
-//        Mage::log("Processing {$collection->getSize()} orders", null, "sailthru.log");
         $orderData = [];
-//        $startTime = microtime(true);
-//        $page = 1;
         $syncedOrders = 0;
-
-//        do {
-//            $collection->setCurPage($page++)->load();
-            /** @var Mage_Sales_Model_Order $order */
-            foreach ($collection->getItems() as $order) {
-                $orderData[] = $this->exportData($order);
-                $syncedOrders++;
-                if ($syncedOrders % 100 == 0) Mage::log("Processed $syncedOrders orders", null, "sailthru.log");
-            }
-
-//            $collection->clear();
-//        } while ($page <= $collection->getLastPageNumber());
-
-        $endTime = microtime(true);
-//        $time = $endTime - $startTime;
-//        Mage::log("Successfully generated Order JSON in $time seconds", null, "sailthru.log");
+        /** @var Mage_Sales_Model_Order $order */
+        foreach ($collection->getItems() as $order) {
+            $orderData[] = $this->exportData($order);
+            $syncedOrders++;
+        }
         return $orderData;
     }
 

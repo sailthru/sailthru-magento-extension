@@ -25,7 +25,7 @@ class Sailthru_Email_Model_Observer_Adminhtml
             $stores = Mage::app()->getStores();
             foreach ($stores as $store) {
                 /** @var $store Mage_Core_Model_Store */
-                $name = "Sailthru JSON" . (Mage::app()->isSingleStoreMode() ? "" : " [ {$store->getName()}]");
+                $name = "[BETA] Sailthru JSON" . (Mage::app()->isSingleStoreMode() ? "" : " - {$store->getName()}");
                 $block->addExportType("sailthruemail/order/bulk/store/{$store->getId()}", $name);
             }
         }
@@ -44,26 +44,6 @@ class Sailthru_Email_Model_Observer_Adminhtml
                         'value' => $store
                     )))
         );
-    }
-
-    private function setupOrderExport(Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block)
-    {
-        /** @var Mage_Core_Model_Store[] $stores */
-        $stores = Mage::app()->getStores();
-        foreach ($stores as $store) {
-            $block->addItem(
-                "sailthruemail_sales_bulk_{$store->getId()}", array(
-                    'label' => "Sailthru CSV [{$store->getName()}]",
-                    'url' => $block->getUrl('sailthruemail/order/bulk'),
-                    'additional' => array(
-                        'store' => array(
-                            'name' => 'store',
-                            'type' => 'hidden',
-                            'value' => $store->getId()
-                        )))
-            );
-        }
-
     }
 
     /**

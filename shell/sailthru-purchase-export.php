@@ -81,7 +81,7 @@ time    : $time seconds
 mem max : $mem
 ------------------------
 RESULTS;
-        echo green($res).PHP_EOL.PHP_EOL."Sailthru Order Import JSON saved to".bold($this::FILE_PATH).PHP_EOL.PHP_EOL;
+        echo green($res).PHP_EOL.PHP_EOL."Sailthru Order Import JSON saved to ".bold($this::FILE_PATH).PHP_EOL.PHP_EOL;
     }
 
     private function setFilters()
