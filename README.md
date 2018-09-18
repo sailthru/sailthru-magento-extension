@@ -83,7 +83,7 @@ If you don't want to use modman:
     ```
     
     
-#### Order Import Tool
+### Order Import Tool
 We've built a tool export orders from Magento and generate a Sailthru
 Order import JSON file. You can access it via CLI or *beta* via Admin Sales UI (may time out).
 
