@@ -29,12 +29,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_TRANSACTIONAL_EMAIL_SENDER               = 'sailthru_transactional/email/sender';
     const XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_ENABLED     = 'sailthru_transactional/email/customer_error_enabled';
     const XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_MESSAGE     = 'sailthru_transactional/email/customer_error_message';
-    const XML_PATH_ABANDONED_CART_ENABLED                   = 'sailthru_transactional/abandoned_cart/enabled';
-    const XML_PATH_ABANDONED_CART_TEMPLATE                  = 'sailthru_transactional/abandoned_cart/template';
-    const XML_PATH_ABANDONED_CART_DELAY                     = 'sailthru_transactional/abandoned_cart/delay';
-    const XML_PATH_ANONYMOUS_CART_ENABLED                   = 'sailthru_transactional/anonymous_cart/enabled';
-    const XML_PATH_ANONYMOUS_CART_TEMPLATE                  = 'sailthru_transactional/anonymous_cart/template';
-    const XML_PATH_ANONYMOUS_CART_DELAY                     = 'sailthru_transactional/anonymous_cart/reminder_time';
 
     // Content
     const XML_PATH_PRODUCT_SYNC                             = 'sailthru_content/product_sync/enabled';
@@ -115,36 +109,6 @@ class Sailthru_Email_Helper_Data extends Mage_Core_Helper_Abstract
     public function getCustomerErrorMessage($store = null)
     {
         return Mage::getStoreConfig(self::XML_PATH_TRANSACTIONAL_CUSTOMER_ERROR_MESSAGE);
-    }
-
-    public function isAbandonedCartEnabled($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_ENABLED, $store);
-    }
-
-    public function getAbandonedCartDelayTime($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_DELAY, $store);
-    }
-
-    public function getAbandonedCartTemplate($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ABANDONED_CART_TEMPLATE, $store);
-    }
-
-    public function isAnonymousCartEnabled($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_ENABLED, $store);
-    }
-
-    public function getAnonymousCartDelayTime($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_DELAY, $store);
-    }
-
-    public function getAnonymousCartTemplate($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_ANONYMOUS_CART_TEMPLATE, $store);
     }
 
     /**

@@ -300,7 +300,7 @@
                     <expanded>1</expanded>
                     <fields>
                         <enabled translate="label comment">
-                            <label>Enable Abandoned Cart Emails</label>
+                            <label>Enable Abandoned Cart</label>
                             <frontend_type>select</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
@@ -308,6 +308,17 @@
                             <show_in_store>1</show_in_store>
                             <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
                         </enabled>
+                        <use_email translate="label comment">
+                            <label>Send Abandoned Cart Email from Magento</label>
+                            <comment>Emails can be triggered directly from Magento, or managed from within Lifecycle Optimizer.</comment>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enabled>1</enabled></depends>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
+                        </use_email>
                         <template translate="label comment">
                             <label>Abandoned Cart Template</label>
                             <frontend_type>select</frontend_type>
@@ -317,7 +328,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>Choose the template to use for your abandoned cart template.</comment>
-                            <depends><enabled>1</enabled></depends>
+                            <depends><use_email>1</use_email></depends>
                             <validate>required-entry</validate>
                             <validate>validate-select</validate>
                         </template>
@@ -329,7 +340,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment>The delay in minutes before a reminder email is sent to a customer who abandoned their shopping cart.</comment>
-                            <depends><enabled>1</enabled></depends>
+                            <depends><use_email>1</use_email></depends>
                             <validate>required-entry</validate>
                         </delay>
                     </fields>
@@ -353,6 +364,17 @@
                             <show_in_store>1</show_in_store>
                             <sort_order>1</sort_order>
                         </enabled>
+                        <use_email translate="label comment">
+                            <label>Send Anonymous Cart Email from Magento</label>
+                            <comment>Emails can be triggered directly from Magento, or managed from within Lifecycle Optimizer.</comment>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><enabled>1</enabled></depends>
+                            <source_model>Sailthru_Email_Model_Config_Source_Validatedyesno</source_model>
+                        </use_email>
                         <template>
                             <label>Template</label>
                             <comment>Can be the same as regular abandoned cart, or use a different template to use a different strategy.</comment>
@@ -361,7 +383,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends><enabled>1</enabled></depends>
+                            <depends><use_email>1</use_email></depends>
                             <sort_order>2</sort_order>
                             <validate>required-entry</validate>
                             <validate>validate-select</validate>
@@ -373,7 +395,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends><enabled>1</enabled></depends>
+                            <depends><use_email>1</use_email></depends>
                             <comment>The delay before a reminder email is sent to a customer who abandoned their shopping cart. Cam select unit (min, days).</comment>
                             <validate>required-entry</validate>
 

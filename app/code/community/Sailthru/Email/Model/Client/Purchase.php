@@ -9,6 +9,8 @@
 class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
 {
 
+    const KNOWN_CART = 1;
+    const HID_CART = 2;
     /**
      * Create Cart data to post to API
      *
@@ -20,17 +22,16 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      */
     public function sendCart(Mage_Sales_Model_Quote $quote, $eventType = null)
     {
-        if ($eventType){
-            $this->_eventType = $eventType;
-        }
+        $helper = Mage::helper('sailthruemail/cart');
 
+        $cartType = null;
         $email = $quote->getCustomerEmail();
-        if (Mage::helper('sailthruemail')->isAbandonedCartEnabled() and $email){
-            $cartTime = Mage::helper('sailthruemail')->getAbandonedCartDelayTime();
-            $cartTemplate = Mage::helper('sailthruemail')->getAbandonedCartTemplate();
-        } elseif (Mage::helper('sailthruemail')->isAnonymousCartEnabled() and $email = $this->useHid()){
-            $cartTemplate = Mage::helper('sailthruemail')->getAnonymousCartTemplate();
-            $cartTime = Mage::helper('sailthruemail')->getAnonymousCartDelayTime();
+        if ($helper->isAbandonedCartEnabled() and $email) {
+            $cartType = self::KNOWN_CART;
+
+        } elseif ($helper->isAnonymousCartEnabled() and $email = $this->useHid()) {
+            $cartType = self::HID_CART;
+
         } else {
             return;
         }
@@ -48,11 +49,24 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
                 'email' => $email,
                 'items' => $this->getItems($items),
                 'incomplete' => 1,
-                'reminder_time' => '+' . $cartTime,
-                'reminder_template' => $cartTemplate,
                 'message_id' => $this->getMessageId()
         );
 
+        if (($cartType == self::KNOWN_CART and $helper->isAbandonedCartEmailEnabled()) or
+            ($cartType == self::HID_CART and $helper->isAnonymousCartEmailEnabled())) {
+
+            $data['reminder_time'] = '+' . $cartType == self::KNOWN_CART
+                ? $helper->getAbandonedCartDelayTime()
+                : $helper->getAnonymousCartDelayTime();
+
+            $data['reminder_template'] = $cartType == self::KNOWN_CART
+                ? $helper->getAbandonedCartTemplate()
+                : $helper->getAnonymousCartTemplate();
+        }
+
+        if ($eventType){
+            $this->_eventType = $eventType;
+        }
         $this->apiPost('purchase', $data);
     }
 
