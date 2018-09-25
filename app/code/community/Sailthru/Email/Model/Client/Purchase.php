@@ -23,13 +23,13 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
     public function sendCart(Mage_Sales_Model_Quote $quote, $eventType = null)
     {
         $helper = Mage::helper('sailthruemail/cart');
-
         $cartType = null;
         $email = $quote->getCustomerEmail();
+
         if ($helper->isAbandonedCartEnabled() and $email) {
             $cartType = self::KNOWN_CART;
 
-        } elseif ($helper->isAnonymousCartEnabled() and $email = $this->useHid()) {
+        } elseif ($helper->isAnonymousCartEnabled() and $email = $this->getHid()) {
             $cartType = self::HID_CART;
 
         } else {
@@ -147,12 +147,8 @@ class Sailthru_Email_Model_Client_Purchase extends Sailthru_Email_Model_Client
      *
      * @return string|bool
      */
-    private function useHid()
+    private function getHid()
     {
-        if (!Mage::helper('sailthruemail')->isAnonymousCartEnabled()) {
-            return false;
-        }
-
         $cookie = Mage::getModel('core/cookie')->get('sailthru_hid');
         if ($cookie) {
             try {

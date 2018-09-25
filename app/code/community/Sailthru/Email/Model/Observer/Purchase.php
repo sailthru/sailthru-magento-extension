@@ -9,17 +9,10 @@
 class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observer
 {
 
-    public function isCartEnabled()
-    {
-        return ($this->isEnabled and (Mage::helper('sailthruemail')->isAbandonedCartEnabled() or Mage::helper('sailthruemail')->isAnonymousCartEnabled()));
-    }
-
     public function emptyCart(Varien_Event_Observer $observer)
     {
         $quote = $observer->getCart()->getQuote();
-        $num_prods = $quote->getItemsCount();
-        $num_qty = $quote->getItemsQty();
-        if($quote->getItemsCount() == 0 && $this->isCartEnabled()) {
+        if($quote->getItemsCount() == 0) {
             try{
                  $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($quote, 'EmptiedCart');
             } catch (Exception $e) {
@@ -30,36 +23,30 @@ class Sailthru_Email_Model_Observer_Purchase extends Sailthru_Email_Model_Observ
 
     public function addItemToCart(Varien_Event_Observer $observer)
     {
-        if($this->isCartEnabled()) {
-            try{
-                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), 'addItemToCart');
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
+        try{
+            $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), 'addItemToCart');
+        } catch (Exception $e) {
+            Mage::logException($e);
         }
     }
 
     public function updateItemInCart(Varien_Event_Observer $observer)
     {
-        if($this->isCartEnabled()) {
-            try{
-                if ($hasChanges = $observer->getCart()->hasDataChanges()) {
-                    $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(), 'updateItemInCart');
-                }
-            } catch (Exception $e) {
-                Mage::logException($e);
+        try{
+            if ($hasChanges = $observer->getCart()->hasDataChanges()) {
+                $response = Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getCart()->getQuote(), 'updateItemInCart');
             }
+        } catch (Exception $e) {
+            Mage::logException($e);
         }
     }
 
     public function removeItemFromCart(Varien_Event_Observer $observer)
     {
-        if($this->isCartEnabled()) {
-            try{
-                 Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), 'removeItemFromCart');
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
+        try{
+             Mage::getModel('sailthruemail/client_purchase')->sendCart($observer->getQuoteItem()->getQuote(), 'removeItemFromCart');
+        } catch (Exception $e) {
+            Mage::logException($e);
         }
     }
 
