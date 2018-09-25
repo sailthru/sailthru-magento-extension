@@ -2,29 +2,39 @@
 
 class Sailthru_Email_Model_Observer_Adminhtml
 {
+    const BLOCK__MASS_ACTION    = "Mage_Adminhtml_Block_Widget_Grid_Massaction";
+    const CONTENT_CONTROLLER    = "catalog_product";
+    const SALES_CONTROLLER      = "sales_order";
+
     /**
      * Catch loading of Catalog Product Admin and insert a new mass action to send to Sailthru.
      * @param Varien_Event_Observer $observer
+     * @throws Exception
      */
     public function addBlockMassAction(Varien_Event_Observer $observer) 
     {
         $block = $observer->getEvent()->getBlock();
-
-        // verify this is for a specific store, or a single-store Magento instance
-        $store = $block->getRequest()->getParam('store');
-        if (!$store and count(Mage::app()->getStores()) == 1) {
-            $store = 1;
+        $singleStore = Mage::app()->isSingleStoreMode();
+        $store = $singleStore ? 1 : $block->getRequest()->getParam('store');
+        
+        if ($store and $this->isMassActionWidget($block) and $this->isController($block, self::CONTENT_CONTROLLER) and $this->contentActionEnabled()) {
+            $this->setupContentSync($block, $store);
         }
 
-        $featureEnabled = (Mage::helper('sailthruemail')->isEnabled() and Mage::helper('sailthruemail')->isProductMassActionEnabled());
+        if ($block instanceof Mage_Adminhtml_Block_Sales_Order_Grid) {
+            $stores = Mage::app()->getStores();
+            foreach ($stores as $store) {
+                /** @var $store Mage_Core_Model_Store */
+                $name = "[BETA] Sailthru JSON" . (Mage::app()->isSingleStoreMode() ? "" : " - {$store->getName()}");
+                $block->addExportType("sailthruemail/order/bulk/store/{$store->getId()}", $name);
+            }
+        }
+    }
 
-        // we only want to add this to the Product Catalog mass action block
-        if($store != null and get_class($block) =='Mage_Adminhtml_Block_Widget_Grid_Massaction'
-            && $block->getRequest()->getControllerName() == 'catalog_product' and $featureEnabled) {
-
-            /** @var Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block */
-            $block->addItem(
-                'sailthruemail_content_bulk', array(
+    private function setupContentSync(Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract $block, $store)
+    {
+        $block->addItem(
+            'sailthruemail_content_bulk', array(
                 'label' => '[BETA] Send to Sailthru',
                 'url' => $block->getUrl('sailthruemail/content/bulk'),
                 'additional' => array(
@@ -32,8 +42,40 @@ class Sailthru_Email_Model_Observer_Adminhtml
                         'name' => 'store',
                         'type' => 'hidden',
                         'value' => $store
-                )))
-            );
-        }
+                    )))
+        );
+    }
+
+    /**
+     * @param Mage_Core_Block_Abstract $block
+     * @param $type
+     * @return bool
+     */
+    private function isMassActionWidget(Mage_Core_Block_Abstract $block)
+    {
+        return $block instanceof Mage_Adminhtml_Block_Widget_Grid_Massaction_Abstract;
+    }
+
+    /**
+     * @param Mage_Core_Block_Abstract $block
+     * @param $controller
+     * @return bool
+     * @throws Exception
+     */
+    private function isController(Mage_Core_Block_Abstract $block, $controller)
+    {
+        return $block->getRequest()->getControllerName() == $controller;
+    }
+
+    private function contentActionEnabled()
+    {
+        return Mage::helper('sailthruemail')->isEnabled() and Mage::helper('sailthruemail')->isProductMassActionEnabled();
+
+    }
+
+    private function isSingleStore()
+    {
+        return count(Mage::app()->getStores()) == 1;
     }
 }
+

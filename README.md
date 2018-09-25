@@ -70,7 +70,7 @@ modman update sailthru-magento-extension # to update
 #### Installation without modman
 If you don't want to use modman:
 1. Download the plugin
-    ```
+    ```bash
     cd /tmp
     mkdir sailthru-magento
     cd sailthru-magento
@@ -81,6 +81,25 @@ If you don't want to use modman:
     ```
     cp -r app/* <magento_root>/app/
     ```
+    
+    
+### Order Import Tool
+We've built a tool export orders from Magento and generate a Sailthru
+Order import JSON file. You can access it via CLI or *beta* via Admin Sales UI (may time out).
+
+```bash
+<from magento root>
+$ cd shell
+$ php sailthru-purchase-export.php -h
+Usage:
+    php sailthru-purchase-export.php [OPTIONS]
+
+Arguments
+    -s <int>     Set Store ID Filter
+    -f <date>    Set From Date Filter
+    -t <date>    Set To Date Filter
+
+```
     
 [1]: https://github.com/babel/babel/issues/5518
 [2]: https://getstarted.sailthru.com/

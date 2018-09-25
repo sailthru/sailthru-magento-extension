@@ -151,6 +151,29 @@ class Sailthru_Email_Helper_Purchase extends Mage_Core_Helper_Abstract
         }
         return null;
     }
+    
+    public function generateExportData(Mage_Sales_Model_Resource_Order_Collection $collection) {
+        $orderData = [];
+        $syncedOrders = 0;
+        /** @var Mage_Sales_Model_Order $order */
+        foreach ($collection->getItems() as $order) {
+            $orderData[] = $this->exportData($order);
+            $syncedOrders++;
+        }
+        return $orderData;
+    }
+
+    public function exportData(Mage_Sales_Model_Order $order)
+    {
+        return json_encode([
+            'date' => $order->getCreatedAtStoreDate()->getIso(),
+            'email' => $order->getCustomerEmail(),
+            'items' => Mage::getModel('sailthruemail/client_purchase')->getItems($order->getAllVisibleItems()),
+            'adjustments' => $this->getAdjustments($order, "api"),
+            'tenders' => $this->getTenders($order),
+            'purchase_keys' => ["extid" => $order->getIncrementId()]
+        ]);
+    }
 
 }
 
