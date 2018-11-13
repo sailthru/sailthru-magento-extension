@@ -55,6 +55,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
      */
     public function getProductData(Mage_Catalog_Model_Product $product)
     {
+        $stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
         $productType = $product->getTypeId();
         $isMaster = ($productType == 'configurable' or $productType == 'bundle');
         $updateMaster = Mage::helper('sailthruemail')->updateMasterProducts();
@@ -64,7 +65,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
 
         $isSimple = ($productType == 'simple');
         $parents = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
-        $isVariant = ($isSimple and (sizeof($parents) == 1));
+        $isVariant = ($isSimple and (sizeof($parents) > 0)); // Could have more then 1 parent.
         $updateVariants = Mage::helper('sailthruemail')->updateVariantProducts();
         if ($isVariant and !$updateVariants) {
             return false;
@@ -77,7 +78,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
         $productTypeId = $product->getTypeId();
         $data = array(
             'url' => $url,
-            'title' => htmlspecialchars($product->getName()),
+            'title' => htmlspecialchars($product->getName()), // why specialchars are encoded only here? they could be stored everywhere.
             'price' => $product->getPrice(),
             'description' => $product->getDescription(),
             'tags' => Mage::helper('sailthruemail')->getTags($product),
@@ -88,7 +89,7 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'status' => $product->getStatus(),
                 'categoryId' => $product->getCategoryId(),
                 'categoryIds' => $product->getCategoryIds(),
-                'category' => $product->getCategory(),
+                'category' => $product->getCategory(), // This is the object, shouldn't it be a string or id?
                 'websiteIds' => $product->getWebsiteIds(),
                 'storeIds'  => $product->getStoreIds(),
                 'attributes' => Mage::helper('sailthruemail')->getProductAttributeValues($product),
@@ -111,19 +112,13 @@ class Sailthru_Email_Model_Client_Content extends Sailthru_Email_Model_Client
                 'isAvailable'  => $product->isAvailable(),
                 'isVirtual'  => $product->isVirtual(),
                 'isRecurring' => $product->isRecurring(),
-                'isInStock'  => $product->isInStock(),
+                'isInStock'  => $stockItem->isInStock(),
                 'weight'  => $product->getWeight()
             )
         );
 
         if ($isSimple) {
-            if ($product->getStockItem()->getQty() || $product->getQty()) {
-                $inv = $product->getStockItem()->getQty() ?: intval($product->getQty());
-                if ($inv < 0) {
-                    $inv = 0;
-                }
-                $data['inventory'] = $inv;
-            }
+                $data['inventory'] = $stockItem->getStockQty(); // This function works even for composite products.
         }
 
         // PRICE-FIXING CODE
