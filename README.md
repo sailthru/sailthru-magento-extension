@@ -1,4 +1,13 @@
-# Sailthru Magento Extension
+# DEPRECATED - Sailthru Magento Extension
+
+**This extension will not be supported by Sailthru after June 30, 2020. This aligns with the [end of support date](https://magento.com/blog/magento-news/supporting-magento-1-through-june-2020) for Magento 1.**
+
+
+
+
+
+---
+
 ### Version 2.1.0 - Beta
 
 The Magento extension provides an integration to the Sailthru platform and can serve as a framework for building custom Magento functionality. 
